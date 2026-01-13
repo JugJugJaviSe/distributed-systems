@@ -1,0 +1,22 @@
+# ====================
+# Python (server)
+# ====================
+__pycache__/
+*.py[cod]
+venv/
+instance/
+*.log
+
+# ====================
+# Node / React (client)
+# ====================
+node_modules/
+dist/
+build/
+
+# ====================
+# OS
+# ====================
+.DS_Store
+Thumbs.db
+
