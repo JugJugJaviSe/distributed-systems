@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/UseAuthHook";
 
-export default function PlayerDashobard(){
+export default function AdminDashobard(){
 
     const { logout } = useAuth();
     const navigate = useNavigate();
@@ -12,7 +12,7 @@ export default function PlayerDashobard(){
     }
 
     return(<div>
-        <h1>Welcome to player dashboard!</h1>
+        <h1>Welcome to admin dashboard!</h1>
         <button onClick={logoutHandler}>Log out</button>
     </div>);
 }

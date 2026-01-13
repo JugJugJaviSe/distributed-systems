@@ -1,0 +1,51 @@
+import React from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "../../hooks/UseAuthHook";
+import { DeleteValueByKey } from "../../helpers/LocalStorage";
+
+type ProtectedRouteProps = {
+    children: React.ReactNode;
+    requiredRole: string;
+    redirectTo?: string;
+};
+
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole, redirectTo = "/login" }) => {
+    const { isAuthenticated, user, isLoading, logout } = useAuth();
+    const location = useLocation();
+
+    const handleLogout = () => {
+        DeleteValueByKey("authToken");
+        logout();
+    };
+
+    if (isLoading) {
+        return (
+            <h1 className="text-center text-gray-500 text-lg mt-10 animate-pulse">Loading...</h1>
+        );
+    }
+
+    if (!isAuthenticated) {
+        return <Navigate to={redirectTo} state={{ from: location }} replace />;
+    }
+
+    if (requiredRole && user?.role !== requiredRole) {
+        return (
+            <main className="min-h-screen flex items-center justify-center bg-gray-900 p-6">
+                <div className="bg-gray-800 p-8 rounded-2xl shadow-lg text-center text-white max-w-md">
+                    <h2 className="text-2xl font-bold mb-4">Access denied</h2>
+                    <p className="mb-6 text-gray-300">
+                        Required role: <span className="font-semibold">{`"${requiredRole}"`}</span>
+                    </p>
+                    <button
+                        onClick={handleLogout}
+                        className="px-6 py-2 bg-red-600 hover:bg-red-500 rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200"
+                    >
+                        Log out
+                    </button>
+                </div>
+            </main>
+        );
+    }
+
+    return <>{children}</>;
+};

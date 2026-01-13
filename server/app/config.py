@@ -10,4 +10,4 @@ class Config:
         "mysql+pymysql://root:1234@localhost:3306/quizz_users_db"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "jwt-secret-key")
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "jwt-secret-key")  #Flask-JWT-Extended reads it from Flask app config automatically!
