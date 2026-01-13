@@ -21,8 +21,8 @@ class User(db.Model):
     street = db.Column(db.String(100), nullable=False)
     street_number = db.Column(db.String(20), nullable=False)
 
-    role = db.Column(db.String(20), default="PLAYER")  
-    # PLAYER | MODERATOR | ADMIN
+    role = db.Column(db.String(20), default="Player")  
+    # Player | Moderator | Admin
 
     failed_login_attempts = db.Column(db.Integer, default=0)#these 2 probably won't be in db, I am not sure
     blocked_until = db.Column(db.DateTime, nullable=True)

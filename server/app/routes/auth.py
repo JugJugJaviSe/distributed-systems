@@ -8,6 +8,7 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 @auth_bp.route("/register", methods=["POST"])
 def register():
+    print("I got the payload")
     data = request.get_json()
     user = register_user(data)
     print(f"User created -> ID: {user.id}, Name: {user.first_name} {user.last_name}, Email: {user.email}")
@@ -19,8 +20,9 @@ def register():
     })
 
     return jsonify({
-        "msg": "User registered successfully",
-        "token": token
+        "success": True,
+        "message": "User registered successfully",
+        "data": token
     }), 201
 
 @auth_bp.route("/login", methods=["POST"])
@@ -32,7 +34,10 @@ def login():
     user = User.query.filter_by(email=email).first()
 
     if not user or not user.check_password(password):
-        return jsonify({"msg": "Invalid credentials"}), 401
+        return jsonify({
+            "success": False,
+            "message": "Invalid credentials",
+            }), 401
     
     token = create_access_token(identity={
         "id": user.id,
@@ -41,6 +46,7 @@ def login():
     })
 
     return jsonify({
-        "msg": "Login successful",
+        "success": True,
+        "message": "Login successful",
         "token": token
     }), 200
