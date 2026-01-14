@@ -25,16 +25,16 @@ export const authApi: IAuthAPIService = {
     async register(firstName: string, lastName: string, email: string, password: string, dateOfBirth: Date, gender: string, country: string, street: string, streetNumber: string): Promise<AuthResponse> {
         try {
             const payload = {
-            first_name: firstName,
-            last_name: lastName,
-            email: email,
-            password: password,
-            date_of_birth: dateOfBirth.toISOString().split("T")[0], // "YYYY-MM-DD"
-            gender: gender,
-            country: country,
-            street: street,
-            street_number: streetNumber // if you have this
-        };  //Convention for Flask is to use snake_case while React uses camelCase
+                first_name: firstName,
+                last_name: lastName,
+                email: email,
+                password: password,
+                date_of_birth: dateOfBirth.toISOString().split("T")[0], // "YYYY-MM-DD"
+                gender: gender,
+                country: country,
+                street: street,
+                street_number: streetNumber
+            };
 
             //console.log("I am sending the payload: ", payload);
 
