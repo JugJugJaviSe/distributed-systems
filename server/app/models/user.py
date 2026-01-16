@@ -1,7 +1,8 @@
 from app.extensions import db
 from datetime import date
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timedelta
+
+from app.constants.user_roles import UserRole
 
 class User(db.Model):
     __tablename__ = "users"
@@ -21,7 +22,7 @@ class User(db.Model):
     street = db.Column(db.String(100), nullable=False)
     street_number = db.Column(db.String(20), nullable=False)
 
-    role = db.Column(db.String(20), default="Player")  # Player | Moderator | Admin
+    role = db.Column(db.String(20), default=UserRole.PLAYER)  # Player | Moderator | Admin
 
     failed_login_attempts = db.Column(db.Integer, default=0)
     blocked_until = db.Column(db.DateTime, nullable=True)

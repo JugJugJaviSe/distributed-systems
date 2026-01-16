@@ -1,8 +1,9 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from flask_jwt_extended import create_access_token
 
 from app.extensions import db
 from app.models.user import User
+from app.constants.user_roles import UserRole
 
 class AuthService:
 
@@ -17,7 +18,7 @@ class AuthService:
             country=data["country"],
             street=data["street"],
             street_number=data["street_number"],
-            role="Player"
+            role=UserRole.PLAYER
         )
 
         user.set_password(data["password"])
