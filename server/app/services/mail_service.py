@@ -42,7 +42,7 @@ class MailService:
     @staticmethod
     def send_role_change_email(user_email: str, new_role: UserRole):
         subject = "Role Update Notification"
-        body = f"Hello,\n\nYour role on the platform has been updated to: {new_role}.\n\nRegards,\nQuiz Platform Team"
-        html = f"<p>Hello,</p><p>Your role on the platform has been updated to: <b>{new_role}</b>.</p><p>Regards,<br/>Quiz Platform Team</p>"
+        body = f"Hello,\n\nYour role on the platform has been updated to: {new_role.value}.\n\nRegards,\nQuiz Platform Team"
+        html = f"<p>Hello,</p><p>Your role on the platform has been updated to: <b>{new_role.value}</b>.</p><p>Regards,<br/>Quiz Platform Team</p>"
 
         MailService.send_email(to_email=user_email, subject=subject, body=body, html=html)

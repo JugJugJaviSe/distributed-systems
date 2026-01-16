@@ -31,7 +31,7 @@ class AdminService:
         if not user:
             raise ValueError(f"User with ID {user_id} does not exist.")
 
-        user.role = new_role
+        user.role = new_role.value
         db.session.commit()
 
         Process(target=MailService.send_role_change_email, args=(user.email, new_role)).start()     # Starting a separate process
