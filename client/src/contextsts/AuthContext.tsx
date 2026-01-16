@@ -9,17 +9,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const decodeJWT = (token: string): JwtTokenClaims | null => {
     try {
-        const decoded = jwtDecode<any>(token);  //any for now because Flask sends it wrapped
+        const decoded: any = jwtDecode(token);
 
-        if (decoded.sub && decoded.sub.id && decoded.sub.email && decoded.sub.role) {
-            return {
-                id: decoded.sub.id,
-                email: decoded.sub.email,
-                role: decoded.sub.role
-            };
-        }
+        if (!decoded.sub) return null;
 
-        return null;
+        return {
+            id: parseInt(decoded.sub), // sub is now a string
+            email: decoded.email,      // from additional_claims
+            role: decoded.role          // from additional_claims
+        };
     } catch (error) {
         console.error('Error while decoding JWT token: ', error);
         return null;
