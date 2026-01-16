@@ -5,7 +5,7 @@ app = create_app()
 from app.extensions import db
 
 with app.app_context():
-    db.create_all()         #this is only for creating the tables inside the schema (it doesn't do it automatically like TypeORM :(
+    db.create_all()     # Generates tables inside schema
 
 if __name__ == "__main__":
     app.run(debug=True)
