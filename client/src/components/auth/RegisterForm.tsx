@@ -12,7 +12,7 @@ export function RegisterForm({ authApi }: AuthFormProps) {
   const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [dateOfBirth, setDateOfBirth] = useState<Date>(new Date());
+  const [dateOfBirth, setDateOfBirth] = useState<string>("");
   const [gender, setGender] = useState<string>("Male");
   const [country, setCountry] = useState<string>("Serbia");
   const [street, setStreet] = useState<string>("");
@@ -39,7 +39,7 @@ export function RegisterForm({ authApi }: AuthFormProps) {
       lastName,
       email,
       password,
-      dateOfBirth,
+      new Date(dateOfBirth),
       gender,
       country,
       street,
@@ -111,25 +111,20 @@ export function RegisterForm({ authApi }: AuthFormProps) {
 
           <input
             type="date"
-            placeholder="Date of Birth"
-            value={dateOfBirth ? dateOfBirth.toISOString().split("T")[0] : ""}
-            min={3}
-            max={20}
+            value={dateOfBirth}
             required
-            onChange={(e) => setDateOfBirth(new Date(e.target.value))}
-            className="w-full px-5 py-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
+            onChange={(e) => setDateOfBirth(e.target.value)}
+            className="w-full px-5 py-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100"
           />
 
-          <input
-            type="text"
-            placeholder="Gender"
-            value={gender}
-            min={3}
-            max={20}
-            required
-            onChange={(e) => setGender(e.target.value)}
-            className="w-full px-5 py-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
-          />
+          <select
+          value={gender}
+          onChange={(e) => setGender(e.target.value)}
+          className="w-full px-5 py-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150">
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+
 
           <input
             type="text"
