@@ -7,6 +7,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import { ProtectedRoute } from "./components/protected_route/ProtectedRoute";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import NotFoundPage from "./pages/not_found/NotFoundPage";
+import { cloudinaryApi } from "./api_services/cloudinary_image_api/CloudinaryImageAPIService";
 
 function App() {
   return (
@@ -16,7 +17,7 @@ function App() {
       <Route path="/404" element={<NotFoundPage />} />
 
       <Route path="/Player-dashboard" element={
-          <ProtectedRoute requiredRole="Player"><PlayerDashboard /></ProtectedRoute>
+          <ProtectedRoute requiredRole="Player"><PlayerDashboard cloudinaryApi={cloudinaryApi} /></ProtectedRoute>
       }/>
 
       <Route path="/Admin-dashboard" element={

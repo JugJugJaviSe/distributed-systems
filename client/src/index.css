@@ -46,3 +46,89 @@ input {
  border-radius: 6px;
  border: 1px solid #ccc;
 }
+
+/* Dashboard layout */
+.dashboard {
+  position: relative;
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: #f3f4f6; /* gray-100 equivalent */
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+.dashboard h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Buttons */
+.button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  color: white;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.button-blue {
+  background-color: #3b82f6; /* blue-500 */
+}
+
+.button-red {
+  background-color: #ef4444; /* red-500 */
+}
+
+/* Test box */
+.test-box {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background-color: red;
+  color: white;
+  padding: 1rem;
+  z-index: 1000;
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  position: fixed;
+  inset: 0; /* top:0; right:0; bottom:0; left:0 */
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Profile card */
+.profile-card {
+  width: 24rem;
+  background-color: white;
+  border: 1px solid #e5e7eb; /* gray-200 */
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.profile-card img {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+}
+
+.profile-card h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.profile-card p {
+  color: #4b5563; /* gray-600 */
+  margin-bottom: 0.25rem;
+}

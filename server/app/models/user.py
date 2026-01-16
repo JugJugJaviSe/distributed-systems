@@ -27,6 +27,9 @@ class User(db.Model):
     failed_login_attempts = db.Column(db.Integer, default=0)
     blocked_until = db.Column(db.DateTime, nullable=True)
 
+    profile_picture_url = db.Column(db.String(500), nullable=True)
+    profile_picture_public_id = db.Column(db.String(255), nullable=True)
+
     def __repr__(self): #this is something like ToString
         return f"<User {self.email}>"
     

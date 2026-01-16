@@ -18,7 +18,11 @@ def create_app():
         api_secret=Config.CLOUDINARY_API_SECRET
     )
 
-    CORS(app)
+    CORS(
+    app,
+    origins=["http://localhost:5173/"],
+    supports_credentials=True,
+)
 
     db.init_app(app)
     jwt.init_app(app)
