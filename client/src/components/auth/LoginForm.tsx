@@ -27,7 +27,6 @@ export function LoginForm({ authApi }: AuthFormProps) {
             login(authResult.data);
         } else {
             setErrorMessage(authResult.message);
-            setEmail("");
             setPassword("");
         }
     };

@@ -1,0 +1,91 @@
+from datetime import datetime, timedelta, timezone
+from flask_jwt_extended import create_access_token
+
+from app.extensions import db
+from app.models.user import User
+
+class AuthService:
+
+    @staticmethod
+    def register_user(data):
+        user = User(
+            first_name=data["first_name"],
+            last_name=data["last_name"],
+            email=data["email"],
+            date_of_birth=data["date_of_birth"],
+            gender=data["gender"],
+            country=data["country"],
+            street=data["street"],
+            street_number=data["street_number"],
+            role="Player"
+        )
+
+        user.set_password(data["password"])
+
+        db.session.add(user)
+        db.session.commit()
+
+        token = create_access_token(identity={
+            "id": user.id,
+            "email": user.email,
+            "role": user.role
+        })
+
+        return token
+
+
+    @staticmethod
+    def login_user(email: str, password: str):
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            return {
+                "success": False,
+                "message": "Invalid credentials",
+                "status": 401
+            }
+
+
+        # Check if user is currently blocked
+        now = datetime.utcnow()
+
+        if user.blocked_until and user.blocked_until > now:
+            return {
+                "success": False,
+                "message": f"Too many unsuccessful login attempts. Account blocked for 60 seconds.",    # 15 minutes by specification
+                "status": 403
+            }
+
+        # Check password
+        if not user.check_password(password):
+            user.failed_login_attempts += 1
+
+            if user.failed_login_attempts >= 3:
+                user.blocked_until = now + timedelta(minutes=1)
+                user.failed_login_attempts = 0
+
+            db.session.commit()
+
+            return {
+                "success": False,
+                "message": "Invalid credentials",
+                "status": 401
+            }
+
+        # Successful login
+        user.failed_login_attempts = 0
+        user.blocked_until = None
+        db.session.commit()
+
+        token = create_access_token(identity={
+            "id": user.id,
+            "email": user.email,
+            "role": user.role
+        })
+
+        return {
+            "success": True,
+            "message": "Login successful",
+            "data": token,
+            "status": 200
+        }
