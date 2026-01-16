@@ -48,3 +48,20 @@ def change_role():
         }), 200
     except ValueError as e:
         return jsonify({"success": False, "message": str(e)}), 404
+
+
+@admin_bp.delete("/delete-user/<int:user_id>")
+@require_role([UserRole.ADMIN])
+def delete_user(user_id: int):
+    deleted = AdminService.delete_user(user_id)
+
+    if not deleted:
+        return jsonify({
+            "success": False,
+            "message": "User not found"
+        }), 404
+
+    return jsonify({
+        "success": True,
+        "message": "User deleted"
+    }), 200

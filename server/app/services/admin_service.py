@@ -8,6 +8,7 @@ from app.services.mail_service import MailService
 
 class AdminService:
 
+   #all users
     @staticmethod
     def list_all_users() -> List[Dict[str, Any]]:
         users = User.query.all()
@@ -24,7 +25,7 @@ class AdminService:
             for user in users
         ]
     
-    
+    #change user role
     @staticmethod
     def change_user_role(user_id: int, new_role: UserRole) -> User:
         user = User.query.get(user_id)
@@ -37,3 +38,14 @@ class AdminService:
         Process(target=MailService.send_role_change_email, args=(user.email, new_role)).start()     # Starting a separate process
 
         return user
+
+    #delete user
+    @staticmethod
+    def delete_user(user_id: int) -> bool:
+        user = User.query.get(user_id)
+        if not user:
+            return False
+
+        db.session.delete(user)
+        db.session.commit()
+        return True
