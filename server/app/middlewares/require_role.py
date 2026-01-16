@@ -4,9 +4,11 @@ from typing import Callable, Any, Iterable
 from flask import jsonify
 from flask_jwt_extended import verify_jwt_in_request, get_jwt
 
+from app.constants.user_roles import UserRole
 
-def require_role(allowed_roles: Iterable[str]):
-    allowed = set(allowed_roles)
+
+def require_role(allowed_roles: Iterable[UserRole]):
+    allowed = {r.value for r in allowed_roles}
 
     def decorator(fn: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(fn)
@@ -16,8 +18,7 @@ def require_role(allowed_roles: Iterable[str]):
             except Exception:
                 return jsonify({"success": False, "message": "Unauthorized"}), 401
 
-            claims = get_jwt()
-            role = claims.get("role")
+            role = get_jwt().get("role")
 
             if role not in allowed:
                 return jsonify({"success": False, "message": "Forbidden"}), 403

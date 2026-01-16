@@ -17,3 +17,10 @@ def list_users():
         "success": True,
         "data": users
     }), 200
+
+
+
+@admin_bp.get("/health")
+@require_role([UserRole.ADMIN])
+def health_check():
+    return "OK", 200
