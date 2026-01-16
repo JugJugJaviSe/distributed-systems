@@ -1,15 +1,15 @@
 from flask import Blueprint, request, jsonify
-
-from app.middlewares.require_admin import require_admin
+from app.middlewares.require_role import require_role
+from app.constants.user_roles import UserRole
+from app.services.admin_service import AdminService
 from app.services.admin_service import AdminService
 from app.constants.user_roles import UserRole
-from app.services.auth_service import AuthService 
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
 
 @admin_bp.get("/users")
-@require_admin
+@require_role([UserRole.ADMIN])
 def list_users():
     users = AdminService.list_all_users()
 
@@ -20,7 +20,7 @@ def list_users():
 
 
 @admin_bp.route("/change-role", methods=["POST"])
-@require_admin
+#@require_role([UserRole.ADMIN])
 def change_role():
     data = request.get_json()
     user_id = data.get("user_id")

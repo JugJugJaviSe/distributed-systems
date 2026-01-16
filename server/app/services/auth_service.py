@@ -26,11 +26,11 @@ class AuthService:
         db.session.add(user)
         db.session.commit()
 
-        token = create_access_token(identity={
-            "id": user.id,
-            "email": user.email,
-            "role": user.role
-        })
+        token = create_access_token(
+    identity=str(user.id),  # user ID as string
+    additional_claims={"email": user.email, "role": user.role}
+)
+
 
         return token
 
@@ -78,11 +78,11 @@ class AuthService:
         user.blocked_until = None
         db.session.commit()
 
-        token = create_access_token(identity={
-            "id": user.id,
-            "email": user.email,
-            "role": user.role
-        })
+        token = create_access_token(
+    identity=str(user.id),  # user ID as string
+    additional_claims={"email": user.email, "role": user.role}
+)
+
 
         return {
             "success": True,
