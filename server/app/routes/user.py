@@ -1,24 +1,67 @@
-from flask import Blueprint, request, jsonify
-from flask_jwt_extended import get_jwt_identity, jwt_required
-from ..services.cloudinary_service import CloudinaryService
+from __future__ import annotations
+
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import get_jwt_identity
+
+from app.middlewares.require_auth import require_auth
+from app.services.user_service import UserService
+from app.services.cloudinary_service import CloudinaryService
+from app.validators.user_validator import validate_patch_me
+
 
 user_bp = Blueprint("user", __name__, url_prefix="/users")
 
-@user_bp.route("/set-profile-picture", methods=["POST"])
-@jwt_required()
+
+@user_bp.get("/me")
+@require_auth
+def get_me():
+    user_id = int(get_jwt_identity())
+    result = UserService.get_me(user_id)
+
+    status = result.pop("status", 200)
+    return jsonify(result), status
+
+
+@user_bp.patch("/me")
+@require_auth
+def patch_me():
+    user_id = int(get_jwt_identity())
+    payload = request.get_json(silent=True)
+
+    validation = validate_patch_me(payload)
+    if not validation.ok:
+        return (
+            jsonify(
+                {
+                    "success": False,
+                    "message": "Validation error",
+                    "errors": validation.errors,
+                }
+            ),
+            400,
+        )
+
+    result = UserService.update_profile(user_id, validation.data)
+    status = result.pop("status", 200)
+    return jsonify(result), status
+
+
+
+@user_bp.post("/set-profile-picture")
+@require_auth
 def upload_profile_picture():
-    # get_jwt_identity() now returns a string (user ID)
-    user_id = int(get_jwt_identity())  # convert to int for DB query
+    user_id = int(get_jwt_identity())
 
     if "image" not in request.files:
         return jsonify({"success": False, "message": "No image provided"}), 400
-    
-    image = request.files["image"]
 
+    image = request.files["image"]
     result = CloudinaryService.upload_profile_picture(user_id, image)
 
-    return jsonify({
-        "success": True,
-        "message": "Profile picture uploaded successfully",
-        "data": result
-    }), 200
+    return jsonify(
+        {
+            "success": True,
+            "message": "Profile picture uploaded successfully",
+            "data": result,
+        }
+    ), 200

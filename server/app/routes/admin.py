@@ -19,11 +19,6 @@ def list_users():
     }), 200
 
 
-@admin_bp.get("/health")
-@require_role([UserRole.MODERATOR])
-def health_check():
-    return "OK", 200
-
 @admin_bp.route("/change-role", methods=["POST"])
 @require_role([UserRole.ADMIN])
 def change_role():

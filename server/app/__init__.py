@@ -20,9 +20,10 @@ def create_app():
 
     CORS(
     app,
-    origins=["http://localhost:5173/"],
+    origins=["http://localhost:5173"],
     supports_credentials=True,
 )
+
 
     db.init_app(app)
     jwt.init_app(app)
