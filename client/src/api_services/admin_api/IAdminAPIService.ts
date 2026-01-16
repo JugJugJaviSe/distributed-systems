@@ -2,7 +2,7 @@ import type { UserDto } from "../../models/UserDto";
 import type { AdminResponse } from "../../types/admin/AdminResponse";
 
 export interface IAdminAPIService {
-    listUsers(): Promise<AdminResponse<UserDto[]>>;
-    changeUserRole(userId: string, newRole: string): Promise<AdminResponse<UserDto>>;
-    deleteUser(userId: string): Promise<AdminResponse<null>>;
+    listUsers(token: string): Promise<AdminResponse<UserDto[]>>;
+    changeUserRole(token: string, userId: string, newRole: string): Promise<AdminResponse<UserDto>>;
+    deleteUser(token: string, userId: string): Promise<AdminResponse<null>>;
 }

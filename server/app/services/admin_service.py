@@ -17,6 +17,8 @@ class AdminService:
             {
                 "id": user.id,
                 "email": user.email,
+                "firstName": user.first_name,
+                "lastName": user.last_name,
                 "role": user.role,
                 "created_at": user.created_at.isoformat()
                 if getattr(user, "created_at", None)

@@ -6,9 +6,17 @@ import type { UserDto } from "../../models/UserDto";
 const API_URL: string = import.meta.env.VITE_API_URL + "/admin";
 
 export const adminApi: IAdminAPIService = {
-    async listUsers(): Promise<AdminResponse<UserDto[]>> {
+    async listUsers(token: string): Promise<AdminResponse<UserDto[]>> {
         try {
-            const res = await axios.get<AdminResponse<UserDto[]>>(`${API_URL}/users`);
+            const res = await axios.get<AdminResponse<UserDto[]>>(
+                `${API_URL}/users`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
             return res.data;
         } catch (error) {
             let message = "Failed to fetch users";
@@ -18,10 +26,19 @@ export const adminApi: IAdminAPIService = {
         }
     },
 
-    async changeUserRole(userId: string, newRole: string): Promise<AdminResponse<UserDto>> {
+    async changeUserRole(token: string, userId: string, newRole: string): Promise<AdminResponse<UserDto>> {
         try {
             const payload = { user_id: userId, new_role: newRole };
-            const res = await axios.post<AdminResponse<UserDto>>(`${API_URL}/change-role`, payload);
+            const res = await axios.post<AdminResponse<UserDto>>(
+                `${API_URL}/change-role`,
+                payload,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
             return res.data;
         } catch (error) {
             let message = "Failed to change user role";
@@ -31,9 +48,16 @@ export const adminApi: IAdminAPIService = {
         }
     },
 
-    async deleteUser(userId: string): Promise<AdminResponse<null>> {
+    async deleteUser(token: string, userId: string): Promise<AdminResponse<null>> {
         try {
-            const res = await axios.delete<AdminResponse<null>>(`${API_URL}/delete-user/${userId}`);
+            const res = await axios.delete<AdminResponse<null>>(
+                `${API_URL}/delete-user/${userId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
             return res.data;
         } catch (error) {
             let message = "Failed to delete user";
