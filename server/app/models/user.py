@@ -22,7 +22,7 @@ class User(db.Model):
     street = db.Column(db.String(100), nullable=False)
     street_number = db.Column(db.String(20), nullable=False)
 
-    role = db.Column(db.String(20), default=UserRole.PLAYER)  # Player | Moderator | Admin
+    role = db.Column(db.String(20), default=UserRole.PLAYER.value)  # Player | Moderator | Admin
 
     failed_login_attempts = db.Column(db.Integer, default=0)
     blocked_until = db.Column(db.DateTime, nullable=True)

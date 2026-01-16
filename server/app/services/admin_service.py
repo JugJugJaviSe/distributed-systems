@@ -1,5 +1,10 @@
+from multiprocessing import Process
 from typing import List, Dict, Any
 from app.models.user import User
+
+from app.extensions import db
+from app.constants.user_roles import UserRole
+from app.services.mail_service import MailService
 
 class AdminService:
 
@@ -18,3 +23,17 @@ class AdminService:
             }
             for user in users
         ]
+    
+    
+    @staticmethod
+    def change_user_role(user_id: int, new_role: UserRole) -> User:
+        user = User.query.get(user_id)
+        if not user:
+            raise ValueError(f"User with ID {user_id} does not exist.")
+
+        user.role = new_role
+        db.session.commit()
+
+        Process(target=MailService.send_role_change_email, args=(user.email, new_role)).start()     # Starting a separate process
+
+        return user

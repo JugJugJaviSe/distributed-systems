@@ -18,7 +18,7 @@ class AuthService:
             country=data["country"],
             street=data["street"],
             street_number=data["street_number"],
-            role=UserRole.PLAYER
+            role=UserRole.PLAYER.value
         )
 
         user.set_password(data["password"])
