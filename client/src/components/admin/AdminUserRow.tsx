@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import type { UserDto } from "../../models/UserDto";
 
 interface AdminUserRowProps {
@@ -9,22 +8,6 @@ interface AdminUserRowProps {
 
 export function AdminUserRow({ user, onDelete, onChangeRole }: AdminUserRowProps) {
     const isAdmin = user.role === "Admin";
-
-    const [selectedRole, setSelectedRole] = useState<"Player" | "Moderator">(
-        user.role === "Moderator" ? "Moderator" : "Player"
-    );
-
-    useEffect(() => {
-        if (user.role === "Player" || user.role === "Moderator") {
-            setSelectedRole(user.role);
-        }
-    }, [user.role]);
-
-    const applyRoleChange = () => {
-        if (selectedRole !== user.role) {
-            onChangeRole(user.id, selectedRole);
-        }
-    };
 
     return (
         <tr className="user-row">
@@ -51,17 +34,16 @@ export function AdminUserRow({ user, onDelete, onChangeRole }: AdminUserRowProps
                 )}
             </td>
             <td className="user-actions">
-                {!isAdmin && (
-                    <>
-                        <button
-                            onClick={() => onDelete(user.id)}
-                            className="delete-btn"
-                        >
-                            Delete
-                        </button>
-                    </>
+                {!isAdmin ? (
+                    <button
+                        onClick={() => onDelete(user.id)}
+                        className="delete-btn"
+                    >
+                        Delete
+                    </button>
+                ) : (
+                    <span>—</span>
                 )}
-                {isAdmin && <span>—</span>}
             </td>
         </tr>
     );
