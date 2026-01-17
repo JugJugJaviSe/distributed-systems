@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/UseAuthHook";
 import type { IAuthAPIService } from "../../api_services/auth_api/IAuthAPIService";
+import { validateRegisterForm } from "../../helpers/ValidateRegisterForm";
 
 interface AuthFormProps {
     authApi: IAuthAPIService;
@@ -23,16 +24,22 @@ export function RegisterForm({ authApi }: AuthFormProps) {
   const applyRegisterForm = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    /*const validationResult: ValidationResult = validateRegisterData(
-      username,
+    setErrorMessage("");
+
+    const validationResult = validateRegisterForm(
+      firstName,
+      lastName,
+      email,
       password,
-      fullName,
-      role
+      dateOfBirth,
+      street,
+      streetNumber
     );
+
     if (!validationResult.success) {
       setErrorMessage(validationResult.message ?? "Invalid data");
       return;
-    }*/
+    }
 
     const authResult = await authApi.register(
       firstName,

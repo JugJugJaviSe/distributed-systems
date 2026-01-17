@@ -10,14 +10,12 @@ export const cloudinaryApi: ICloudinariImageAPIService = {
       const formData = new FormData();
       formData.append("image", image);
 
-        console.log("JWT:", token);
-
     const res = await axios.post<CloudinaryImageResponse>(
     `${API_URL}/set-profile-picture`,
     formData,
     {
         headers: {
-        Authorization: `Bearer ${token}` // <-- send token
+        Authorization: `Bearer ${token}`
         },
     }
     );

@@ -4,11 +4,15 @@ from flask_jwt_extended import create_access_token
 from app.extensions import db
 from app.models.user import User
 from app.constants.user_roles import UserRole
+from ..validators.auth_validator import validate_register_data
 
 class AuthService:
 
     @staticmethod
     def register_user(data):
+
+        validate_register_data(data)
+
         user = User(
             first_name=data["first_name"],
             last_name=data["last_name"],

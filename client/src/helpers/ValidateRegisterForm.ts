@@ -1,0 +1,44 @@
+import type { ValidationResult } from "../types/validation/ValidationResult";
+
+export function validateRegisterForm(
+  firstName: string,
+  lastName: string,
+  email: string,
+  password: string,
+  dateOfBirth: string,
+  street: string,
+  streetNumber: string
+): ValidationResult {
+
+  if (firstName.length < 3 || firstName.length > 20) {
+    return { success: false, message: "First name must be 3–20 characters long." };
+  }
+
+  if (lastName.length < 3 || lastName.length > 20) {
+    return { success: false, message: "Last name must be 3–20 characters long." };
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return { success: false, message: "Invalid email format." };
+  }
+
+  if (password.length < 6) {
+    return { success: false, message: "Password must be at least 6 characters long." };
+  }
+
+  const dob = new Date(dateOfBirth);
+  if (isNaN(dob.getTime()) || dob > new Date()) {
+    return { success: false, message: "Invalid date of birth." };
+  }
+
+  if (street.length < 3) {
+    return { success: false, message: "Street must be at least 3 characters." };
+  }
+
+  if (streetNumber.trim() === "") {
+    return { success: false, message: "Street number is required." };
+  }
+
+  return { success: true };
+}
