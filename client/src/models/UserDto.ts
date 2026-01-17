@@ -9,4 +9,5 @@ export interface UserDto {
     street: string;
     streetNumber: string;
     role: "Player" | "Moderator" | "Admin";
+    profilePictureUrl?: string;
 }
