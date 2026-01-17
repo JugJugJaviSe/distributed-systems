@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/UseAuthHook";
 import { ProfileCard } from "../../components/profile_card/ProfileCard";
 import type { ICloudinariImageAPIService } from "../../api_services/cloudinary_image_api/ICloudinaryImageAPIService";
+import type { IUsersAPIService } from "../../api_services/users_api/IUsersAPIService";
 
 interface PlayerDashboardProps{
   cloudinaryApi: ICloudinariImageAPIService;
+  usersApi: IUsersAPIService;
 }
 
-export default function PlayerDashboard({cloudinaryApi}: PlayerDashboardProps) {
+export default function PlayerDashboard({cloudinaryApi, usersApi}: PlayerDashboardProps) {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -37,7 +39,7 @@ export default function PlayerDashboard({cloudinaryApi}: PlayerDashboardProps) {
 
       {showProfile && (
         <div className="modal-backdrop">
-          <ProfileCard setShowProfile={setShowProfile} cloudinaryApi={cloudinaryApi}/>
+          <ProfileCard setShowProfile={setShowProfile} cloudinaryApi={cloudinaryApi} usersApi={usersApi} />
         </div>
       )}
     </div>
