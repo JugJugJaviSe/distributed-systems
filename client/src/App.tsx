@@ -24,7 +24,7 @@ function App() {
       } />
 
       <Route path="/Admin-dashboard" element={
-        <ProtectedRoute requiredRole="Admin"><AdminDashboard /></ProtectedRoute>
+        <ProtectedRoute requiredRole="Admin"><AdminDashboard cloudinaryApi={cloudinaryApi} usersApi={usersApi} /></ProtectedRoute>
       } />
 
       <Route path="/Admin/users" element={
