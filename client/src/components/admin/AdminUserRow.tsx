@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import type { UserDto } from "../../models/UserDto";
 
 interface AdminUserRowProps {
@@ -10,30 +9,14 @@ interface AdminUserRowProps {
 export function AdminUserRow({ user, onDelete, onChangeRole }: AdminUserRowProps) {
     const isAdmin = user.role === "Admin";
 
-    const [selectedRole, setSelectedRole] = useState<"Player" | "Moderator">(
-        user.role === "Moderator" ? "Moderator" : "Player"
-    );
-
-    useEffect(() => {
-        if (user.role === "Player" || user.role === "Moderator") {
-            setSelectedRole(user.role);
-        }
-    }, [user.role]);
-
-    const applyRoleChange = () => {
-        if (selectedRole !== user.role) {
-            onChangeRole(user.id, selectedRole);
-        }
-    };
-
     return (
-        <tr>
-            <td>{user.id}</td>
-            <td>{user.email}</td>
-            <td>{user.firstName} {user.lastName}</td>
-            <td>
+        <tr className="user-row">
+            <td className="user-id">{user.id}</td>
+            <td className="user-email">{user.email}</td>
+            <td className="user-name">{user.firstName} {user.lastName}</td>
+            <td className="user-role">
                 {isAdmin ? (
-                    user.role
+                    <span className="role-badge">{user.role}</span>
                 ) : (
                     <select
                         value={user.role}
@@ -43,29 +26,24 @@ export function AdminUserRow({ user, onDelete, onChangeRole }: AdminUserRowProps
                                 e.target.value as "Player" | "Moderator"
                             )
                         }
+                        className="role-select"
                     >
                         <option value="Player">Player</option>
                         <option value="Moderator">Moderator</option>
                     </select>
                 )}
             </td>
-            <td>
-                {!isAdmin && (
-                    <>
-                        <button
-                            onClick={applyRoleChange}
-                            disabled={selectedRole === user.role}
-                        >
-                            Apply
-                        </button>
-                        {" "}
-                        <button onClick={() => onDelete(user.id)}>
-                            Delete
-                        </button>
-                    </>
+            <td className="user-actions">
+                {!isAdmin ? (
+                    <button
+                        onClick={() => onDelete(user.id)}
+                        className="delete-btn"
+                    >
+                        Delete
+                    </button>
+                ) : (
+                    <span>—</span>
                 )}
-
-                {isAdmin && <span>—</span>}
             </td>
         </tr>
     );

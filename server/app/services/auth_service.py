@@ -31,10 +31,9 @@ class AuthService:
         db.session.commit()
 
         token = create_access_token(
-    identity=str(user.id),  # user ID as string
-    additional_claims={"email": user.email, "role": user.role}
-)
-
+            identity=str(user.id),  # user ID as string
+            additional_claims={"email": user.email, "role": user.role}
+        )
 
         return token
 

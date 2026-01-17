@@ -5,23 +5,23 @@ import { ProfileCard } from "../../components/profile_card/ProfileCard";
 import type { ICloudinariImageAPIService } from "../../api_services/cloudinary_image_api/ICloudinaryImageAPIService";
 import type { IUsersAPIService } from "../../api_services/users_api/IUsersAPIService";
 
-interface AdminDashboardProps {
+interface ModeratorDashboardProps {
   cloudinaryApi: ICloudinariImageAPIService;
   usersApi: IUsersAPIService;
 }
 
-export default function AdminDashobard({ cloudinaryApi, usersApi }: AdminDashboardProps) {
+export default function ModeratorDashboard({
+  cloudinaryApi,
+  usersApi,
+}: ModeratorDashboardProps) {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
-    const goToAdminUsersPage = () => {
-        navigate(`/Admin/users`);
-    }
   const [showProfile, setShowProfile] = useState(false);
 
   const logoutHandler = () => {
     logout();
-    navigate(`/login`);
+    navigate("/login");
   };
 
   const toggleProfile = () => {
@@ -30,11 +30,7 @@ export default function AdminDashobard({ cloudinaryApi, usersApi }: AdminDashboa
 
   return (
     <div className="dashboard">
-      <h1>Welcome to admin dashboard!</h1>
-
-      <button onClick={goToAdminUsersPage}>
-        Users page
-      </button>
+      <h1>Welcome to moderator dashboard!</h1>
 
       <button className="button button-blue" onClick={toggleProfile}>
         {showProfile ? "Hide Profile" : "Show Profile"}

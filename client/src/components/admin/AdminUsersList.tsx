@@ -52,10 +52,10 @@ export function AdminUsersList({ adminApi }: AdminUsersProps) {
     };
 
     return (
-        <div>
-            {errorMessage && <p>{errorMessage}</p>}
+        <div className="admin-users">
+            {errorMessage && <p className="error">{errorMessage}</p>}
 
-            <table border={1} cellPadding={6}>
+            <table className="users-table">
                 <thead>
                     <tr>
                         <th>ID</th>

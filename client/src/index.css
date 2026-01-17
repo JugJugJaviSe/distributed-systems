@@ -3,48 +3,49 @@
   margin: 0 auto;
   padding: 2rem;
 }
+
 :root {
- font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
- line-height: 1.5;
- font-weight: 400;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
 }
 
 h1 {
- font-size: 2.4em;
- line-height: 1.1;
- margin-bottom: 1rem;
- text-align: center;
+  font-size: 2.4em;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 button {
- border-radius: 8px;
- border: 1px solid transparent;
- padding: 0.6em 1.2em;
- font-size: 1em;
- font-family: inherit;
- width: 100%;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-family: inherit;
+  width: 100%;
 }
 
 .form-container {
- max-width: 400px;
- padding: 2rem;
+  max-width: 400px;
+  padding: 2rem;
 }
 
 .input-group {
- margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 label {
- margin-bottom: 0.5rem;
- font-weight: 500;
- text-align: left;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  text-align: left;
 }
 
 input {
- width: 100%;
- padding: 0.6rem;
- border-radius: 6px;
- border: 1px solid #ccc;
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
 /* Dashboard layout */
@@ -52,7 +53,8 @@ input {
   position: relative;
   min-height: 100vh;
   padding: 2rem;
-  background-color: #f3f4f6; /* gray-100 equivalent */
+  background-color: #f3f4f6;
+  /* gray-100 equivalent */
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
@@ -75,11 +77,13 @@ input {
 }
 
 .button-blue {
-  background-color: #3b82f6; /* blue-500 */
+  background-color: #3b82f6;
+  /* blue-500 */
 }
 
 .button-red {
-  background-color: #ef4444; /* red-500 */
+  background-color: #ef4444;
+  /* red-500 */
 }
 
 /* Test box */
@@ -96,7 +100,8 @@ input {
 /* Modal backdrop */
 .modal-backdrop {
   position: fixed;
-  inset: 0; /* top:0; right:0; bottom:0; left:0 */
+  inset: 0;
+  /* top:0; right:0; bottom:0; left:0 */
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
@@ -108,7 +113,8 @@ input {
 .profile-card {
   width: 24rem;
   background-color: white;
-  border: 1px solid #e5e7eb; /* gray-200 */
+  border: 1px solid #e5e7eb;
+  /* gray-200 */
   border-radius: 0.75rem;
   padding: 1.5rem;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
@@ -129,6 +135,114 @@ input {
 }
 
 .profile-card p {
-  color: #4b5563; /* gray-600 */
+  color: #4b5563;
+  /* gray-600 */
   margin-bottom: 0.25rem;
+}
+
+/* Users table */
+.admin-users {
+  padding: 20px;
+}
+
+.error {
+  color: #b00020;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.users-table thead {
+  background-color: #f4f6f8;
+}
+
+.users-table th,
+.users-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.users-table th {
+  font-weight: 600;
+  color: #333;
+}
+
+.users-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.users-table button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.users-table button.delete {
+  background-color: #e53935;
+  color: white;
+}
+
+.users-table button.delete:hover {
+  background-color: #c62828;
+}
+
+.user-row td {
+  vertical-align: middle;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.role-select {
+  padding: 4px 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.user-actions button {
+  padding: 5px 10px;
+  margin-right: 6px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.apply-btn {
+  background-color: #1976d2;
+  color: white;
+}
+
+.apply-btn:hover:enabled {
+  background-color: #1565c0;
+}
+
+.apply-btn:disabled {
+  background-color: #90caf9;
+  cursor: not-allowed;
+}
+
+.delete-btn {
+  background-color: #e53935;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #c62828;
 }
