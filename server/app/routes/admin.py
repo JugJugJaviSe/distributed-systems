@@ -39,7 +39,7 @@ def change_role():
         return jsonify({
             "success": True,
             "message": f"User role updated to {new_role.value}",
-            "data": {"id": user.id, "email": user.email, "role": user.role}
+            "data": {"id": user.id, "email": user.email, "role": user.role, "firstName": user.first_name, "lastName": user.last_name}
         }), 200
     except ValueError as e:
         return jsonify({"success": False, "message": str(e)}), 404
