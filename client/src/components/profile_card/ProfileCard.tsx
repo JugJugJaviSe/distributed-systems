@@ -39,7 +39,7 @@ export function ProfileCard({ setShowProfile, cloudinaryApi }: ProfileCardProps)
 
   const [profilePicture, setProfilePicture] = useState(auth.user.profile_picture_url);
   const [loading, setLoading] = useState(false);
-  const {token}  = useAuth();
+  const { token } = useAuth();
 
   const handleChangePicture = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;

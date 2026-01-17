@@ -27,13 +27,13 @@ export function AdminUserRow({ user, onDelete, onChangeRole }: AdminUserRowProps
     };
 
     return (
-        <tr>
-            <td>{user.id}</td>
-            <td>{user.email}</td>
-            <td>{user.firstName} {user.lastName}</td>
-            <td>
+        <tr className="user-row">
+            <td className="user-id">{user.id}</td>
+            <td className="user-email">{user.email}</td>
+            <td className="user-name">{user.firstName} {user.lastName}</td>
+            <td className="user-role">
                 {isAdmin ? (
-                    user.role
+                    <span className="role-badge">{user.role}</span>
                 ) : (
                     <select
                         value={user.role}
@@ -43,28 +43,24 @@ export function AdminUserRow({ user, onDelete, onChangeRole }: AdminUserRowProps
                                 e.target.value as "Player" | "Moderator"
                             )
                         }
+                        className="role-select"
                     >
                         <option value="Player">Player</option>
                         <option value="Moderator">Moderator</option>
                     </select>
                 )}
             </td>
-            <td>
+            <td className="user-actions">
                 {!isAdmin && (
                     <>
                         <button
-                            onClick={applyRoleChange}
-                            disabled={selectedRole === user.role}
+                            onClick={() => onDelete(user.id)}
+                            className="delete-btn"
                         >
-                            Apply
-                        </button>
-                        {" "}
-                        <button onClick={() => onDelete(user.id)}>
                             Delete
                         </button>
                     </>
                 )}
-
                 {isAdmin && <span>—</span>}
             </td>
         </tr>
