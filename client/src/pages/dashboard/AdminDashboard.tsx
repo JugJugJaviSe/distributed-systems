@@ -14,9 +14,9 @@ export default function AdminDashobard({ cloudinaryApi, usersApi }: AdminDashboa
   const { logout } = useAuth();
   const navigate = useNavigate();
 
-    const goToAdminUsersPage = () => {
-        navigate(`/Admin/users`);
-    }
+  const goToAdminUsersPage = () => {
+    navigate(`/Admin/users`);
+  }
   const [showProfile, setShowProfile] = useState(false);
 
   const logoutHandler = () => {
@@ -29,23 +29,34 @@ export default function AdminDashobard({ cloudinaryApi, usersApi }: AdminDashboa
   };
 
   return (
-    <div className="dashboard">
-      <h1>Welcome to admin dashboard!</h1>
+    <div className="min-h-screen w-full bg-gray-900 backdrop-blur-sm text-gray-100 p-6 flex flex-col items-center justify-start space-y-6">
+      <h1 className="text-3xl font-bold text-center">Welcome to admin dashboard!</h1>
 
-      <button onClick={goToAdminUsersPage}>
-        Users page
-      </button>
+      <div className="flex flex-col sm:flex-row gap-4">
+        <button
+          onClick={goToAdminUsersPage}
+          className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+        >
+          Users page
+        </button>
 
-      <button className="button button-blue" onClick={toggleProfile}>
-        {showProfile ? "Hide Profile" : "Show Profile"}
-      </button>
+        <button
+          onClick={toggleProfile}
+          className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+        >
+          {showProfile ? "Hide Profile" : "Show Profile"}
+        </button>
 
-      <button className="button button-red" onClick={logoutHandler}>
-        Log out
-      </button>
+        <button
+          onClick={logoutHandler}
+          className="px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+        >
+          Log out
+        </button>
+      </div>
 
       {showProfile && (
-        <div className="modal-backdrop">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
           <ProfileCard
             setShowProfile={setShowProfile}
             cloudinaryApi={cloudinaryApi}

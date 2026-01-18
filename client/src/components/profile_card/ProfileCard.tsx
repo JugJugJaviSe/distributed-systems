@@ -222,47 +222,19 @@ export function ProfileCard({
 
   if (loadingProfile) {
     return (
-      <div
-        className="profile-card"
-        style={{
-          border: "1px solid #ccc",
-          padding: "1rem",
-          borderRadius: "8px",
-          width: "340px",
-          textAlign: "center",
-          boxSizing: "border-box",
-        }}
-      >
-        <p>Loading profile...</p>
+      <div className="w-80 p-4 mx-auto mt-10 text-center bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-2xl">
+        <p className="text-gray-300 animate-pulse">Loading profile...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div
-        className="profile-card"
-        style={{
-          border: "1px solid #ccc",
-          padding: "1rem",
-          borderRadius: "8px",
-          width: "340px",
-          textAlign: "center",
-          boxSizing: "border-box",
-        }}
-      >
-        <p style={{ color: "red" }}>{error}</p>
+      <div className="w-80 p-4 mx-auto mt-10 text-center bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-2xl">
+        <p className="text-red-500">{error}</p>
         <button
-          style={{
-            marginTop: "1rem",
-            padding: "0.5rem 1rem",
-            backgroundColor: "#e74c3c",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
           onClick={() => setShowProfile(false)}
+          className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200"
         >
           Close
         </button>
@@ -273,164 +245,128 @@ export function ProfileCard({
   if (!profile) return null;
 
   return (
-    <div
-      className="profile-card"
-      style={{
-        border: "1px solid #ccc",
-        padding: "1.25rem",
-        borderRadius: "8px",
-        width: "340px",
-        textAlign: "center",
-        position: "relative",
-        boxSizing: "border-box",
-        overflow: "hidden",
-      }}
-    >
+    <div className="w-80 p-5 mx-auto mt-10 text-center bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden">
       <img
         src={profilePicture}
         alt={`${form.firstName} ${form.lastName}`}
-        style={{
-          width: "100px",
-          height: "100px",
-          borderRadius: "50%",
-          objectFit: "cover",
-          marginBottom: "1rem",
-        }}
+        className="w-24 h-24 rounded-full object-cover mx-auto mb-4"
       />
 
-      <div style={{ marginBottom: "1rem" }}>
-        <label
-          style={{
-            display: "inline-block",
-            padding: "0.5rem 1rem",
-            backgroundColor: "#3498db",
-            color: "white",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "0.9rem",
-          }}
-        >
+      <div className="mb-4">
+        <label className="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg cursor-pointer text-sm">
           {loadingPicture ? "Uploading..." : "Change Picture"}
           <input
             type="file"
             accept="image/*"
             onChange={handleChangePicture}
-            style={{ display: "none" }}
+            className="hidden"
           />
         </label>
       </div>
 
-      <h2 style={{ marginBottom: "0.75rem" }}>
+      <h2 className="text-xl font-bold mb-3 text-gray-100">
         {form.firstName} {form.lastName}
       </h2>
 
-      <div style={{ display: "grid", gap: "0.6rem", textAlign: "left" }}>
-        <label>
+      <div className="grid gap-2 text-left">
+        <label className="text-gray-100">
           First Name
           <input
             value={form.firstName}
             onChange={onChange("firstName")}
-            style={inputStyle}
+            className="w-full mt-1 px-3 py-2 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
           />
         </label>
 
-        <label>
+        <label className="text-gray-100">
           Last Name
           <input
             value={form.lastName}
             onChange={onChange("lastName")}
-            style={inputStyle}
+            className="w-full mt-1 px-3 py-2 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
           />
         </label>
 
-        <label>
+        <label className="text-gray-100">
           Email
-          <input value={form.email} onChange={onChange("email")} style={inputStyle} />
+          <input
+            value={form.email}
+            onChange={onChange("email")}
+            className="w-full mt-1 px-3 py-2 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
+          />
         </label>
 
-        <label>
+        <label className="text-gray-100">
           Date of Birth
           <input
             type="date"
             value={form.dateOfBirth}
             required
             onChange={onDateChange}
-            style={inputStyle}
+            className="w-full mt-1 px-3 py-2 rounded-lg bg-gray-700 text-gray-100 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
           />
         </label>
 
-        <label>
+        <label className="text-gray-100">
           Gender
-          <select value={form.gender} onChange={onGenderChange} style={inputStyle}>
+          <select
+            value={form.gender}
+            onChange={onGenderChange}
+            className="w-full mt-1 px-3 py-2 rounded-lg bg-gray-700 text-gray-100 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
+          >
             <option value="">Select...</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
           </select>
         </label>
 
-        <label>
+        <label className="text-gray-100">
           Country
           <input
             value={form.country}
             onChange={onChange("country")}
-            style={inputStyle}
+            className="w-full mt-1 px-3 py-2 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
           />
         </label>
 
-        <label>
+        <label className="text-gray-100">
           Street
-          <input value={form.street} onChange={onChange("street")} style={inputStyle} />
+          <input
+            value={form.street}
+            onChange={onChange("street")}
+            className="w-full mt-1 px-3 py-2 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
+          />
         </label>
 
-        <label>
+        <label className="text-gray-100">
           Street Number
           <input
             value={form.streetNumber}
             onChange={onChange("streetNumber")}
-            style={inputStyle}
+            className="w-full mt-1 px-3 py-2 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
           />
         </label>
 
-        <div style={{ textAlign: "left", marginTop: "0.25rem" }}>
+        <div className="mt-1 text-gray-300">
           <strong>Role:</strong> {profile.role}
         </div>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          gap: "0.5rem",
-          justifyContent: "center",
-          marginTop: "1rem",
-        }}
-      >
+      <div className="flex gap-2 justify-center mt-4">
         <button
           disabled={!hasChanges || saving}
-          style={{
-            padding: "0.5rem 1rem",
-            backgroundColor: !hasChanges || saving ? "#95a5a6" : "#2ecc71",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: !hasChanges || saving ? "not-allowed" : "pointer",
-            minWidth: "120px",
-          }}
           onClick={handleSave}
+          className={`px-4 py-2 rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200 min-w-[120px] ${!hasChanges || saving
+            ? "bg-gray-500 cursor-not-allowed text-gray-200"
+            : "bg-green-600 hover:bg-green-500 text-white cursor-pointer"
+            }`}
         >
           {saving ? "Saving..." : "Save"}
         </button>
 
         <button
-          style={{
-            padding: "0.5rem 1rem",
-            backgroundColor: "#e74c3c",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            minWidth: "120px",
-          }}
           onClick={() => setShowProfile(false)}
+          className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200 min-w-[120px]"
         >
           Close
         </button>

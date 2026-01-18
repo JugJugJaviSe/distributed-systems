@@ -52,17 +52,17 @@ export function AdminUsersList({ adminApi }: AdminUsersProps) {
     };
 
     return (
-        <div className="admin-users">
-            {errorMessage && <p className="error">{errorMessage}</p>}
+        <div className="p-6 min-h-screen bg-gray-900 flex flex-col items-center">
+            {errorMessage && <p className="text-red-500 text-sm mb-4">{errorMessage}</p>}
 
-            <table className="users-table">
+            <table className="min-w-full divide-y divide-gray-700 bg-gray-800 rounded-lg shadow-lg">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Email</th>
-                        <th>Name</th>
-                        <th>Role</th>
-                        <th>Actions</th>
+                        <th className="px-4 py-2 text-left text-gray-200 font-semibold text-sm">ID</th>
+                        <th className="px-4 py-2 text-left text-gray-200 font-semibold text-sm">Email</th>
+                        <th className="px-4 py-2 text-left text-gray-200 font-semibold text-sm">Name</th>
+                        <th className="px-4 py-2 text-left text-gray-200 font-semibold text-sm">Role</th>
+                        <th className="px-4 py-2 text-left text-gray-200 font-semibold text-sm">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

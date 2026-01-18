@@ -26,8 +26,10 @@ export default function AdminUsersPage({ adminApi }: AdminUsersProps) {
     }
 
     return (
-        <main>
-            <h1>Administrator User Management</h1>
+        <main className="min-h-screen w-full bg-gray-900 backdrop-blur-sm text-gray-100 p-6">
+            <h1 className="text-3xl font-bold mb-6 text-center">
+                Administrator User Management
+            </h1>
             <AdminUsersList adminApi={adminApi} />
         </main>
     );
