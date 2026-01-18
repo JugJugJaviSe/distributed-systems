@@ -118,9 +118,9 @@ export function ProfileCard({
 
   const onChange =
     (field: keyof Omit<ProfileFormState, "gender" | "dateOfBirth">) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setForm((prev) => ({ ...prev, [field]: e.target.value }));
-    };
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        setForm((prev) => ({ ...prev, [field]: e.target.value }));
+      };
 
   const onDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, dateOfBirth: e.target.value }));

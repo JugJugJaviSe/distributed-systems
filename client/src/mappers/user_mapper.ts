@@ -1,8 +1,5 @@
 import type { UserDto } from "../models/UserDto";
 
-/**
- * Backend (API) representation – snake_case
- */
 export type UserApi = {
   id: number;
   first_name: string;
@@ -17,7 +14,6 @@ export type UserApi = {
   profile_picture_url?: string | null;
 };
 
-
 export const mapUserApiToDto = (u: UserApi): UserDto => ({
   id: u.id,
   firstName: u.first_name,
@@ -31,7 +27,6 @@ export const mapUserApiToDto = (u: UserApi): UserDto => ({
   role: u.role,
   profilePictureUrl: u.profile_picture_url ?? undefined,
 });
-
 
 export const mapUserDtoToApi = (
   dto: Partial<UserDto>

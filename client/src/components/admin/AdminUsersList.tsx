@@ -30,21 +30,21 @@ export function AdminUsersList({ adminApi }: AdminUsersProps) {
         const result = await adminApi.deleteUser(token!, userId.toString());
 
         if (result.success) {
-            setUsers(prev => prev.filter(u => u.id !== userId));
+            setUsers(prev => prev.filter(u => u.id !== userId));    // Delete user from view
         } else {
             alert(result.message);
         }
     };
 
-    const handleChangeRole = async (
-        userId: number,
-        newRole: "Player" | "Moderator"
-    ) => {
+    const handleChangeRole = async (userId: number, newRole: "Player" | "Moderator") => {
+        const confirmed = window.confirm(`Are you sure you want to change role to \'${newRole}\' for this user?`);
+        if (!confirmed) return;
+
         const result = await adminApi.changeUserRole(token!, userId.toString(), newRole);
 
         if (result.success && result.data) {
             setUsers(prev =>
-                prev.map(u => (u.id === userId ? result.data! : u))
+                prev.map(u => (u.id === userId ? result.data! : u))     // Update user in view
             );
         } else {
             alert(result.message);

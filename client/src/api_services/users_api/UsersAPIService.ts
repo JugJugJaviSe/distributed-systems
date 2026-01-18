@@ -1,8 +1,8 @@
 import axios from "axios";
 import type { IUsersAPIService } from "./IUsersAPIService";
 import type { UserDto } from "../../models/UserDto";
-import type { UserApi } from "../../mappers/user.mapper";
-import { mapUserApiToDto, mapUserDtoToApi } from "../../mappers/user.mapper";
+import type { UserApi } from "../../mappers/user_mapper";
+import { mapUserApiToDto, mapUserDtoToApi } from "../../mappers/user_mapper";
 import type { UserResponse } from "../../types/user/UserResponse";
 
 const API_URL: string = import.meta.env.VITE_API_URL + "/users";
