@@ -1,10 +1,4 @@
-import type { UserDto } from "../../models/UserDto";
-
-interface AdminUserRowProps {
-    user: UserDto;
-    onDelete: (userId: number) => void;
-    onChangeRole: (userId: number, newRole: "Player" | "Moderator") => void;
-}
+import type { AdminUserRowProps } from "../../types/admin/AdminUserRowProps";
 
 export function AdminUserRow({ user, onDelete, onChangeRole }: AdminUserRowProps) {
     const isAdmin = user.role === "Admin";

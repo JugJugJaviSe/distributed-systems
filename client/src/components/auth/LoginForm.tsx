@@ -1,11 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/UseAuthHook";
-import type { IAuthAPIService } from "../../api_services/auth_api/IAuthAPIService";
-
-interface AuthFormProps {
-    authApi: IAuthAPIService;
-}
+import type { AuthFormProps } from "../../types/auth/AuthFormProps";
 
 export function LoginForm({ authApi }: AuthFormProps) {
     const [email, setEmail] = useState<string>("");
@@ -15,12 +11,6 @@ export function LoginForm({ authApi }: AuthFormProps) {
 
     const applyLoginForm = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        // const validationResult: ValidationResult = validateLoginData(email, password);
-        // if (!validationResult.success) {
-        //     setErrorMessage(validationResult.message ?? "Invalid data");
-        //     return;
-        // }
 
         const authResult = await authApi.login(email, password);
         if (authResult.success && authResult.data) {

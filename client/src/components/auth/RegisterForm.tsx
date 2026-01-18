@@ -1,12 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/UseAuthHook";
-import type { IAuthAPIService } from "../../api_services/auth_api/IAuthAPIService";
 import { validateRegisterForm } from "../../helpers/ValidateRegisterForm";
-
-interface AuthFormProps {
-    authApi: IAuthAPIService;
-}
+import type { AuthFormProps } from "../../types/auth/AuthFormProps";
 
 export function RegisterForm({ authApi }: AuthFormProps) {
   const [firstName, setFirstName] = useState<string>("");

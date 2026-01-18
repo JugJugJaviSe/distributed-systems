@@ -1,26 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import type { ICloudinariImageAPIService } from "../../api_services/cloudinary_image_api/ICloudinaryImageAPIService";
 import type { CloudinaryImageResponse } from "../../types/cloudinary/CloudinaryImageResponse";
 import { useAuth } from "../../hooks/UseAuthHook";
-import type { IUsersAPIService } from "../../api_services/users_api/IUsersAPIService";
 import type { UserDto } from "../../models/UserDto";
-
-interface ProfileCardProps {
-  setShowProfile: (value: boolean) => void;
-  cloudinaryApi: ICloudinariImageAPIService;
-  usersApi: IUsersAPIService;
-}
-
-type ProfileFormState = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  dateOfBirth: string; // "YYYY-MM-DD"
-  gender: "" | "Male" | "Female";
-  country: string;
-  street: string;
-  streetNumber: string;
-};
+import type { ProfileFormState } from "../../types/user/ProfileFormState";
+import type { ProfileCardProps } from "../../types/user/ProfileCardProps";
 
 export function ProfileCard({
   setShowProfile,
@@ -46,18 +29,6 @@ export function ProfileCard({
   const [loadingPicture, setLoadingPicture] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string>("");
-
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    display: "block",
-    boxSizing: "border-box",
-    padding: "0.6rem 0.75rem",
-    borderRadius: "6px",
-    border: "1px solid #555",
-    background: "#3b3b3b",
-    color: "white",
-    outline: "none",
-  };
 
   const hasChanges = useMemo(() => {
     if (!profile) return false;
