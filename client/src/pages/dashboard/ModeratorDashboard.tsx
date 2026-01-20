@@ -45,7 +45,14 @@ export default function ModeratorDashboard({
           className="px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
         >
           Log out
-        </button>
+              </button>
+
+              <button
+                  onClick={() => navigate("/quizzes/create")}
+                  className="px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+              >
+                  Create Quiz
+              </button>
       </div>
 
       {showProfile && (
