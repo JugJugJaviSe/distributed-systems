@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useAuth } from "../../hooks/UseAuthHook";
-import type { QuizQuestionDto } from "../../types/quiz/QuizQuestionDto";
-import type { CreateQuizDto } from "../../types/quiz/CreateQuizDto";
 import type { CreateQuizPageProps } from "../../types/quiz/CreateQuizPageProps";
 import { QuestionEditor } from "./QuestionEditor";
+import type { QuizQuestionDto } from "../../models/quiz/QuizQuestionDto";
+import type { CreateQuizDto } from "../../models/quiz/CreateQuizDto";
 
 export function CreateQuizForm({ quizApi }: CreateQuizPageProps) {
     const { user } = useAuth();
+    const { token } = useAuth();
 
     const [title, setTitle] = useState("");
     const [duration, setDuration] = useState(60);
@@ -69,7 +70,7 @@ export function CreateQuizForm({ quizApi }: CreateQuizPageProps) {
         };
 
         try {
-            await quizApi.createQuiz(payload);
+            await quizApi.createQuiz(token!, payload);
             alert("Quiz created and sent for admin approval.");
             setTitle("");
             setDuration(60);

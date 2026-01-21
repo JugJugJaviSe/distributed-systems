@@ -15,3 +15,12 @@ class Quiz(db.Model):
     rejection_reason = db.Column(db.String(500), nullable=True)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+
+    questions = db.relationship(
+        "Question",
+        backref="quiz",
+        lazy=True,
+        cascade="all, delete-orphan"
+    )

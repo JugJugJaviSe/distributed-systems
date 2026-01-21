@@ -1,4 +1,4 @@
-import type { QuizQuestionDto } from "../../types/quiz/QuizQuestionDto";
+import type { QuizQuestionDto } from "../../models/quiz/QuizQuestionDto";
 import { AnswerEditor } from "./AnswerEditor";
 
 interface Props {

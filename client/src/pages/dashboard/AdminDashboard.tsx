@@ -1,9 +1,11 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/UseAuthHook";
 import { ProfileCard } from "../../components/profile_card/ProfileCard";
 import type { ICloudinariImageAPIService } from "../../api_services/cloudinary_image_api/ICloudinaryImageAPIService";
 import type { IUsersAPIService } from "../../api_services/users_api/IUsersAPIService";
+import { useEffect, useState } from "react";
+import { connectAdminSocket, disconnectAdminSocket } from "../../sockets/adminSocket";
+
 
 interface AdminDashboardProps {
   cloudinaryApi: ICloudinariImageAPIService;
@@ -27,6 +29,32 @@ export default function AdminDashobard({ cloudinaryApi, usersApi }: AdminDashboa
   const toggleProfile = () => {
     setShowProfile((prev) => !prev);
   };
+
+
+    useEffect(() => {
+        const socket = connectAdminSocket();
+
+        socket.on("connect", () => {
+            console.log("?? Admin connected to WebSocket");
+        });
+
+        socket.on("quiz-created", (data: any) => {
+            console.log(" New quiz created:", data);
+
+            // kasnije:
+            // - toast notifikacija
+            // - refresh liste
+        });
+
+        socket.on("disconnect", () => {
+            console.log(" Admin socket disconnected");
+        });
+
+        return () => {
+            disconnectAdminSocket();
+        };
+    }, []);
+
 
   return (
     <div className="min-h-screen w-full bg-gray-900 backdrop-blur-sm text-gray-100 p-6 flex flex-col items-center justify-start space-y-6">

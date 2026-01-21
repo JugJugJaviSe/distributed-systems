@@ -1,13 +1,23 @@
 import axios from "axios";
 import type { IQuizAPIService } from "./IQuizAPIService";
-import type { CreateQuizDto } from "../../types/quiz/CreateQuizDto";
+import type { CreateQuizDto } from "../../models/quiz/CreateQuizDto";
 
 const API_URL: string = import.meta.env.VITE_API_URL + "/quizzes";
 
 export const quizApi: IQuizAPIService = {
-    async createQuiz(data: CreateQuizDto): Promise<any> {
+    async createQuiz(token: string, data: CreateQuizDto): Promise<any> {
         try {
-            const res = await axios.post(`${API_URL}`, data);
+            const res = await axios.post(
+                `${API_URL}`,
+                data,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+
             return res.data;
         } catch (error) {
             let message: string = "Create quiz error";

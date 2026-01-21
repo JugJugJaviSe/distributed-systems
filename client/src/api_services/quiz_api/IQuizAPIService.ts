@@ -1,5 +1,6 @@
-import type { CreateQuizDto } from "../../types/quiz/CreateQuizDto";
+import type { CreateQuizDto } from "../../models/quiz/CreateQuizDto";
+
 
 export interface IQuizAPIService {
-    createQuiz(data: CreateQuizDto): Promise<any>;
+    createQuiz(token: string, data: CreateQuizDto): Promise<any>;
 }
