@@ -60,3 +60,13 @@ def delete_user(user_id: int):
         "success": True,
         "message": "User deleted"
     }), 200
+
+@admin_bp.get("/players")
+@require_role([UserRole.ADMIN])
+def list_players():
+    users = AdminService.list_all_players()
+
+    return jsonify({
+        "success": True,
+        "data": users
+    }), 200

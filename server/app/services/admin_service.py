@@ -26,7 +26,7 @@ class AdminService:
             }
             for user in users
         ]
-    
+
     #change user role
     @staticmethod
     def change_user_role(user_id: int, new_role: UserRole) -> User:
@@ -51,3 +51,15 @@ class AdminService:
         db.session.delete(user)
         db.session.commit()
         return True
+    
+    @staticmethod
+    def list_all_players() -> List[Dict[str, Any]]:
+        users = User.query.filter_by(role=UserRole.PLAYER.value).all()
+
+        return[
+            {
+                "id": user.id,
+                "email": user.email
+            }
+            for user in users
+        ]

@@ -13,6 +13,7 @@ python-dotenv = "*"
 cloudinary = "*"
 requests = "*"
 flask_socketio = "*"
+reportlab = "*"
 
 [dev-packages]
 

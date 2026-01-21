@@ -11,3 +11,4 @@ class Config:
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "jwt-secret-key")  #Flask-JWT-Extended reads it from Flask app config automatically!
+    SERVER_URL = os.getenv("SERVER_URL", "http://127.0.0.1:5000")
