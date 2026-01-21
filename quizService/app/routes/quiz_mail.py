@@ -1,4 +1,6 @@
+from multiprocessing import Process
 from flask import Blueprint, jsonify, request
+from ..services.quiz_mail_service import QuizMailService
 from ..services.quiz_pdf_service import PDFService
 from flask_jwt_extended import jwt_required, get_jwt
 
@@ -24,7 +26,11 @@ def generate_report():
     if not attempts or not isinstance(attempts, list):
         return jsonify({"error": "attempts must be a list"}), 400
 
-    PDFService.generate_report(quizzes, current_user_email, users, attempts)
+    file_path = PDFService.generate_report(quizzes, users, attempts)
+    print(file_path)
+
+    Process(target=QuizMailService.send_email_pdf, args=(current_user_email, file_path, [q["title"] for q in quizzes])).start()
+
 
     return jsonify({
         "message": "Reports generation started",
