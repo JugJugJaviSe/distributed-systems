@@ -1,5 +1,5 @@
 from app import create_app
-from app.models import quizzes, questions, answers, quiz_attempts, player_answers
+from app.models import quizzes, questions, answers, quiz_attempts
 
 app = create_app()
 
