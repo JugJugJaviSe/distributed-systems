@@ -9,6 +9,7 @@ import { StartQuizButton } from "../../components/quiz_execution/StartQuizButton
 import { QuizProgress } from "../../components/quiz_execution/QuizProgress";
 import { QuizQuestionCard } from "../../components/quiz_execution/QuizQuestionCard";
 import { useAuth } from "../../hooks/UseAuthHook";
+import { QuizTimer } from "../../components/quiz_execution/QuizTimer";
 
 
 interface QuizPlayPageProps {
@@ -166,6 +167,11 @@ export function QuizPlayPage({ quizApi, executionApi }: QuizPlayPageProps) {
                 <StartQuizButton onStart={startQuiz} />
             ) : (
                 <>
+                    <QuizTimer
+                        durationSeconds={quizData.duration_seconds}
+                        onTimeUp={finishQuiz}
+                    />
+
                     <QuizProgress
                         answered={Object.keys(answersSelected).length}
                         total={quizData.questions.length}
