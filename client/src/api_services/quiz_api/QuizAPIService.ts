@@ -1,6 +1,7 @@
 import axios from "axios";
 import type { IQuizAPIService } from "./IQuizAPIService";
 import type { CreateQuizDto } from "../../models/quiz/CreateQuizDto";
+import type { GetQuizResponse } from "../../types/quiz/GetQuizResponses";
 
 const API_URL: string = import.meta.env.VITE_API_URL + "/quiz";
 
@@ -31,6 +32,18 @@ export const quizApi: IQuizAPIService = {
                 message: message,
                 data: undefined
             };
+        }
+    },
+
+    async getQuiz(quizId: number): Promise<GetQuizResponse> {
+        try {
+            const res = await axios.get<GetQuizResponse>(`${API_URL}/${quizId}`);
+            return res.data;
+        } catch (error) {
+            let message = "Get quiz error";
+            if (axios.isAxiosError(error))
+                message = error.response?.data?.message || message;
+            return { success: false, message, data: undefined };
         }
     }
 };
