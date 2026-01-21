@@ -1,4 +1,5 @@
-from datetime import datetime, time
+from datetime import datetime
+import time
 
 from app.extensions import db
 from app.cache.quiz_execution_cache import QuizExecutionCache
@@ -40,11 +41,11 @@ class QuizExecutionService:
         db.session.add(attempt)
         db.session.commit()  # We need attempt_id
 
-        QuizExecutionCache.start_quiz(      # Add to cache
+        QuizExecutionCache.start_quiz(
             attempt_id=attempt.attempt_id,
-            quiz=quiz,
-            questions=questions,
-            answers=answers
+            quiz={"quiz_id": quiz.quiz_id, "duration_seconds": quiz.duration_seconds},
+            questions=[{"question_id": q.question_id, "points": q.points, "text": q.question_text} for q in questions],
+            answers=[{"answer_id": a.answer_id, "question_id": a.question_id, "is_correct": a.is_correct, "text": a.answer_text} for a in answers]
         )
 
         return {
@@ -70,12 +71,12 @@ class QuizExecutionService:
             raise ValueError("Question already answered")
 
         # Validate that the question belongs to this quiz
-        question_ids = [q.question_id for q in session["questions"]]
+        question_ids = [q["question_id"] for q in session["questions"]]
         if question_id not in question_ids:
             raise ValueError("Invalid question for this quiz")
 
         # Validate that the answer belongs to the question
-        valid_answer_ids = [a.answer_id for a in session["answers"] if a.question_id == question_id]
+        valid_answer_ids = [a["answer_id"] for a in session["answers"] if a["question_id"] == question_id]
         if answer_id not in valid_answer_ids:
             raise ValueError("Invalid answer for this question")
 
@@ -106,16 +107,20 @@ class QuizExecutionService:
 
         score = 0
         for q_id, answer_id in session["player_answers"].items():
-            correct_answer = Answer.query.filter_by(question_id=q_id, is_correct=True).first()  # Only one correct answer per question
-            if correct_answer and answer_id == correct_answer.answer_id:
-                question = next((q for q in session["questions"] if q.question_id == q_id), None)   # Get question by ID, default - None
+            correct_answer = next(
+                (a for a in session["answers"] if a["question_id"] == q_id and a["is_correct"]), 
+                None
+            )
+            if correct_answer and answer_id == correct_answer["answer_id"]:
+                question = next((q for q in session["questions"] if q["question_id"] == q_id), None)    # Get question by ID, default - None
                 if question:
-                    score += question.points
+                    score += question["points"]
+
 
         attempt.finished_at = finished_at
         attempt.time_taken_seconds = int((finished_at - attempt.started_at).total_seconds())
         attempt.score = score
-        attempt.status = AttemptStatus.FINISHED.value
+        attempt.status = AttemptStatus.PROCESSED.value
 
         db.session.commit()
 

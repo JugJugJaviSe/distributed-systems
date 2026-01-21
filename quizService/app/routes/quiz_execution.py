@@ -13,8 +13,8 @@ def start_quiz():
     data = request.get_json()
 
     attempt = QuizExecutionService.start_quiz(
-        quiz_id=data.get("quiz_id"),
-        player_id=data.get("player_id")
+        quiz_id= int(data.get("quiz_id")),
+        player_id= int(data.get("player_id"))
     )
 
     return jsonify({
@@ -29,9 +29,9 @@ def submit_answer():
     data = request.get_json()
 
     result = QuizExecutionService.submit_answer(
-        attempt_id=data.get("attempt_id"),
-        question_id=data.get("question_id"),
-        answer_id=data.get("answer_id")
+        attempt_id = int(data.get("attempt_id")),
+        question_id = int(data.get("question_id")),
+        answer_id = int(data.get("answer_id"))
     )
 
     return jsonify({
@@ -46,7 +46,7 @@ def finish_quiz():
     data = request.get_json()
 
     result = QuizExecutionService.finish_quiz(
-        attempt_id=data.get("attempt_id")
+        attempt_id = int(data.get("attempt_id"))
     )
 
     return jsonify({
