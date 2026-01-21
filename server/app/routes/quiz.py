@@ -4,18 +4,15 @@ import requests
 from app.extensions import socketio
 from app.constants.user_roles import UserRole
 
+quiz_bp = Blueprint("quiz", __name__, url_prefix="/quiz")
 
+QUIZ_SERVICE_URL = "http://127.0.0.1:5001/quiz"
 
-
-quizzes_bp = Blueprint("quizzes", __name__, url_prefix="/quizzes")
-
-QUIZ_SERVICE_URL = "http://127.0.0.1:5001/quizzes"
-
-@quizzes_bp.route("", methods=["OPTIONS"])
+@quiz_bp.route("", methods=["OPTIONS"])
 def quizzes_options():
     return "", 200
 
-@quizzes_bp.route("", methods=["POST"])
+@quiz_bp.route("", methods=["POST"])
 @jwt_required()
 def create_quiz():
     

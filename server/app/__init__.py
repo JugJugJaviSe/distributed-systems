@@ -4,12 +4,11 @@ from .extensions import db, jwt, socketio
 from flask_cors import CORS
 import cloudinary
 
-
-
 from .routes.auth import auth_bp
 from .routes.admin import admin_bp
 from .routes.user import user_bp
-from .routes.quizzes import quizzes_bp
+from .routes.quiz import quiz_bp
+from .routes.quiz_execution import quiz_execution_bp
 
 
 def create_app():
@@ -28,16 +27,14 @@ def create_app():
         supports_credentials=True,
     )
 
-
     db.init_app(app)
     jwt.init_app(app)
     socketio.init_app(app, cors_allowed_origins="*")
 
-    
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(user_bp)
-    app.register_blueprint(quizzes_bp)
-
-
+    app.register_blueprint(quiz_bp)
+    app.register_blueprint(quiz_execution_bp)
+    
     return app

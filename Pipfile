@@ -12,6 +12,7 @@ pymysql = "*"
 python-dotenv = "*"
 cloudinary = "*"
 requests = "*"
+flask_socketio = "*"
 
 [dev-packages]
 

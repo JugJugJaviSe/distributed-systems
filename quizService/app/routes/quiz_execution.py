@@ -13,8 +13,8 @@ def start_quiz():
     data = request.get_json()
 
     attempt = QuizExecutionService.start_quiz(
-        quiz_id= int(data.get("quiz_id")),
-        player_id= int(data.get("player_id"))
+        quiz_id = int(data.get("quiz_id")),
+        player_id = int(data.get("player_id"))
     )
 
     return jsonify({
