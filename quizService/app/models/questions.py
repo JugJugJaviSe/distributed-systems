@@ -4,7 +4,14 @@ class Question(db.Model):
     __tablename__ = "questions"
 
     question_id = db.Column(db.Integer, primary_key=True)
-    quiz_id = db.Column(db.Integer, nullable=False)
+    quiz_id = db.Column(db.Integer, db.ForeignKey("quizzes.quiz_id"), nullable=False)
 
     question_text = db.Column(db.String(1000), nullable=False)
     points = db.Column(db.Integer, nullable=False)
+
+    answers = db.relationship(
+       "Answer",
+       backref="question",
+       lazy=True,
+       cascade="all, delete-orphan"
+    )
