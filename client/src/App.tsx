@@ -14,6 +14,8 @@ import { cloudinaryApi } from "./api_services/cloudinary_image_api/CloudinaryIma
 import { usersApi } from "./api_services/users_api/UsersAPIService";
 import CreateQuizPage from "./pages/quiz/CreateQuizPage";
 import { quizApi } from "./api_services/quiz_api/QuizAPIService";
+import { quizExecutionApi } from "./api_services/quiz_execution_api/QuizExecutionAPIService";
+import { QuizPlayPage } from "./pages/quiz_execution/QuizPlayPage";
 
 function App() {
   return (
@@ -37,6 +39,16 @@ function App() {
       <Route path="/Admin/users" element={
         <ProtectedRoute requiredRole="Admin"><AdminUsersPage adminApi={adminApi} /></ProtectedRoute>
       } />
+
+      <Route
+        path="/quiz/play/:quizId"
+        element={
+          <QuizPlayPage
+            quizApi={quizApi}
+            executionApi={quizExecutionApi}
+          />
+        }
+      />
 
       <Route
         path="/quiz/create"

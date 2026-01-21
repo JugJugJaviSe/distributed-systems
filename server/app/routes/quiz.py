@@ -41,7 +41,6 @@ def create_quiz():
 
 
 @quiz_bp.route("/<int:quiz_id>", methods=["GET"])
-@require_role([UserRole.PLAYER])
 def get_quiz(quiz_id: int):
     try:
         response = requests.get(

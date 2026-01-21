@@ -35,14 +35,23 @@ export const quizApi: IQuizAPIService = {
         }
     },
 
-    async getQuiz(quizId: number): Promise<GetQuizResponse> {
+    async getQuiz(token: string, quizId: number): Promise<GetQuizResponse> {
         try {
-            const res = await axios.get<GetQuizResponse>(`${API_URL}/${quizId}`);
+            const res = await axios.get<GetQuizResponse>(
+                `${API_URL}/${quizId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
             return res.data;
         } catch (error) {
             let message = "Get quiz error";
             if (axios.isAxiosError(error))
                 message = error.response?.data?.message || message;
+
             return { success: false, message, data: undefined };
         }
     }

@@ -1,13 +1,13 @@
-export interface QuizQuestion {
-    question_id: number;
-    question_text: string;
-    points: number;
-    answers: QuizAnswer[];
-}
-
 export interface QuizAnswer {
     answer_id: number;
-    answer_text: string;
+    text: string;
+}
+
+export interface QuizQuestion {
+    question_id: number;
+    text: string;
+    points: number;
+    answers: QuizAnswer[];
 }
 
 export interface GetQuizResponseData {

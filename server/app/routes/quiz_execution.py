@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, g
-from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import get_jwt_identity, jwt_required
 import requests
 import os
 
@@ -16,7 +16,7 @@ QUIZ_SERVICE_BASE_URL = os.path.join(os.getenv("QUIZ_SERVICE_BASE_URL"), "quiz-e
 
 
 @quiz_execution_bp.route("/start", methods=["POST"])
-@require_role([UserRole.PLAYER])
+@jwt_required()
 def start_quiz():
     user_id = int(get_jwt_identity())
     data = request.get_json()
@@ -48,7 +48,7 @@ def start_quiz():
 
 
 @quiz_execution_bp.route("/answer", methods=["POST"])
-@require_role([UserRole.PLAYER])
+@jwt_required()
 def submit_answer():
     data = request.get_json()
     attempt_id = data.get("attempt_id")
@@ -82,7 +82,7 @@ def submit_answer():
 
 
 @quiz_execution_bp.route("/finish", methods=["POST"])
-@require_role([UserRole.PLAYER])
+@jwt_required()
 def finish_quiz():
     user_id = int(get_jwt_identity())
     data = request.get_json()
