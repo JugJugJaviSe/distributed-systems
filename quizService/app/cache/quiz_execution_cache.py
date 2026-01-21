@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from threading import Lock
 
-class QuizExecutionCache:   # In memory cache for active quiz executions
+class QuizExecutionCache:   # In memory cache for active quiz executions - we don't communicate with DB while quiz is played
 
     _lock = Lock()
     _active_quizzes = {}

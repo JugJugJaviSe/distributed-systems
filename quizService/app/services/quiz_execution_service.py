@@ -1,0 +1,128 @@
+from datetime import datetime, time
+
+from app.extensions import db
+from app.cache.quiz_execution_cache import QuizExecutionCache
+
+from app.models.quizzes import Quiz
+from app.models.questions import Question
+from app.models.answers import Answer
+from app.models.quiz_attempts import QuizAttempt
+from app.constants.attempt_status import AttemptStatus
+
+
+class QuizExecutionService:
+
+    @staticmethod
+    def start_quiz(quiz_id: int, player_id: int):
+        QuizExecutionCache.cleanup_expired()    # Delete useless data from cache
+
+        quiz = Quiz.query.get(quiz_id)
+        if not quiz:
+            raise ValueError("Quiz not found")
+
+        if quiz.status != "approved":
+            raise ValueError("Quiz is not available")
+
+        questions = Question.query.filter_by(quiz_id=quiz_id).all()
+        if not questions:
+            raise ValueError("Quiz has no questions")
+
+        question_ids = [q.question_id for q in questions]
+        answers = Answer.query.filter(Answer.question_id.in_(question_ids)).all()
+
+        attempt = QuizAttempt(      # Create quiz attempt
+            quiz_id=quiz_id,
+            player_id=player_id,
+            started_at=datetime.utcnow(),
+            status=AttemptStatus.IN_PROGRESS.value
+        )
+
+        db.session.add(attempt)
+        db.session.commit()  # We need attempt_id
+
+        QuizExecutionCache.start_quiz(      # Add to cache
+            attempt_id=attempt.attempt_id,
+            quiz=quiz,
+            questions=questions,
+            answers=answers
+        )
+
+        return {
+            "attempt_id": attempt.attempt_id,
+            "quiz_id": quiz.quiz_id,
+            "duration_seconds": quiz.duration_seconds,
+            "started_at": attempt.started_at
+        }
+
+
+    @staticmethod
+    def submit_answer(attempt_id: int, question_id: int, answer_id: int):
+        session = QuizExecutionCache.get_quiz(attempt_id)
+        if not session:
+            raise ValueError("Quiz attempt not found or expired")
+
+        if datetime.utcnow() > session["expires_at"]:
+            QuizExecutionCache.finish_quiz(attempt_id)
+            raise ValueError("Quiz time expired")
+
+        # Prevent answering same question twice
+        if question_id in session["player_answers"]:
+            raise ValueError("Question already answered")
+
+        # Validate that the question belongs to this quiz
+        question_ids = [q.question_id for q in session["questions"]]
+        if question_id not in question_ids:
+            raise ValueError("Invalid question for this quiz")
+
+        # Validate that the answer belongs to the question
+        valid_answer_ids = [a.answer_id for a in session["answers"] if a.question_id == question_id]
+        if answer_id not in valid_answer_ids:
+            raise ValueError("Invalid answer for this question")
+
+        QuizExecutionCache.save_answer(attempt_id, question_id, answer_id)
+
+        return {
+            "attempt_id": attempt_id,
+            "question_id": question_id,
+            "answer_id": answer_id,
+            "answered_questions": len(session["player_answers"]),
+            "total_questions": len(session["questions"])
+        }
+
+
+    @staticmethod
+    def finish_quiz(attempt_id: int):
+        finished_at = datetime.utcnow()     # Saving time of finishing quiz
+
+        session = QuizExecutionCache.finish_quiz(attempt_id)
+        if not session:
+            raise ValueError("Quiz attempt not found or already finished")
+
+        attempt = QuizAttempt.query.get(attempt_id)
+        if not attempt:
+            raise ValueError("QuizAttempt record not found in database")
+        
+        time.sleep(5)   # Simulation of long processing
+
+        score = 0
+        for q_id, answer_id in session["player_answers"].items():
+            correct_answer = Answer.query.filter_by(question_id=q_id, is_correct=True).first()  # Only one correct answer per question
+            if correct_answer and answer_id == correct_answer.answer_id:
+                question = next((q for q in session["questions"] if q.question_id == q_id), None)   # Get question by ID, default - None
+                if question:
+                    score += question.points
+
+        attempt.finished_at = finished_at
+        attempt.time_taken_seconds = int((finished_at - attempt.started_at).total_seconds())
+        attempt.score = score
+        attempt.status = AttemptStatus.FINISHED.value
+
+        db.session.commit()
+
+        # TODO: Send email to player
+
+        return {
+            "attempt_id": attempt_id,
+            "score": score,
+            "time_taken_seconds": attempt.time_taken_seconds
+        }

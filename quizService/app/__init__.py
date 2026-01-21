@@ -3,7 +3,7 @@ from .config import Config
 from .extensions import db, jwt
 from flask_cors import CORS
 
-from app.routes.quiz_routes import quiz_bp
+from app.routes.quiz import quiz_bp
 
 def create_app():
     app = Flask(__name__)

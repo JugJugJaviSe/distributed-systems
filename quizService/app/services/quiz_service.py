@@ -1,7 +1,7 @@
 from app.extensions import db
-from app.models.quiz import Quiz
-from app.models.question import Question
-from app.models.answer import Answer
+from app.models.quizzes import Quiz
+from app.models.questions import Question
+from app.models.answers import Answer
 
 
 class QuizService:
