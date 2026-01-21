@@ -1,15 +1,17 @@
+import os
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 import requests
 from app.extensions import socketio
 from app.constants.user_roles import UserRole
+from app.middlewares.require_role import require_role
 
 quiz_bp = Blueprint("quiz", __name__, url_prefix="/quiz")
 
-QUIZ_SERVICE_URL = "http://127.0.0.1:5001/quiz"
+QUIZ_SERVICE_BASE_URL = os.path.join(os.getenv("QUIZ_SERVICE_BASE_URL"), "quiz")
 
 @quiz_bp.route("", methods=["OPTIONS"])
-def quizzes_options():
+def quiz_options():
     return "", 200
 
 @quiz_bp.route("", methods=["POST"])
@@ -22,7 +24,7 @@ def create_quiz():
         return {"error": "Forbidden"}, 403
 
     response = requests.post(
-        QUIZ_SERVICE_URL,
+        QUIZ_SERVICE_BASE_URL,
         json=request.json,
         timeout=5
     )
@@ -36,3 +38,19 @@ def create_quiz():
     socketio.emit("quiz_created", quiz, room="admins")
 
     return quiz, 201
+
+
+@quiz_bp.route("/<int:quiz_id>", methods=["GET"])
+@require_role([UserRole.PLAYER])
+def get_quiz(quiz_id: int):
+    try:
+        response = requests.get(
+            f"{QUIZ_SERVICE_BASE_URL}/{quiz_id}",
+            timeout=10
+        )
+        return jsonify(response.json()), response.status_code
+    except requests.RequestException:
+        return jsonify({
+            "success": False,
+            "message": "Quiz service is unreachable"
+        }), 503

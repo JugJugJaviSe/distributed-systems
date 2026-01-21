@@ -68,3 +68,38 @@ class QuizService:
                 } for q in quiz.questions
             ]
         }
+
+
+    @staticmethod
+    def get_quiz(quiz_id: int):
+        quiz = Quiz.query.get(quiz_id)
+        if not quiz:
+            raise ValueError("Quiz not found")
+
+        if quiz.status != "approved":
+            raise ValueError("Quiz is not available")
+
+        questions = Question.query.filter_by(quiz_id=quiz_id).all()
+        if not questions:
+            raise ValueError("Quiz has no questions")
+
+        question_list = []
+        for q in questions:
+            answers = Answer.query.filter_by(question_id=q.question_id).all()
+            answer_list = [
+                {"answer_id": a.answer_id, "text": a.answer_text}
+                for a in answers
+            ]
+            question_list.append({
+                "question_id": q.question_id,
+                "text": q.question_text,
+                "points": q.points,
+                "answers": answer_list
+            })
+
+        return {
+            "quiz_id": quiz.quiz_id,
+            "title": quiz.title,
+            "duration_seconds": quiz.duration_seconds,
+            "questions": question_list
+        }

@@ -2,7 +2,7 @@ import axios from "axios";
 import type { IQuizAPIService } from "./IQuizAPIService";
 import type { CreateQuizDto } from "../../models/quiz/CreateQuizDto";
 
-const API_URL: string = import.meta.env.VITE_API_URL + "/quizzes";
+const API_URL: string = import.meta.env.VITE_API_URL + "/quiz";
 
 export const quizApi: IQuizAPIService = {
     async createQuiz(token: string, data: CreateQuizDto): Promise<any> {

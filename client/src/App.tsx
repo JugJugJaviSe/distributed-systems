@@ -38,14 +38,14 @@ function App() {
         <ProtectedRoute requiredRole="Admin"><AdminUsersPage adminApi={adminApi} /></ProtectedRoute>
       } />
 
-          <Route
-              path="/quizzes/create"
-              element={
-                  <ProtectedRoute requiredRole="Moderator">
-                      <CreateQuizPage quizApi={quizApi} />
-                  </ProtectedRoute>
-              }
-          />
+      <Route
+        path="/quiz/create"
+        element={
+          <ProtectedRoute requiredRole="Moderator">
+            <CreateQuizPage quizApi={quizApi} />
+          </ProtectedRoute>
+        }
+      />
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/404" replace />} />
     </Routes>

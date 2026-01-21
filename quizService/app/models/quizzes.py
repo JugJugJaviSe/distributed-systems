@@ -16,8 +16,6 @@ class Quiz(db.Model):
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-
-
     questions = db.relationship(
         "Question",
         backref="quiz",
