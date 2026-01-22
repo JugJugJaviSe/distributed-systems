@@ -45,12 +45,22 @@ def submit_answer():
 def finish_quiz():
     data = request.get_json()
 
+    attempt_id = data.get("attempt_id")
+    player_email = data.get("player_email")
+
+    if not attempt_id or not player_email:
+        return jsonify({
+            "success": False,
+            "message": "attempt_id and player_email are required"
+        }), 400
+
     result = QuizExecutionService.finish_quiz(
-        attempt_id = int(data.get("attempt_id"))
+        attempt_id=int(attempt_id),
+        user_email=player_email
     )
 
     return jsonify({
         "success": True,
-        "message": "Quiz finished successfully",
+        "message": "Quiz finished successfully. Results will be sent via email.",
         "data": result
     }), 200

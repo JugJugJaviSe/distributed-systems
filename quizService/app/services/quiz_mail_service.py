@@ -77,3 +77,35 @@ class QuizMailService:
             html=html,
             attachments=[(os.path.basename(pdf_path), pdf_bytes)]
         )
+
+
+    @staticmethod
+    def send_quiz_result_email(to_email: str, quiz_title: str, score: int, total_points: int, time_taken_seconds: int):
+        subject = f"Your results for quiz: {quiz_title}"
+
+        body = (
+            f"Hello,\n\n"
+            f"You have successfully finished the quiz \"{quiz_title}\".\n\n"
+            f"Score: {score} / {total_points}\n"
+            f"Time taken: {time_taken_seconds} seconds\n\n"
+            f"Thank you for playing!\n"
+            f"Quiz Platform Team"
+        )
+
+        html = f"""
+            <p>Hello,</p>
+            <p>You have successfully finished the quiz <b>{quiz_title}</b>.</p>
+            <ul>
+                <li><b>Score:</b> {score} / {total_points}</li>
+                <li><b>Time taken:</b> {time_taken_seconds} seconds</li>
+            </ul>
+            <p>Thank you for playing!</p>
+            <p>Quiz Platform Team</p>
+        """
+
+        QuizMailService.send_email(
+            to_email=to_email,
+            subject=subject,
+            body=body,
+            html=html
+        )

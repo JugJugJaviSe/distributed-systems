@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, g
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 import requests
 import os
 
@@ -84,7 +84,6 @@ def submit_answer():
 @quiz_execution_bp.route("/finish", methods=["POST"])
 @jwt_required()
 def finish_quiz():
-    user_id = int(get_jwt_identity())
     data = request.get_json()
     attempt_id = data.get("attempt_id")
 
@@ -94,9 +93,20 @@ def finish_quiz():
             "message": "attempt_id is required"
         }), 400
 
+    claims = get_jwt()
+    user_email = claims.get("email")
+    user_id = int(get_jwt_identity())
+
+    if not user_email:
+        return jsonify({
+            "success": False,
+            "message": "User email not found in token"
+        }), 400
+
     payload = {
         "attempt_id": attempt_id,
-        "player_id": user_id
+        "player_id": user_id,
+        "player_email": user_email
     }
 
     try:
@@ -106,6 +116,7 @@ def finish_quiz():
             timeout=10
         )
         return jsonify(response.json()), response.status_code
+
     except requests.RequestException:
         return jsonify({
             "success": False,

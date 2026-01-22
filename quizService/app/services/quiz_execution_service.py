@@ -1,4 +1,5 @@
 from datetime import datetime
+from multiprocessing import Process
 import time
 
 from app.extensions import db
@@ -9,6 +10,7 @@ from app.models.questions import Question
 from app.models.answers import Answer
 from app.models.quiz_attempts import QuizAttempt
 from app.constants.attempt_status import AttemptStatus
+from app.services.quiz_mail_service import QuizMailService
 
 
 class QuizExecutionService:
@@ -43,7 +45,7 @@ class QuizExecutionService:
 
         QuizExecutionCache.start_quiz(
             attempt_id=attempt.attempt_id,
-            quiz={"quiz_id": quiz.quiz_id, "duration_seconds": quiz.duration_seconds},
+            quiz={"quiz_id": quiz.quiz_id, "title": quiz.title, "duration_seconds": quiz.duration_seconds},
             questions=[{"question_id": q.question_id, "points": q.points, "text": q.question_text} for q in questions],
             answers=[{"answer_id": a.answer_id, "question_id": a.question_id, "is_correct": a.is_correct, "text": a.answer_text} for a in answers]
         )
@@ -92,8 +94,8 @@ class QuizExecutionService:
 
 
     @staticmethod
-    def finish_quiz(attempt_id: int):
-        finished_at = datetime.utcnow()     # Saving time of finishing quiz
+    def finish_quiz(attempt_id: int, user_email: str):
+        finished_at = datetime.utcnow()
 
         session = QuizExecutionCache.finish_quiz(attempt_id)
         if not session:
@@ -102,20 +104,32 @@ class QuizExecutionService:
         attempt = QuizAttempt.query.get(attempt_id)
         if not attempt:
             raise ValueError("QuizAttempt record not found in database")
-        
-        time.sleep(5)   # Simulation of long processing
+
+        time.sleep(5)  # Simulation of long processing
 
         score = 0
+        total_points = 0
+
+        for question in session["questions"]:
+            total_points += question["points"]
+
+        # Calculate score
         for q_id, answer_id in session["player_answers"].items():
             correct_answer = next(
-                (a for a in session["answers"] if a["question_id"] == q_id and a["is_correct"]), 
+                (
+                    a for a in session["answers"]
+                    if a["question_id"] == q_id and a["is_correct"]
+                ),
                 None
             )
+
             if correct_answer and answer_id == correct_answer["answer_id"]:
-                question = next((q for q in session["questions"] if q["question_id"] == q_id), None)    # Get question by ID, default - None
+                question = next(
+                    (q for q in session["questions"] if q["question_id"] == q_id),
+                    None
+                )
                 if question:
                     score += question["points"]
-
 
         attempt.finished_at = finished_at
         attempt.time_taken_seconds = int((finished_at - attempt.started_at).total_seconds())
@@ -124,10 +138,21 @@ class QuizExecutionService:
 
         db.session.commit()
 
-        # TODO: Send email to player
+        Process(
+            target=QuizMailService.send_quiz_result_email,
+            args=(
+                user_email,
+                session["quiz"]["title"],
+                score,
+                total_points,
+                attempt.time_taken_seconds
+            ),
+            daemon=True
+        ).start()
 
         return {
             "attempt_id": attempt_id,
             "score": score,
+            "total_points": total_points,
             "time_taken_seconds": attempt.time_taken_seconds
         }
