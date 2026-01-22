@@ -2,7 +2,7 @@ from typing import Dict
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from datetime import datetime
-import os, uuid
+from io import BytesIO
 
 # from app.models.quiz import Quiz
 # from app.models.attempt import Attempt
@@ -10,16 +10,12 @@ import os, uuid
 class PDFService:
 
     @staticmethod
-    def generate_report(quizzes: list[Dict[str, str]], users: list[Dict[str, str]], attempts: list[Dict[str, str]]) -> str:
-        os.makedirs("reports", exist_ok=True)
+    def generate_report(quizzes: list[Dict[str, str]], users: list[Dict[str, str]], attempts: list[Dict[str, str]]) -> bytes:
+        #os.makedirs("reports", exist_ok=True)       
 
-        # print(quiz_ids)
-        # print(admin_email)
-        # print(users)
-        # print(attempts)        
-
-        file_path = f"reports/quiz_attempts_report_{uuid.uuid4().hex}.pdf"
-        c = canvas.Canvas(file_path, pagesize=A4)
+        #file_path = f"reports/quiz_attempts_report_{uuid.uuid4().hex}.pdf"
+        buffer = BytesIO()
+        c = canvas.Canvas(buffer, pagesize=A4)
         width, height = A4
 
         y = height - 50
@@ -80,4 +76,5 @@ class PDFService:
             y -= 30  # space between quizzes
 
         c.save()
-        return file_path
+        buffer.seek(0)
+        return buffer.read()

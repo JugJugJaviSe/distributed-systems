@@ -4,6 +4,8 @@ from app.constants.user_roles import UserRole
 from app.services.admin_service import AdminService
 from app.services.admin_service import AdminService
 from app.constants.user_roles import UserRole
+from flask_jwt_extended import get_jwt
+from app.services.user_service import UserService
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -61,12 +63,26 @@ def delete_user(user_id: int):
         "message": "User deleted"
     }), 200
 
-@admin_bp.get("/players")
+@admin_bp.post("/report")
 @require_role([UserRole.ADMIN])
-def list_players():
-    users = AdminService.list_all_players()
+def generate_report():
+    claims = get_jwt()
+    admin_email = claims.get("email")
+
+    data = request.get_json()
+    quiz_ids = data["quiz_ids"]
+
+    users = UserService.get_all_user_emails()
+
+    if not quiz_ids or not isinstance(quiz_ids, list):
+        return jsonify({"error": "quiz_ids must be a list"}), 400
+    
+    if not users or not isinstance(users, list):
+        return jsonify({"error": "users must be a list"}), 400
+
+    response = AdminService.generate_report(quiz_ids, admin_email, users)
 
     return jsonify({
         "success": True,
-        "data": users
-    }), 200
+        "message": response.get("message", "Report generation started")
+    }), 202

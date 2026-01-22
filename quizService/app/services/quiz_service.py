@@ -2,7 +2,7 @@ from app.extensions import db
 from app.models.quizzes import Quiz
 from app.models.questions import Question
 from app.models.answers import Answer
-
+from typing import Dict
 
 class QuizService:
     @staticmethod
@@ -103,3 +103,8 @@ class QuizService:
             "duration_seconds": quiz.duration_seconds,
             "questions": question_list
         }
+    
+    @staticmethod
+    def get_quiz_titles(quiz_ids:list[str]) -> list[Dict[str, str]]:
+        quizzes = Quiz.query.filter(Quiz.quiz_id.in_(quiz_ids)).all()
+        return [{"id": q.quiz_id, "title": q.title} for q in quizzes]

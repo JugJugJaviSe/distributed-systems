@@ -71,3 +71,8 @@ class UserService:
             "role": getattr(user, "role", None),
             "profile_picture_url": getattr(user, "profile_picture_url", None),
         }
+    
+    @staticmethod
+    def get_all_user_emails() -> list[dict]:
+        users = User.query.all()
+        return [{"id": user.id, "email": user.email} for user in users]

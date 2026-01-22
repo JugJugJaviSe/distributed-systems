@@ -47,10 +47,7 @@ class QuizMailService:
             print(f"Email sent to {to_email} with subject '{subject}'")
 
     @staticmethod
-    def send_email_pdf(to_email: str, pdf_path: str, quiz_titles: list[str]):
-
-        with open(pdf_path, "rb") as f:
-            pdf_bytes = f.read()
+    def send_email_pdf(to_email: str, pdf_bytes: bytes, quiz_titles: list[str]):
 
         quiz_titles_str = ", ".join(quiz_titles)
 
@@ -75,7 +72,7 @@ class QuizMailService:
             subject=subject,
             body=body,
             html=html,
-            attachments=[(os.path.basename(pdf_path), pdf_bytes)]
+            attachments=[("quiz_attempts_report.pdf", pdf_bytes)]
         )
 
 

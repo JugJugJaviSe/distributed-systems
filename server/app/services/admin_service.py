@@ -5,6 +5,8 @@ from app.models.user import User
 from app.extensions import db
 from app.constants.user_roles import UserRole
 from app.services.mail_service import MailService
+from ..config import Config
+import requests
 
 class AdminService:
 
@@ -53,13 +55,18 @@ class AdminService:
         return True
     
     @staticmethod
-    def list_all_players() -> List[Dict[str, Any]]:
-        users = User.query.filter_by(role=UserRole.PLAYER.value).all()
+    def generate_report(quiz_ids: list[int], admin_email: str, users: list[dict]):
+        url = f"{Config.QUIZ_SERVICE_BASE_URL}quiz-mail/reports"
 
-        return[
-            {
-                "id": user.id,
-                "email": user.email
-            }
-            for user in users
-        ]
+        payload = {
+            "quiz_ids": quiz_ids,
+            "admin_email": admin_email,
+            "users": users
+        }
+
+        response = requests.post(url, json=payload)
+
+        if response.status_code != 202:
+            raise Exception(f"Failed to generate report: {response.text}")
+        
+        return response.json()
