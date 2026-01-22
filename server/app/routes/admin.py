@@ -75,10 +75,10 @@ def generate_report():
     users = UserService.get_all_user_emails()
 
     if not quiz_ids or not isinstance(quiz_ids, list):
-        return jsonify({"error": "quiz_ids must be a list"}), 400
+        return jsonify({"success": False, "message": "quiz_ids must be a list"}), 400
     
     if not users or not isinstance(users, list):
-        return jsonify({"error": "users must be a list"}), 400
+        return jsonify({"success": False, "message": "users must be a list"}), 400
 
     response = AdminService.generate_report(quiz_ids, admin_email, users)
 

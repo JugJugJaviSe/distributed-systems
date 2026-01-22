@@ -2,6 +2,7 @@ import axios from "axios";
 import type { IQuizAPIService } from "./IQuizAPIService";
 import type { CreateQuizDto } from "../../models/quiz/CreateQuizDto";
 import type { GetQuizResponse } from "../../types/quiz/GetQuizResponses";
+import type { GetAllQuizzesResponse } from "../../types/quiz/GetAllQuizzesResponse";
 
 const API_URL: string = import.meta.env.VITE_API_URL + "/quiz";
 
@@ -49,6 +50,26 @@ export const quizApi: IQuizAPIService = {
             return res.data;
         } catch (error) {
             let message = "Get quiz error";
+            if (axios.isAxiosError(error))
+                message = error.response?.data?.message || message;
+
+            return { success: false, message, data: undefined };
+        }
+    },
+
+    async getAllQuizzes(token: string): Promise<GetAllQuizzesResponse> {
+        try{
+            const res = await axios.get<GetAllQuizzesResponse>(
+                `${API_URL}/allQuizzes`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            return res.data;
+        }catch(error){
+            let message = "Get all quizzes error";
             if (axios.isAxiosError(error))
                 message = error.response?.data?.message || message;
 

@@ -2,6 +2,7 @@ import axios from "axios";
 import type { IAdminAPIService } from "./IAdminAPIService";
 import type { AdminResponse } from "../../types/admin/AdminResponse";
 import type { UserDto } from "../../models/UserDto";
+import type { AdminReportResponse } from "../../types/admin/AdminReportResponse";
 
 const API_URL: string = import.meta.env.VITE_API_URL + "/admin";
 
@@ -64,6 +65,28 @@ export const adminApi: IAdminAPIService = {
             if (axios.isAxiosError(error)) message = error.response?.data?.message || message;
 
             return { success: false, message, data: null };
+        }
+    },
+
+    async generateReport(token: string, quiz_ids: number[]): Promise<AdminReportResponse> {
+        try{
+            const res = await axios.post<AdminReportResponse>(
+                `${API_URL}/report`,
+                {
+                    quiz_ids,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            return res.data;
+        }catch(error){
+            let message = "Failed to generateReport";
+            if (axios.isAxiosError(error)) message = error.response?.data?.message || message;
+
+            return { success: false, message};
         }
     }
 };

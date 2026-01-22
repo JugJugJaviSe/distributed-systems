@@ -22,10 +22,9 @@ class PDFService:
 
         c.setFont("Helvetica-Bold", 18)
         c.drawString(50, y, "Quiz Attempts Report")
-        y -= 30
 
         c.setFont("Helvetica", 10)
-        c.drawString(50, y, f"Generated at: {datetime.now().replace(microsecond=0)}")
+        c.drawString(380, y, f"Generated at: {datetime.now().replace(microsecond=0)}")
         y -= 40
 
         for quiz in quizzes:

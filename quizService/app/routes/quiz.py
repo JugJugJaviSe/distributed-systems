@@ -46,3 +46,18 @@ def get_quiz(quiz_id: int):
             "success": False,
             "message": f"Failed to fetch quiz {ex}"
         }), 500
+    
+@quiz_bp.get("/getAll")
+def get_all():
+    try:
+        quizzes = QuizService.get_all()
+        return jsonify({
+            "success": True,
+            "data": quizzes
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
+    

@@ -5,14 +5,19 @@ import type { ICloudinariImageAPIService } from "../../api_services/cloudinary_i
 import type { IUsersAPIService } from "../../api_services/users_api/IUsersAPIService";
 import { useEffect, useState } from "react";
 import { connectAdminSocket, disconnectAdminSocket } from "../../sockets/adminSocket";
+import ApprovedQuizzesTable from "../../components/quiz/ApprovedQuizzesTable";
+import type { IQuizAPIService } from "../../api_services/quiz_api/IQuizAPIService";
+import type { IAdminAPIService } from "../../api_services/admin_api/IAdminAPIService";
 
 
 interface AdminDashboardProps {
   cloudinaryApi: ICloudinariImageAPIService;
   usersApi: IUsersAPIService;
+  quizApi: IQuizAPIService;
+  adminApi: IAdminAPIService
 }
 
-export default function AdminDashobard({ cloudinaryApi, usersApi }: AdminDashboardProps) {
+export default function AdminDashobard({ cloudinaryApi, usersApi, quizApi, adminApi }: AdminDashboardProps) {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -82,6 +87,8 @@ export default function AdminDashobard({ cloudinaryApi, usersApi }: AdminDashboa
           Log out
         </button>
       </div>
+
+      <ApprovedQuizzesTable quizApi={quizApi} adminApi={adminApi} />
 
       {showProfile && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center">

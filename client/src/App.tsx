@@ -29,7 +29,7 @@ function App() {
       } />
 
       <Route path="/Admin-dashboard" element={
-        <ProtectedRoute requiredRole="Admin"><AdminDashboard cloudinaryApi={cloudinaryApi} usersApi={usersApi} /></ProtectedRoute>
+        <ProtectedRoute requiredRole="Admin"><AdminDashboard cloudinaryApi={cloudinaryApi} usersApi={usersApi} quizApi={quizApi} adminApi={adminApi}/></ProtectedRoute>
       } />
 
       <Route path="/Moderator-dashboard" element={

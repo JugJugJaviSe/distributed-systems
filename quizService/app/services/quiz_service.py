@@ -3,6 +3,7 @@ from app.models.quizzes import Quiz
 from app.models.questions import Question
 from app.models.answers import Answer
 from typing import Dict
+from app.constants.quiz_status import QuizStatus
 
 class QuizService:
     @staticmethod
@@ -108,3 +109,8 @@ class QuizService:
     def get_quiz_titles(quiz_ids:list[str]) -> list[Dict[str, str]]:
         quizzes = Quiz.query.filter(Quiz.quiz_id.in_(quiz_ids)).all()
         return [{"id": q.quiz_id, "title": q.title} for q in quizzes]
+    
+    @staticmethod
+    def get_all() -> list[Dict]:
+        quizzes = Quiz.query.filter(Quiz.status == QuizStatus.APPROVED.value).all()
+        return [{"id": q.quiz_id, "title": q.title, "author_id": q.author_id, "duration_seconds": q.duration_seconds, "created_at": q.created_at.strftime("%d/%m/%y %H:%M:%S")} for q in quizzes]
