@@ -37,14 +37,12 @@ class QuizService:
 
         db.session.commit()
 
-        quiz_dto = QuizService.quiz_to_dto(quiz)
-
         return {
-            "success": True,
-            "message": "Quiz created successfully",
-            "data": quiz_dto,
-            "status": 201,
-        }
+        "quiz_id": quiz.quiz_id,
+        "title": quiz.title,
+        "author_id": quiz.author_id,
+        "status": quiz.status
+    }
 
     @staticmethod
     def quiz_to_dto(quiz: Quiz):
@@ -105,6 +103,15 @@ class QuizService:
             "questions": question_list
         }
     
+    @staticmethod
+    def get_quiz_for_admin(quiz_id: int) -> Dict:
+        quiz = Quiz.query.get(quiz_id)
+
+        if not quiz:
+            raise ValueError("Quiz not found")
+
+        return QuizService.quiz_to_dto(quiz)
+
     @staticmethod
     def get_quiz_titles(quiz_ids:list[str]) -> list[Dict[str, str]]:
         quizzes = Quiz.query.filter(Quiz.quiz_id.in_(quiz_ids)).all()
