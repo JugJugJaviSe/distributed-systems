@@ -5,6 +5,7 @@ import requests
 from app.extensions import socketio
 from app.constants.user_roles import UserRole
 from app.middlewares.require_auth import require_auth
+from app.middlewares.require_role import require_role 
 from app.services.quiz_service import QuizService
 from app.services.user_service import UserService
 
@@ -73,3 +74,20 @@ def get_all_quizzes():
 
     except requests.exceptions.RequestException as e:
         return jsonify({"success": False, "message": str(e)}), 500
+
+@quiz_bp.get("/admin/<int:quiz_id>")
+@require_role([UserRole.ADMIN])
+def get_quiz_for_admin(quiz_id: int):
+    try:
+        response = requests.get(
+            f"{QUIZ_SERVICE_BASE_URL}/admin/{quiz_id}",
+            timeout=10
+        )
+
+        return jsonify(response.json()), response.status_code
+
+    except requests.RequestException:
+        return jsonify({
+            "success": False,
+            "message": "Quiz service is unreachable"
+        }), 503

@@ -9,6 +9,7 @@ from .routes.admin import admin_bp
 from .routes.user import user_bp
 from .routes.quiz import quiz_bp
 from .routes.quiz_execution import quiz_execution_bp
+from .routes import socket_events 
 
 
 def create_app():

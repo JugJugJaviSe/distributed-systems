@@ -23,9 +23,8 @@ def create_quiz():
         )
 
     result = QuizService.create_quiz(validation.data)
-    status = result.pop("status", 201)
-
-    return jsonify(result), status
+    
+    return jsonify(result), 201
 
 
 @quiz_bp.route("/<int:quiz_id>", methods=["GET"])
@@ -60,4 +59,24 @@ def get_all():
             "success": False,
             "message": str(e)
         }), 500
+
+@quiz_bp.route("/admin/<int:quiz_id>", methods=["GET"])
+def get_quiz_for_admin(quiz_id: int):
+    try:
+        quiz = QuizService.get_quiz_for_admin(quiz_id)
+        return jsonify({
+            "success": True,
+            "data": quiz
+        }), 200
+    except ValueError as e:
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 404
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
+
     
