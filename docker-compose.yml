@@ -1,6 +1,6 @@
 services:
-  backend:
-    container_name: drs-flask-backend
+  server:
+    container_name: drs-flask-server
     build: ./server
     ports:
       - "5000:5000"
@@ -16,7 +16,7 @@ services:
       - users_db
 
   quizservice:
-    container_name: drs-quizService
+    container_name: drs-flask-quizService
     build: ./quizService
     ports:
       - "5001:5001"
@@ -53,8 +53,8 @@ services:
     volumes:
       - quiz_db_data:/var/lib/mysql
 
-  frontend:
-    container_name: drs-react-frontend
+  client:
+    container_name: drs-react-client
     build: ./client
     ports:
       - "5173:5173"
@@ -62,7 +62,7 @@ services:
       - ./client:/app
       - /app/node_modules
     depends_on:
-      - backend
+      - server
       - quizservice
 
 volumes:
