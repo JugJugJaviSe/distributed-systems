@@ -79,4 +79,60 @@ def get_quiz_for_admin(quiz_id: int):
             "message": str(e)
         }), 500
 
-    
+
+
+@quiz_bp.route("/admin/<int:quiz_id>/approve", methods=["PUT"])
+def approve_quiz(quiz_id: int):
+    try:
+        result = QuizService.approve_quiz(quiz_id)
+
+        return jsonify({
+            "success": True,
+            "message": "Quiz approved successfully",
+            "data": result
+        }), 200
+
+    except ValueError as e:
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 404
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Failed to approve quiz: {str(e)}"
+        }), 500
+
+
+@quiz_bp.route("/admin/<int:quiz_id>/reject", methods=["PUT"])
+def reject_quiz(quiz_id: int):
+    data = request.get_json(silent=True)
+
+    if not data or not data.get("comment"):
+        return jsonify({
+            "success": False,
+            "message": "Comment is required when rejecting a quiz"
+        }), 400
+
+    try:
+        result = QuizService.reject_quiz(quiz_id, data["comment"])
+
+        return jsonify({
+            "success": True,
+            "message": "Quiz rejected successfully",
+            "data": result
+        }), 200
+
+    except ValueError as e:
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 404
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Failed to reject quiz: {str(e)}"
+        }), 500
+

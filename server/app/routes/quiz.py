@@ -91,3 +91,51 @@ def get_quiz_for_admin(quiz_id: int):
             "success": False,
             "message": "Quiz service is unreachable"
         }), 503
+
+
+@quiz_bp.route("/admin/<int:quiz_id>/approve", methods=["PUT"])
+@require_auth
+@require_role([UserRole.ADMIN])
+def approve_quiz(quiz_id):
+    try:
+        response = requests.put(
+            f"{QUIZ_SERVICE_BASE_URL}/admin/{quiz_id}/approve",
+            json=request.json,
+            timeout=5
+        )
+
+        return jsonify(response.json()), response.status_code
+
+    except requests.RequestException:
+        return jsonify({
+            "success": False,
+            "message": "Quiz service is unreachable"
+        }), 503
+
+@quiz_bp.route("/admin/<int:quiz_id>/reject", methods=["PUT"])
+@require_auth
+@require_role([UserRole.ADMIN])
+def reject_quiz(quiz_id):
+    data = request.get_json()
+
+    if not data or not data.get("comment"):
+        return jsonify({
+            "success": False,
+            "message": "Comment is required"
+        }), 400
+
+    try:
+        response = requests.put(
+            f"{QUIZ_SERVICE_BASE_URL}/admin/{quiz_id}/reject",
+            json=data,
+            timeout=5
+        )
+
+        return jsonify(response.json()), response.status_code
+
+    except requests.RequestException:
+        return jsonify({
+            "success": False,
+            "message": "Quiz service is unreachable"
+        }), 503
+

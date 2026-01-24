@@ -12,7 +12,7 @@ class QuizService:
             title=data["title"],
             duration_seconds=data["duration"],
             author_id=data["author_id"],
-            status="PENDING",
+            status=QuizStatus.PENDING.value,
         )
 
         db.session.add(quiz)
@@ -121,3 +121,37 @@ class QuizService:
     def get_all() -> list[Dict]:
         quizzes = Quiz.query.filter(Quiz.status == QuizStatus.APPROVED.value).all()
         return [{"id": q.quiz_id, "title": q.title, "author_id": q.author_id, "duration_seconds": q.duration_seconds, "created_at": q.created_at.strftime("%d/%m/%y %H:%M:%S")} for q in quizzes]
+
+    @staticmethod
+    def approve_quiz(quiz_id):
+        quiz = Quiz.query.get(quiz_id)
+
+        if not quiz:
+            raise ValueError("Quiz not found")
+
+        quiz.status = QuizStatus.APPROVED.value
+
+        db.session.commit()
+
+        return {
+        "id": quiz.quiz_id,
+        "status": quiz.status
+    }
+
+    @staticmethod
+    def reject_quiz(quiz_id, comment):
+        quiz = Quiz.query.get(quiz_id)
+
+        if not quiz:
+            raise ValueError("Quiz not found")
+
+        quiz.status = QuizStatus.REJECTED.value
+        quiz.rejection_reason = comment
+
+        db.session.commit()
+
+        return {
+        "id": quiz.quiz_id,
+        "status": quiz.status,
+        "admin_comment": quiz.rejection_reason
+    }
