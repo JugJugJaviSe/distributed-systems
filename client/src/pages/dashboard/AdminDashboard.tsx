@@ -8,97 +8,101 @@ import { connectAdminSocket, disconnectAdminSocket } from "../../sockets/adminSo
 import ApprovedQuizzesTable from "../../components/quiz/ApprovedQuizzesTable";
 import type { IQuizAPIService } from "../../api_services/quiz_api/IQuizAPIService";
 import type { IAdminAPIService } from "../../api_services/admin_api/IAdminAPIService";
-
+import type { AdminNotification } from "../../types/admin/AdminNotification";
+import { AdminInbox } from "../../components/admin/AdminInbox";
 
 interface AdminDashboardProps {
-  cloudinaryApi: ICloudinariImageAPIService;
-  usersApi: IUsersAPIService;
-  quizApi: IQuizAPIService;
-  adminApi: IAdminAPIService
+    cloudinaryApi: ICloudinariImageAPIService;
+    usersApi: IUsersAPIService;
+    quizApi: IQuizAPIService;
+    adminApi: IAdminAPIService;
 }
 
-export default function AdminDashobard({ cloudinaryApi, usersApi, quizApi, adminApi }: AdminDashboardProps) {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
+export default function AdminDashboard({
+    cloudinaryApi,
+    usersApi,
+    quizApi,
+    adminApi
+}: AdminDashboardProps) {
+    const { logout } = useAuth();
+    const navigate = useNavigate();
 
-  const goToAdminUsersPage = () => {
-    navigate(`/Admin/users`);
-  }
-  const [showProfile, setShowProfile] = useState(false);
+    const [showProfile, setShowProfile] = useState(false);
+    const [notifications, setNotifications] = useState<AdminNotification[]>([]);
 
-  const logoutHandler = () => {
-    logout();
-    navigate(`/login`);
-  };
+    const goToAdminUsersPage = () => {
+        navigate("/Admin/users");
+    };
 
-  const toggleProfile = () => {
-    setShowProfile((prev) => !prev);
-  };
+    const logoutHandler = () => {
+        logout();
+        navigate("/login");
+    };
 
+    const toggleProfile = () => {
+        setShowProfile((prev) => !prev);
+    };
 
     useEffect(() => {
         const socket = connectAdminSocket();
 
-        socket.on("connect", () => {
-            console.log("?? Admin connected to WebSocket");
-        });
+        socket.emit("join", "admins");
 
-        socket.on("quiz-created", (data: any) => {
-            console.log(" New quiz created:", data);
+        const handleQuizCreated = (data: any) => {
+            console.log("New quiz created:", data);
+            setNotifications((prev) => [data, ...prev]);
+        };
 
-            // kasnije:
-            // - toast notifikacija
-            // - refresh liste
-        });
-
-        socket.on("disconnect", () => {
-            console.log(" Admin socket disconnected");
-        });
+        socket.on("quiz_created", handleQuizCreated);
 
         return () => {
+            socket.off("quiz_created", handleQuizCreated);
             disconnectAdminSocket();
         };
     }, []);
 
+    return (
+        <div className="min-h-screen w-full bg-gray-900 backdrop-blur-sm text-gray-100 p-6 flex flex-col items-center justify-start space-y-6">
+            <div className="w-full flex justify-between items-center">
+                <h1 className="text-3xl font-bold">Welcome to admin dashboard!</h1>
+                <AdminInbox
+                    notifications={notifications}
+                    onOpenQuiz={(quizId) => navigate(`/admin/quizzes/${quizId}`)}
+                />
+            </div>
 
-  return (
-    <div className="min-h-screen w-full bg-gray-900 backdrop-blur-sm text-gray-100 p-6 flex flex-col items-center justify-start space-y-6">
-      <h1 className="text-3xl font-bold text-center">Welcome to admin dashboard!</h1>
+            <div className="flex flex-col sm:flex-row gap-4">
+                <button
+                    onClick={goToAdminUsersPage}
+                    className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                >
+                    Users page
+                </button>
+                <button
+                    onClick={toggleProfile}
+                    className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                >
+                    {showProfile ? "Hide Profile" : "Show Profile"}
+                </button>
+                <button
+                    onClick={logoutHandler}
+                    className="px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                >
+                    Log out
+                </button>
+            </div>
 
-      <div className="flex flex-col sm:flex-row gap-4">
-        <button
-          onClick={goToAdminUsersPage}
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
-        >
-          Users page
-        </button>
+            <ApprovedQuizzesTable quizApi={quizApi} adminApi={adminApi} />
 
-        <button
-          onClick={toggleProfile}
-          className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
-        >
-          {showProfile ? "Hide Profile" : "Show Profile"}
-        </button>
-
-        <button
-          onClick={logoutHandler}
-          className="px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
-        >
-          Log out
-        </button>
-      </div>
-
-      <ApprovedQuizzesTable quizApi={quizApi} adminApi={adminApi} />
-
-      {showProfile && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-          <ProfileCard
-            setShowProfile={setShowProfile}
-            cloudinaryApi={cloudinaryApi}
-            usersApi={usersApi}
-          />
+            {showProfile && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <ProfileCard
+                        setShowProfile={setShowProfile}
+                        cloudinaryApi={cloudinaryApi}
+                        usersApi={usersApi}
+                    />
+                </div>
+            )}
         </div>
-      )}
-    </div>
-  );
+    );
 }
