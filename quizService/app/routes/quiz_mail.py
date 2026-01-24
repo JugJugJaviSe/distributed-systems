@@ -24,9 +24,6 @@ def generate_report():
 
     if not quizzes or not isinstance(quizzes, list):
         return jsonify({"error": "quiz_ids must be a list"}), 400
-    
-    if not attempts or not isinstance(attempts, list):
-        return jsonify({"error": "attempts must be a list"}), 400
 
     pdf_bytes = PDFService.generate_report(quizzes, users, attempts)
 
