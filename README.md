@@ -5,7 +5,7 @@ The goal of the system is to simulate the core functionalities of an online quiz
 ## Table of Contents
 - [Key Features](#key-features)
 - [Tech Stack](#tech-stack)
-- [Roles & Permissions](#roles-and-permissions)
+- [Roles & Permissions](#roles--permissions)
 - [Requirements](#requirements)
 - [First-time Setup](#first-time-setup)
 - [Running the Project](#running-the-project)
