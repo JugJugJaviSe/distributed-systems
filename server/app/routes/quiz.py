@@ -130,7 +130,22 @@ def reject_quiz(quiz_id):
             json=data,
             timeout=5
         )
+        quiz_data = response.json()
 
+        data = quiz_data.get("data", {})
+        author_id = data.get("author_id")
+        comment = data.get("admin_comment")
+
+        if author_id:
+            socketio.emit(
+                "quiz_rejected",
+                {
+                    "quiz_id": quiz_id,
+                    "comment": comment,
+                    "message": "Your quiz was rejected by admin"
+                },
+                room=f"user_{author_id}"
+            )
         return jsonify(response.json()), response.status_code
 
     except requests.RequestException:

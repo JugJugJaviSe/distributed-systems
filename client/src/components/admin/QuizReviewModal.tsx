@@ -3,6 +3,8 @@ import type { GetQuizResponseData } from "../../types/quiz/GetQuizResponses";
 import { quizApi } from "../../api_services/quiz_api/QuizAPIService";
 import { useAuth } from "../../hooks/UseAuthHook";
 
+const STORAGE_KEY = "admin_notifications";
+
 type Props = {
     quizId: number;
     onClose: () => void;
@@ -48,12 +50,24 @@ export function QuizReviewModal({
         }
     }, [quizId, token]);
 
-    const handleApprove = async () => {
+    const removeNotificationFromStorage = () => {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) return;
 
+        const notifications = JSON.parse(saved);
+        const updated = notifications.filter((n: any) => n.quiz_id !== quizId);
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    };
+
+    const handleApprove = async () => {
         try {
             setSubmitting(true);
             await onApprove(comment);
-        } catch {
+            removeNotificationFromStorage();
+            onClose();
+        } catch (e) {
+            console.error(e);
             alert("Approve failed");
         } finally {
             setSubmitting(false);
@@ -69,7 +83,10 @@ export function QuizReviewModal({
         try {
             setSubmitting(true);
             await onReject(comment);
-        } catch {
+            removeNotificationFromStorage();
+            onClose();
+        } catch (e) {
+            console.error(e);
             alert("Reject failed");
         } finally {
             setSubmitting(false);
@@ -118,7 +135,10 @@ export function QuizReviewModal({
                             </span>
                         </div>
                     </div>
-                    <button onClick={onClose} className="text-gray-400 hover:text-white">
+                    <button
+                        onClick={onClose}
+                        className="text-gray-400 hover:text-white"
+                    >
                         X
                     </button>
                 </div>
@@ -170,6 +190,7 @@ export function QuizReviewModal({
                     >
                         Cancel
                     </button>
+
                     <button
                         disabled={submitting}
                         onClick={handleReject}
@@ -177,6 +198,7 @@ export function QuizReviewModal({
                     >
                         Reject
                     </button>
+
                     <button
                         disabled={submitting}
                         onClick={handleApprove}

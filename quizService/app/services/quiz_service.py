@@ -136,7 +136,7 @@ class QuizService:
         return {
         "id": quiz.quiz_id,
         "status": quiz.status
-    }
+        }
 
     @staticmethod
     def reject_quiz(quiz_id, comment):
@@ -151,7 +151,8 @@ class QuizService:
         db.session.commit()
 
         return {
-        "id": quiz.quiz_id,
-        "status": quiz.status,
-        "admin_comment": quiz.rejection_reason
-    }
+            "id": quiz.quiz_id,
+            "status": quiz.status,
+            "admin_comment": quiz.rejection_reason,
+            "author_id": quiz.author_id
+        }

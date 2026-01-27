@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/UseAuthHook";
 import type { CreateQuizPageProps } from "../../types/quiz/CreateQuizPageProps";
 import { QuestionEditor } from "./QuestionEditor";
@@ -6,8 +7,8 @@ import type { QuizQuestionDto } from "../../models/quiz/QuizQuestionDto";
 import type { CreateQuizDto } from "../../models/quiz/CreateQuizDto";
 
 export function CreateQuizForm({ quizApi }: CreateQuizPageProps) {
-    const { user } = useAuth();
-    const { token } = useAuth();
+    const { user, token } = useAuth();
+    const navigate = useNavigate();
 
     const [title, setTitle] = useState("");
     const [duration, setDuration] = useState(60);
@@ -28,31 +29,13 @@ export function CreateQuizForm({ quizApi }: CreateQuizPageProps) {
     };
 
     const validateQuiz = (): boolean => {
-        if (!title.trim()) {
-            alert("Quiz title is required");
-            return false;
-        }
-
-        if (questions.length === 0) {
-            alert("Quiz must have at least one question");
-            return false;
-        }
+        if (!title.trim()) return false;
+        if (questions.length === 0) return false;
 
         for (const q of questions) {
-            if (!q.text.trim()) {
-                alert("Each question must have text");
-                return false;
-            }
-
-            if (q.answers.length < 2) {
-                alert("Each question must have at least 2 answers");
-                return false;
-            }
-
-            if (!q.answers.some(a => a.is_correct)) {
-                alert("Each question must have at least one correct answer");
-                return false;
-            }
+            if (!q.text.trim()) return false;
+            if (q.answers.length < 2) return false;
+            if (!q.answers.some(a => a.is_correct)) return false;
         }
 
         return true;
@@ -71,10 +54,10 @@ export function CreateQuizForm({ quizApi }: CreateQuizPageProps) {
 
         try {
             await quizApi.createQuiz(token!, payload);
-            alert("Quiz created and sent for admin approval.");
             setTitle("");
             setDuration(60);
             setQuestions([]);
+            navigate("/Moderator-dashboard");
         } catch {
             alert("Error while creating quiz");
         }

@@ -11,6 +11,8 @@ import type { IAdminAPIService } from "../../api_services/admin_api/IAdminAPISer
 import type { AdminNotification } from "../../types/admin/AdminNotification";
 import { AdminInbox } from "../../components/admin/AdminInbox";
 
+const STORAGE_KEY = "admin_notifications";
+
 interface AdminDashboardProps {
     cloudinaryApi: ICloudinariImageAPIService;
     usersApi: IUsersAPIService;
@@ -22,7 +24,7 @@ export default function AdminDashboard({
     cloudinaryApi,
     usersApi,
     quizApi,
-    adminApi
+    adminApi,
 }: AdminDashboardProps) {
     const { logout } = useAuth();
     const navigate = useNavigate();
@@ -30,63 +32,70 @@ export default function AdminDashboard({
     const [showProfile, setShowProfile] = useState(false);
     const [notifications, setNotifications] = useState<AdminNotification[]>([]);
 
-    const goToAdminUsersPage = () => {
-        navigate("/Admin/users");
-    };
+    useEffect(() => {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            setNotifications(JSON.parse(saved));
+        }
+    }, []);
 
-    const logoutHandler = () => {
-        logout();
-        navigate("/login");
-    };
-
-    const toggleProfile = () => {
-        setShowProfile((prev) => !prev);
-    };
-
+    
     useEffect(() => {
         const socket = connectAdminSocket();
-
         socket.emit("join", "admins");
 
-        const handleQuizCreated = (data: any) => {
-            console.log("New quiz created:", data);
-            setNotifications((prev) => [data, ...prev]);
+        const handleQuizCreated = (data: AdminNotification) => {
+            setNotifications((prev) => {
+                const updated = [data, ...prev];
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+                return updated;
+            });
         };
 
         socket.on("quiz_created", handleQuizCreated);
 
         return () => {
             socket.off("quiz_created", handleQuizCreated);
-            disconnectAdminSocket();
         };
     }, []);
 
+    const logoutHandler = () => {
+        disconnectAdminSocket();
+        logout();
+        navigate("/login");
+    };
+
     return (
-        <div className="min-h-screen w-full bg-gray-900 backdrop-blur-sm text-gray-100 p-6 flex flex-col items-center justify-start space-y-6">
+        <div className="min-h-screen w-full bg-gray-900 text-gray-100 p-6 flex flex-col space-y-6">
             <div className="w-full flex justify-between items-center">
                 <h1 className="text-3xl font-bold">Welcome to admin dashboard!</h1>
+
                 <AdminInbox
                     notifications={notifications}
-                    onOpenQuiz={(quizId) => navigate(`/admin/quizzes/${quizId}`)}
+                    onOpenQuiz={(quizId) =>
+                        navigate(`/admin/quizzes/${quizId}`)
+                    }
                 />
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex gap-4">
                 <button
-                    onClick={goToAdminUsersPage}
-                    className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                    onClick={() => navigate("/Admin/users")}
+                    className="px-6 py-3 bg-blue-600 rounded-lg"
                 >
                     Users page
                 </button>
+
                 <button
-                    onClick={toggleProfile}
-                    className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                    onClick={() => setShowProfile((p) => !p)}
+                    className="px-6 py-3 bg-gray-700 rounded-lg"
                 >
                     {showProfile ? "Hide Profile" : "Show Profile"}
                 </button>
+
                 <button
                     onClick={logoutHandler}
-                    className="px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                    className="px-6 py-3 bg-red-600 rounded-lg"
                 >
                     Log out
                 </button>
