@@ -17,6 +17,7 @@ import { quizApi } from "./api_services/quiz_api/QuizAPIService";
 import { quizExecutionApi } from "./api_services/quiz_execution_api/QuizExecutionAPIService";
 import { QuizPlayPage } from "./pages/quiz_execution/QuizPlayPage";
 import QuizReviewRoute from "./components/admin/QuizReviewRoute";
+import EditQuizPage from "./pages/quiz/EditQuizPage";
 
 function App() {
   return (
@@ -67,7 +68,14 @@ function App() {
                   </ProtectedRoute>
               }
           />
-
+          <Route
+              path="/quiz/edit/:quizId"
+              element={
+                  <ProtectedRoute requiredRole="Moderator">
+                      <EditQuizPage quizApi={quizApi} />
+                  </ProtectedRoute>
+              }
+          />
 
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/404" replace />} />

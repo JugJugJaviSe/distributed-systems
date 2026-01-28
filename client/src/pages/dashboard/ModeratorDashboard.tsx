@@ -38,6 +38,7 @@ export default function ModeratorDashboard({
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     };
 
+
     const logoutHandler = () => {
         disconnectModeratorSocket();
         logout();
@@ -45,7 +46,7 @@ export default function ModeratorDashboard({
     };
 
     const toggleProfile = () => {
-        setShowProfile((prev) => !prev);
+        setShowProfile(prev => !prev);
     };
 
     useEffect(() => {
@@ -54,8 +55,6 @@ export default function ModeratorDashboard({
         const socket = connectModeratorSocket(user.id);
 
         const handleQuizRejected = (data: ModeratorNotification) => {
-            console.log("Notification received:", data);
-
             const updated = [data, ...notifications];
             saveNotifications(updated);
         };
@@ -65,43 +64,39 @@ export default function ModeratorDashboard({
         return () => {
             socket.off("quiz_rejected", handleQuizRejected);
         };
-    }, [user]);
+    }, [user, notifications]);
 
     return (
-        <div className="min-h-screen w-full bg-gray-900 backdrop-blur-sm text-gray-100 p-6 flex flex-col items-center justify-start space-y-6">
+        <div className="min-h-screen w-full bg-gray-900 text-gray-100 p-6 flex flex-col items-center space-y-6">
             <div className="w-full flex justify-between items-center">
                 <h1 className="text-3xl font-bold">Welcome to moderator dashboard!</h1>
 
                 <ModeratorInbox
                     notifications={notifications}
-                    onOpenQuiz={(quizId) => navigate(`/quiz/edit/${quizId}`)}
+                    onOpenQuiz={(quizId: number) =>
+                        navigate(`/quiz/edit/${quizId}`)
+                    }
                 />
+
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-                <button
-                    onClick={toggleProfile}
-                    className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
-                >
+            <div className="flex gap-4">
+                <button onClick={toggleProfile} className="px-6 py-3 bg-gray-700 rounded">
                     {showProfile ? "Hide Profile" : "Show Profile"}
                 </button>
 
-                <button
-                    onClick={logoutHandler}
-                    className="px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
-                >
+                <button onClick={logoutHandler} className="px-6 py-3 bg-red-600 rounded">
                     Log out
                 </button>
 
                 <button
                     onClick={() => navigate("/quiz/create")}
-                    className="px-6 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                    className="px-6 py-3 bg-green-600 rounded"
                 >
                     Create Quiz
                 </button>
             </div>
 
-            
             <ModeratorTable quizApi={quizApi} />
 
             {showProfile && (

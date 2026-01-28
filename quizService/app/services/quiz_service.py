@@ -192,3 +192,75 @@ class QuizService:
             for q in quizzes
         ]
 
+    @staticmethod
+    def get_rejected_quiz_for_edit(quiz_id: int) -> Dict:
+        quiz = Quiz.query.get(quiz_id)
+
+        if not quiz:
+            raise ValueError("Quiz not found")
+
+        if quiz.status != QuizStatus.REJECTED.value:
+            raise ValueError("Quiz is not rejected and cannot be edited")
+
+        return {
+            "quiz_id": quiz.quiz_id,
+            "title": quiz.title,
+            "duration_seconds": quiz.duration_seconds,
+            "status": quiz.status,
+            "admin_comment": quiz.rejection_reason,
+            "questions": [
+                {
+                    "question_id": q.question_id,
+                    "text": q.question_text,
+                    "points": q.points,
+                    "answers": [
+                        {
+                            "answer_id": a.answer_id,
+                            "text": a.answer_text,
+                            "is_correct": a.is_correct
+                        } for a in q.answers
+                    ]
+                } for q in quiz.questions
+            ]
+        }
+
+
+    @staticmethod
+    def edit_quiz(quiz_id: int, data: Dict) -> Dict:
+        quiz = Quiz.query.get(quiz_id)
+
+        if not quiz:
+            raise ValueError("Quiz not found")
+
+        if quiz.status != QuizStatus.REJECTED.value:
+            raise ValueError("Only rejected quizzes can be edited")
+
+        quiz.title = data.get("title", quiz.title)
+        quiz.duration_seconds = data.get("duration", quiz.duration_seconds)
+
+        for q_data in data.get("questions", []):
+            question = Question.query.get(q_data["question_id"])
+            if not question:
+                continue
+
+            question.question_text = q_data["text"]
+            question.points = q_data["points"]
+
+            for a_data in q_data["answers"]:
+                answer = Answer.query.get(a_data["answer_id"])
+                if not answer:
+                    continue
+
+                answer.answer_text = a_data["text"]
+                answer.is_correct = a_data["is_correct"]
+
+        
+        quiz.status = QuizStatus.PENDING.value
+        quiz.rejection_reason = None
+
+        db.session.commit()
+
+        return {
+            "quiz_id": quiz.quiz_id,
+            "status": quiz.status
+        }

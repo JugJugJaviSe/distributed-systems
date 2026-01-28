@@ -20,25 +20,49 @@ def quiz_options():
 @quiz_bp.route("", methods=["POST"])
 @jwt_required()
 def create_quiz():
+    try:
+        if get_jwt()["role"] != UserRole.MODERATOR.value:
+            return jsonify({
+                "success": False,
+                "message": "Forbidden"
+            }), 403
 
-    if get_jwt()["role"] != UserRole.MODERATOR.value:
-        return {"error": "Forbidden"}, 403
+        response = requests.post(
+            QUIZ_SERVICE_BASE_URL,
+            json=request.json,
+            timeout=5
+        )
 
-    response = requests.post(
-        QUIZ_SERVICE_BASE_URL,
-        json=request.json,
-        timeout=5
-    )
+        try:
+            data = response.json()
+        except ValueError:
+            data = {
+                "success": False,
+                "message": "Invalid response from quiz service"
+            }
 
-    if response.status_code != 201:
-        return jsonify(response.json()), response.status_code
+        if response.status_code != 201:
+            return jsonify(data), response.status_code
 
-    quiz = response.json()
+        quiz = data.get("data", data)
 
-    # real-time admin notification
-    socketio.emit("quiz_created", quiz, room="admins")
+        # real-time admin notification
+        socketio.emit("quiz_created", quiz, room="admins")
 
-    return quiz, 201
+        return jsonify(data), 201
+
+    except requests.RequestException:
+        return jsonify({
+            "success": False,
+            "message": "Quiz service is unreachable"
+        }), 503
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Server error while creating quiz: {str(e)}"
+        }), 500
+
 
 
 @quiz_bp.route("/<int:quiz_id>", methods=["GET"])
@@ -199,3 +223,41 @@ def get_my_quizzes():
     except requests.exceptions.RequestException as e:
         return jsonify({"success": False, "message": str(e)}), 500
 
+
+@quiz_bp.route("/getRejected/<int:quiz_id>", methods=["GET"])
+@require_auth
+@require_role([UserRole.MODERATOR])
+def get_rejected_quiz_for_moderator(quiz_id: int):
+    try:
+        response = requests.get(
+            f"{QUIZ_SERVICE_BASE_URL}/getRejected/{quiz_id}",
+            timeout=10
+        )
+
+        return jsonify(response.json()), response.status_code
+
+    except requests.RequestException:
+        return jsonify({
+            "success": False,
+            "message": "Quiz service is unreachable"
+        }), 503
+
+
+@quiz_bp.route("/edit/<int:quiz_id>", methods=["PUT"])
+@require_auth
+@require_role([UserRole.MODERATOR])
+def edit_quiz(quiz_id: int):
+    try:
+        response = requests.put(
+            f"{QUIZ_SERVICE_BASE_URL}/edit/{quiz_id}",
+            json=request.json,
+            timeout=10
+        )
+        
+        return jsonify(response.json()), response.status_code
+
+    except requests.RequestException:
+        return jsonify({
+            "success": False,
+            "message": "Quiz service is unreachable"
+        }), 503

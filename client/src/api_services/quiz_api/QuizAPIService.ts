@@ -197,7 +197,57 @@ export const quizApi: IQuizAPIService = {
 
             return { success: false, message, data: undefined };
         }
-    }
+    },
+
+    async getRejectedQuiz(token: string, quizId: number): Promise<GetQuizResponse> {
+        try {
+            const res = await axios.get<GetQuizResponse>(
+                `${API_URL}/getRejected/${quizId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            return res.data;
+        } catch (error) {
+            let message = "Get rejected quiz error";
+            if (axios.isAxiosError(error))
+                message = error.response?.data?.message || message;
+
+            return { success: false, message, data: undefined };
+        }
+    },
+
+    async editQuiz(
+        token: string,
+        quizId: number,
+        data: any
+    ): Promise<{ success: boolean; message: string }> {
+        try {
+            const res = await axios.put(
+                `${API_URL}/edit/${quizId}`,
+                data,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            return res.data;
+        } catch (error) {
+            let message = "Edit quiz error";
+            if (axios.isAxiosError(error)) {
+                message = error.response?.data?.message || message;
+            }
+
+            return { success: false, message };
+        }
+    },
+
 
 
 };

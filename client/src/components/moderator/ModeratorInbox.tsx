@@ -1,6 +1,6 @@
 import { Bell } from "lucide-react";
+import { useState } from "react";
 import type { ModeratorNotification } from "../../types/moderator/ModeratorNotification";
-
 
 interface ModeratorInboxProps {
     notifications: ModeratorNotification[];
@@ -8,9 +8,14 @@ interface ModeratorInboxProps {
 }
 
 export function ModeratorInbox({ notifications, onOpenQuiz }: ModeratorInboxProps) {
+    const [open, setOpen] = useState(false);
+
     return (
         <div className="relative">
-            <button className="relative p-2 rounded-full bg-gray-800 hover:bg-gray-700">
+            <button
+                className="relative p-2 rounded-full bg-gray-800 hover:bg-gray-700"
+                onClick={() => setOpen(o => !o)}
+            >
                 <Bell className="w-6 h-6" />
                 {notifications.length > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-600 text-xs rounded-full px-2">
@@ -19,13 +24,16 @@ export function ModeratorInbox({ notifications, onOpenQuiz }: ModeratorInboxProp
                 )}
             </button>
 
-            {notifications.length > 0 && (
+            {open && notifications.length > 0 && (
                 <div className="absolute right-0 mt-2 w-80 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
-                    {notifications.map((n, index) => (
+                    {notifications.map((n) => (
                         <div
-                            key={index}
+                            key={n.quiz_id}
                             className="p-3 border-b border-gray-700 hover:bg-gray-700 cursor-pointer"
-                            onClick={() => onOpenQuiz(n.quiz_id)}
+                            onClick={() => {
+                                setOpen(false);
+                                onOpenQuiz(n.quiz_id);
+                            }}
                         >
                             <p className="text-sm font-semibold">Quiz rejected</p>
                             <p className="text-xs text-gray-400">{n.comment}</p>

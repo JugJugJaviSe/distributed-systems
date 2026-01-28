@@ -168,3 +168,52 @@ def get_my_quizzes(user_id: int):
             "message": str(e)
         }), 500
 
+@quiz_bp.route("/getRejected/<int:quiz_id>", methods=["GET"])
+def get_rejected_quiz(quiz_id: int):
+    try:
+        quiz = QuizService.get_rejected_quiz_for_edit(quiz_id)
+        return jsonify({
+            "success": True,
+            "data": quiz
+        }), 200
+    except ValueError as e:
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 404
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Failed to fetch rejected quiz: {str(e)}"
+        }), 500
+
+
+@quiz_bp.route("/edit/<int:quiz_id>", methods=["PUT"])
+def edit_quiz(quiz_id: int):
+    payload = request.get_json(silent=True)
+
+    if not payload:
+        return jsonify({
+            "success": False,
+            "message": "Request body is required"
+        }), 400
+
+    try:
+        result = QuizService.edit_quiz(quiz_id, payload)
+        return jsonify({
+            "success": True,
+            "message": "Quiz updated successfully",
+            "data": result
+        }), 200
+
+    except ValueError as e:
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 404
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Failed to update quiz: {str(e)}"
+        }), 500
