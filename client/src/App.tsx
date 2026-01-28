@@ -33,8 +33,8 @@ function App() {
         <ProtectedRoute requiredRole="Admin"><AdminDashboard cloudinaryApi={cloudinaryApi} usersApi={usersApi} quizApi={quizApi} adminApi={adminApi}/></ProtectedRoute>
       } />
 
-      <Route path="/Moderator-dashboard" element={
-        <ProtectedRoute requiredRole="Moderator"><ModeratorDashboard cloudinaryApi={cloudinaryApi} usersApi={usersApi} /></ProtectedRoute>
+          <Route path="/Moderator-dashboard" element={
+              <ProtectedRoute requiredRole="Moderator"><ModeratorDashboard cloudinaryApi={cloudinaryApi} usersApi={usersApi} quizApi={quizApi} /></ProtectedRoute>
       } />
 
       <Route path="/Admin/users" element={

@@ -4,14 +4,16 @@ import { useAuth } from "../../hooks/UseAuthHook";
 import { ProfileCard } from "../../components/profile_card/ProfileCard";
 import type { ICloudinariImageAPIService } from "../../api_services/cloudinary_image_api/ICloudinaryImageAPIService";
 import type { IUsersAPIService } from "../../api_services/users_api/IUsersAPIService";
+import type { IQuizAPIService } from "../../api_services/quiz_api/IQuizAPIService";
 import type { ModeratorNotification } from "../../types/moderator/ModeratorNotification";
 import { connectModeratorSocket, disconnectModeratorSocket } from "../../sockets/moderatorSocket";
 import { ModeratorInbox } from "../../components/moderator/ModeratorInbox";
-
+import { ModeratorTable } from "../../components/moderator/ModeratorTable";
 
 interface ModeratorDashboardProps {
     cloudinaryApi: ICloudinariImageAPIService;
     usersApi: IUsersAPIService;
+    quizApi: IQuizAPIService;
 }
 
 const STORAGE_KEY = "moderator_notifications";
@@ -19,6 +21,7 @@ const STORAGE_KEY = "moderator_notifications";
 export default function ModeratorDashboard({
     cloudinaryApi,
     usersApi,
+    quizApi,
 }: ModeratorDashboardProps) {
     const { logout, user } = useAuth();
     const navigate = useNavigate();
@@ -57,7 +60,6 @@ export default function ModeratorDashboard({
             saveNotifications(updated);
         };
 
-        
         socket.on("quiz_rejected", handleQuizRejected);
 
         return () => {
@@ -98,6 +100,9 @@ export default function ModeratorDashboard({
                     Create Quiz
                 </button>
             </div>
+
+            
+            <ModeratorTable quizApi={quizApi} />
 
             {showProfile && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

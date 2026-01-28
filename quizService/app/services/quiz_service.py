@@ -177,3 +177,18 @@ class QuizService:
             "message": "Quiz deleted successfully",
             "quiz_id": quiz_id
         }
+
+    @staticmethod
+    def get_by_author(author_id: int) -> list[Dict]:
+        quizzes = Quiz.query.filter(Quiz.author_id == author_id).all()
+        return [
+            {
+                "id": q.quiz_id,
+                "title": q.title,
+                "status": q.status,
+                "duration_seconds": q.duration_seconds,
+                "created_at": q.created_at.strftime("%d/%m/%y %H:%M:%S"),
+            }
+            for q in quizzes
+        ]
+

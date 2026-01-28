@@ -3,5 +3,6 @@ export type QuizFromList = {
     title: string,
     author_email: string,
     duration_seconds: string,
-    created_at: string
+    created_at: string,
+    status: string;
 }

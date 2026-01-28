@@ -177,6 +177,27 @@ export const quizApi: IQuizAPIService = {
 
             return { success: false, message };
         }
+    },
+
+    async getMyQuizzes(token: string): Promise<GetAllQuizzesResponse> {
+        try {
+            const res = await axios.get<GetAllQuizzesResponse>(
+                `${API_URL}/my`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            return res.data;
+        } catch (error) {
+            let message = "Get my quizzes error";
+            if (axios.isAxiosError(error))
+                message = error.response?.data?.message || message;
+
+            return { success: false, message, data: undefined };
+        }
     }
+
 
 };

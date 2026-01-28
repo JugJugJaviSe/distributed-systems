@@ -153,3 +153,18 @@ def delete_quiz(quiz_id):
             "success": False,
             "message": f"Failed to delete quiz: {str(e)}"
         }), 500
+
+@quiz_bp.get("/my/<int:user_id>")
+def get_my_quizzes(user_id: int):
+    try:
+        quizzes = QuizService.get_by_author(user_id)
+        return jsonify({
+            "success": True,
+            "data": quizzes
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
+

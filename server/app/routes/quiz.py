@@ -181,3 +181,21 @@ def delete_quiz(quiz_id):
             "success": False,
             "message": f"Server error while deleting quiz: {str(e)}"
         }), 500
+
+@quiz_bp.get("/my")
+@require_auth
+@require_role([UserRole.MODERATOR])
+def get_my_quizzes():
+    try:
+        user_id = get_jwt_identity()
+
+        response = requests.get(
+            f"{QUIZ_SERVICE_BASE_URL}/my/{user_id}",
+            timeout=10
+        )
+
+        return jsonify(response.json()), response.status_code
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
