@@ -7,16 +7,7 @@ export interface IQuizAPIService {
     getQuiz(token: string, quizId: number): Promise<GetQuizResponse>;
     getAllQuizzes(token: string): Promise<GetAllQuizzesResponse>;
     getQuizForAdmin(token: string, quizId: number): Promise<GetQuizResponse>;
-
-    approveQuiz(
-        token: string,
-        quizId: number,
-        comment: string
-    ): Promise<{ success: boolean; message: string }>;
-
-    rejectQuiz(
-        token: string,
-        quizId: number,
-        comment: string
-    ): Promise<{ success: boolean; message: string }>;
+    approveQuiz(token: string, quizId: number, comment: string): Promise<{ success: boolean; message: string }>;
+    rejectQuiz(token: string, quizId: number, comment: string): Promise<{ success: boolean; message: string }>;
+    deleteQuiz(quizId: number, token: string): Promise<{ success: boolean; message: string }>;
 }

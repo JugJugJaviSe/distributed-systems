@@ -136,3 +136,20 @@ def reject_quiz(quiz_id: int):
             "message": f"Failed to reject quiz: {str(e)}"
         }), 500
 
+
+
+@quiz_bp.route("/delete/<int:quiz_id>", methods=["DELETE"])
+def delete_quiz(quiz_id):
+    try:
+        result = QuizService.delete_quiz(quiz_id)
+
+        if not result["success"]:
+            return jsonify(result), 403
+
+        return jsonify(result), 200
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Failed to delete quiz: {str(e)}"
+        }), 500

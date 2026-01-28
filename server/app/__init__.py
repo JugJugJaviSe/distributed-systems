@@ -24,9 +24,12 @@ def create_app():
 
     CORS(
         app,
-        origins=["http://localhost:5173"],
+        resources={r"/*": {"origins": "*"}},
         supports_credentials=True,
+        methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allow_headers=["Content-Type", "Authorization"]
     )
+
 
     db.init_app(app)
     jwt.init_app(app)
@@ -39,3 +42,4 @@ def create_app():
     app.register_blueprint(quiz_execution_bp)
     
     return app
+  

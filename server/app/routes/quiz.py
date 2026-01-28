@@ -20,8 +20,6 @@ def quiz_options():
 @quiz_bp.route("", methods=["POST"])
 @jwt_required()
 def create_quiz():
-    
-    user = get_jwt_identity()
 
     if get_jwt()["role"] != UserRole.MODERATOR.value:
         return {"error": "Forbidden"}, 403
@@ -154,3 +152,32 @@ def reject_quiz(quiz_id):
             "message": "Quiz service is unreachable"
         }), 503
 
+@quiz_bp.route("/delete/<int:quiz_id>", methods=["OPTIONS"])
+def delete_quiz_options(quiz_id):
+    return "", 200 
+
+@quiz_bp.route("/delete/<int:quiz_id>", methods=["DELETE"])
+@require_auth
+@require_role([UserRole.ADMIN, UserRole.MODERATOR])
+def delete_quiz(quiz_id):
+    try:
+        response = requests.delete(
+            f"{QUIZ_SERVICE_BASE_URL}/delete/{quiz_id}",
+            timeout=5
+        )
+
+        try:
+            data = response.json()
+        except ValueError:
+            data = {
+                "success": False,
+                "message": "Invalid response from quizService"
+            }
+
+        return jsonify(data), response.status_code
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Server error while deleting quiz: {str(e)}"
+        }), 500

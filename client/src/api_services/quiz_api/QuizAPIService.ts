@@ -102,14 +102,28 @@ export const quizApi: IQuizAPIService = {
         quizId: number,
         comment: string
     ): Promise<{ success: boolean; message: string }> {
-        return fetch(`${API_URL}/admin/${quizId}/approve`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ comment }),
-        }).then(res => res.json());
+        try {
+            const res = await axios.put(
+                `${API_URL}/admin/${quizId}/approve`,
+                { comment },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+
+            return res.data;
+        } catch (error) {
+            let message = "Approve quiz error";
+
+            if (axios.isAxiosError(error)) {
+                message = error.response?.data?.message || message;
+            }
+
+            return { success: false, message };
+        }
     },
 
     async rejectQuiz(
@@ -117,13 +131,52 @@ export const quizApi: IQuizAPIService = {
         quizId: number,
         comment: string
     ): Promise<{ success: boolean; message: string }> {
-        return fetch(`${API_URL}/admin/${quizId}/reject`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ comment }),
-        }).then(res => res.json());
+        try {
+            const res = await axios.put(
+                `${API_URL}/admin/${quizId}/reject`,
+                { comment },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+
+            return res.data;
+        } catch (error) {
+            let message = "Reject quiz error";
+
+            if (axios.isAxiosError(error)) {
+                message = error.response?.data?.message || message;
+            }
+
+            return { success: false, message };
+        }
+    },
+
+    async deleteQuiz(quizId: number, token: string): Promise<{ success: boolean; message: string }> {
+        try {
+            const res = await axios.delete(
+                `${API_URL}/delete/${quizId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+
+            return res.data;
+        } catch (error) {
+            let message = "Delete quiz error";
+
+            if (axios.isAxiosError(error)) {
+                message = error.response?.data?.message || message;
+            }
+
+            return { success: false, message };
+        }
     }
+
 };

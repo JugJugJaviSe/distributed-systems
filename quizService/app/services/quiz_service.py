@@ -156,3 +156,24 @@ class QuizService:
             "admin_comment": quiz.rejection_reason,
             "author_id": quiz.author_id
         }
+
+
+    @staticmethod
+    def delete_quiz(quiz_id: int):
+        quiz = Quiz.query.get(quiz_id)
+
+        if not quiz:
+            return {
+                "success": False,
+                "message": "Quiz not found"
+            }
+
+
+        db.session.delete(quiz)
+        db.session.commit()
+
+        return {
+            "success": True,
+            "message": "Quiz deleted successfully",
+            "quiz_id": quiz_id
+        }
