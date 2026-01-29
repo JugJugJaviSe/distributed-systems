@@ -5,14 +5,18 @@ import type { CreateQuizPageProps } from "../../types/quiz/CreateQuizPageProps";
 import { QuestionEditor } from "./QuestionEditor";
 import type { QuizQuestionDto } from "../../models/quiz/QuizQuestionDto";
 import type { CreateQuizDto } from "../../models/quiz/CreateQuizDto";
+import type { CreateQuizResponse } from "../../types/quiz/CreateQuizResponse";
+
+const STORAGE_KEY = "moderator_notifications";
 
 export function CreateQuizForm({ quizApi }: CreateQuizPageProps) {
     const { user, token } = useAuth();
     const navigate = useNavigate();
 
     const [title, setTitle] = useState("");
-    const [duration, setDuration] = useState(60);
+    const [duration, setDuration] = useState<number>(60);
     const [questions, setQuestions] = useState<QuizQuestionDto[]>([]);
+    const [formErrors, setFormErrors] = useState<string[]>([]);
 
     const addQuestion = () => {
         setQuestions(prev => [
@@ -29,20 +33,37 @@ export function CreateQuizForm({ quizApi }: CreateQuizPageProps) {
     };
 
     const validateQuiz = (): boolean => {
-        if (!title.trim()) return false;
-        if (questions.length === 0) return false;
+        const newErrors: string[] = [];
 
-        for (const q of questions) {
-            if (!q.text.trim()) return false;
-            if (q.answers.length < 2) return false;
-            if (!q.answers.some(a => a.is_correct)) return false;
-        }
+        if (!title.trim()) newErrors.push("Title is required");
+        if (questions.length === 0) newErrors.push("At least one question is required");
 
-        return true;
+        questions.forEach((q, i) => {
+            if (!q.text.trim()) newErrors.push(`Question ${i + 1} text is required`);
+
+            if (q.answers.length < 2) {
+                newErrors.push(`Question ${i + 1} must have at least 2 answers`);
+            }
+
+            if (!q.answers.some(a => a.is_correct)) {
+                newErrors.push(`Question ${i + 1} must have at least one correct answer`);
+            }
+
+            q.answers.forEach((a, j) => {
+                if (!a.text.trim()) {
+                    newErrors.push(`Question ${i + 1}, Answer ${j + 1} text is required`);
+                }
+            });
+        });
+
+        setFormErrors(newErrors);
+        return newErrors.length === 0;
     };
 
-    const submitQuiz = async () => {
-        if (!user) return;
+    const handleSubmit = async () => {
+        if (!user || !token) return;
+
+        setFormErrors([]);
         if (!validateQuiz()) return;
 
         const payload: CreateQuizDto = {
@@ -52,20 +73,41 @@ export function CreateQuizForm({ quizApi }: CreateQuizPageProps) {
             questions,
         };
 
-        try {
-            await quizApi.createQuiz(token!, payload);
-            setTitle("");
-            setDuration(60);
-            setQuestions([]);
-            navigate("/Moderator-dashboard");
-        } catch {
-            alert("Error while creating quiz");
+        const res: CreateQuizResponse = await quizApi.createQuiz(token, payload);
+
+        if (!res.success) {
+            if (res.errors) {
+                setFormErrors(Object.values(res.errors));
+            } else {
+                setFormErrors([res.message || "Failed to create quiz"]);
+            }
+            return;
         }
+
+        // Remove notification from storage
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            const updated = parsed.filter((n: any) => n.quiz_id !== res.data.quiz_id);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        }
+
+        // Reset form
+        setTitle("");
+        setDuration(60);
+        setQuestions([]);
+        navigate("/Moderator-dashboard");
     };
 
     return (
         <div className="max-w-3xl mx-auto space-y-4">
-            <h1 className="text-2xl font-bold">Create quiz</h1>
+            <h1 className="text-2xl font-bold">Create Quiz</h1>
+
+            {formErrors.length > 0 && (
+                <div className="bg-red-100 border border-red-400 text-red-700 p-3 rounded">
+                    {formErrors.map((err, i) => <p key={i}>• {err}</p>)}
+                </div>
+            )}
 
             <input
                 value={title}
@@ -101,7 +143,7 @@ export function CreateQuizForm({ quizApi }: CreateQuizPageProps) {
             </button>
 
             <button
-                onClick={submitQuiz}
+                onClick={handleSubmit}
                 className="px-4 py-2 bg-green-600 text-white rounded"
             >
                 Save quiz

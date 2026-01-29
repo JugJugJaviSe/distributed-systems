@@ -4,11 +4,12 @@ import type { CreateQuizDto } from "../../models/quiz/CreateQuizDto";
 import type { GetQuizResponse } from "../../types/quiz/GetQuizResponses";
 import type { GetAllQuizzesResponse } from "../../types/quiz/GetAllQuizzesResponse";
 import type { EditQuizResponse } from "../../types/quiz/EditQuizResponse";
+import type { CreateQuizResponse } from "../../types/quiz/CreateQuizResponse";
 
 const API_URL: string = import.meta.env.VITE_API_URL + "/quiz";
 
 export const quizApi: IQuizAPIService = {
-    async createQuiz(token: string, data: CreateQuizDto): Promise<any> {
+    async createQuiz(token: string, data: CreateQuizDto): Promise<CreateQuizResponse> {
         try {
             const res = await axios.post(
                 `${API_URL}`,
