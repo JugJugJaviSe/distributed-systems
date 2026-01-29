@@ -25,6 +25,7 @@ export default function EditQuizForm({ quizId, quizApi, onSaved }: EditQuizFormP
     const [questions, setQuestions] = useState<EditQuestion[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [formErrors, setFormErrors] = useState<string[]>([]);
 
     useEffect(() => {
         if (!token) return;
@@ -43,11 +44,11 @@ export default function EditQuizForm({ quizId, quizApi, onSaved }: EditQuizFormP
             setDuration(quiz.duration_seconds);
 
             const mappedQuestions: EditQuestion[] = quiz.questions.map((q: any) => ({
-                question_id: q.question_id,
+                question_id: q.id, // FIX
                 text: q.text,
                 points: q.points,
                 answers: q.answers.map((a: any) => ({
-                    answer_id: a.answer_id,
+                    answer_id: a.id, // FIX
                     text: a.text,
                     is_correct: a.is_correct,
                 })),
@@ -75,18 +76,28 @@ export default function EditQuizForm({ quizId, quizApi, onSaved }: EditQuizFormP
 
     const handleSave = async () => {
         if (!token) return;
-        if (!validateQuiz()) return;
+
+        setFormErrors([]);
+
+        if (!validateQuiz()) {
+            setFormErrors(["Please fill in all fields and mark at least one correct answer."]);
+            return;
+        }
 
         const payload = { title, duration, questions };
 
         const res = await quizApi.editQuiz(token, quizId, payload);
 
         if (!res.success) {
-            alert(res.message || "Failed to update quiz");
+            if (res.errors) {
+                const messages = Object.values(res.errors);
+                setFormErrors(messages as string[]);
+            } else {
+                setFormErrors([res.message || "Failed to update quiz"]);
+            }
             return;
         }
 
-        
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
             const parsed = JSON.parse(saved);
@@ -94,7 +105,7 @@ export default function EditQuizForm({ quizId, quizApi, onSaved }: EditQuizFormP
             localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
         }
 
-        onSaved(); 
+        onSaved();
     };
 
     if (loading) return <p>Loading...</p>;
@@ -103,6 +114,14 @@ export default function EditQuizForm({ quizId, quizApi, onSaved }: EditQuizFormP
     return (
         <div className="max-w-3xl mx-auto space-y-4">
             <h1 className="text-2xl font-bold">Edit quiz</h1>
+
+            {formErrors.length > 0 && (
+                <div className="bg-red-100 border border-red-400 text-red-700 p-3 rounded">
+                    {formErrors.map((err, i) => (
+                        <p key={i}>• {err}</p>
+                    ))}
+                </div>
+            )}
 
             <input
                 value={title}

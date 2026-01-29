@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify, request
 
-from app.validators.quiz_validator import validate_create_quiz
+from app.validators.create_quiz_validator import validate_create_quiz
+from app.validators.edit_quiz_validator import validate_edit_quiz
+from app.validators.reject_quiz_validator import validate_reject_quiz
 from app.services.quiz_service import QuizService
 
 quiz_bp = Blueprint("quiz", __name__, url_prefix="/quiz")
@@ -11,20 +13,31 @@ def create_quiz():
 
     validation = validate_create_quiz(payload)
     if not validation.ok:
-        return (
-            jsonify(
-                {
-                    "success": False,
-                    "message": "Validation error",
-                    "errors": validation.errors,
-                }
-            ),
-            400,
-        )
+        return jsonify({
+            "success": False,
+            "message": "Validation error",
+            "errors": validation.errors
+        }), 400
 
-    result = QuizService.create_quiz(validation.data)
-    
-    return jsonify(result), 201
+    try:
+        result = QuizService.create_quiz(validation.data)
+        return jsonify({
+            "success": True,
+            "data": result
+        }), 201
+
+    except ValueError as e:
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 400
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": f"Failed to create quiz: {str(e)}"
+        }), 500
+
 
 
 @quiz_bp.route("/<int:quiz_id>", methods=["GET"])
@@ -96,7 +109,7 @@ def approve_quiz(quiz_id: int):
         return jsonify({
             "success": False,
             "message": str(e)
-        }), 404
+        }), 400
 
     except Exception as e:
         return jsonify({
@@ -107,16 +120,18 @@ def approve_quiz(quiz_id: int):
 
 @quiz_bp.route("/admin/<int:quiz_id>/reject", methods=["PUT"])
 def reject_quiz(quiz_id: int):
-    data = request.get_json(silent=True)
+    payload = request.get_json(silent=True)
 
-    if not data or not data.get("comment"):
+    validation = validate_reject_quiz(payload)
+    if not validation.ok:
         return jsonify({
             "success": False,
-            "message": "Comment is required when rejecting a quiz"
+            "message": "Validation error",
+            "errors": validation.errors
         }), 400
 
     try:
-        result = QuizService.reject_quiz(quiz_id, data["comment"])
+        result = QuizService.reject_quiz(quiz_id, validation.data["comment"])
 
         return jsonify({
             "success": True,
@@ -125,10 +140,10 @@ def reject_quiz(quiz_id: int):
         }), 200
 
     except ValueError as e:
-        return jsonify({
-            "success": False,
-            "message": str(e)
-        }), 404
+        msg = str(e)
+        if "not found" in msg:
+            return jsonify({"success": False, "message": msg}), 404
+        return jsonify({"success": False, "message": msg}), 400
 
     except Exception as e:
         return jsonify({
@@ -144,7 +159,7 @@ def delete_quiz(quiz_id):
         result = QuizService.delete_quiz(quiz_id)
 
         if not result["success"]:
-            return jsonify(result), 403
+            return jsonify(result), 404
 
         return jsonify(result), 200
 
@@ -180,7 +195,7 @@ def get_rejected_quiz(quiz_id: int):
         return jsonify({
             "success": False,
             "message": str(e)
-        }), 404
+        }), 400
     except Exception as e:
         return jsonify({
             "success": False,
@@ -191,6 +206,14 @@ def get_rejected_quiz(quiz_id: int):
 @quiz_bp.route("/edit/<int:quiz_id>", methods=["PUT"])
 def edit_quiz(quiz_id: int):
     payload = request.get_json(silent=True)
+
+    validation = validate_edit_quiz(payload)
+    if not validation.ok:
+        return jsonify({
+            "success": False,
+            "message": "Validation error",
+            "errors": validation.errors
+        }), 400
 
     if not payload:
         return jsonify({
@@ -210,7 +233,7 @@ def edit_quiz(quiz_id: int):
         return jsonify({
             "success": False,
             "message": str(e)
-        }), 404
+        }), 400
 
     except Exception as e:
         return jsonify({

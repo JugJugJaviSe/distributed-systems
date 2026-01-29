@@ -8,41 +8,47 @@ from app.constants.quiz_status import QuizStatus
 class QuizService:
     @staticmethod
     def create_quiz(data):
-        quiz = Quiz(
-            title=data["title"],
-            duration_seconds=data["duration"],
-            author_id=data["author_id"],
-            status=QuizStatus.PENDING.value,
-        )
-
-        db.session.add(quiz)
-        db.session.flush()  
-
-        for q in data["questions"]:
-            question = Question(
-                quiz_id=quiz.quiz_id,          
-                question_text=q["text"],       
-                points=q["points"],
+        try:
+            quiz = Quiz(
+                title=data["title"],
+                duration_seconds=data["duration"],
+                author_id=data["author_id"],
+                status=QuizStatus.PENDING.value,
             )
-            db.session.add(question)
-            db.session.flush() 
 
-            for a in q["answers"]:
-                answer = Answer(
-                    question_id=question.question_id,  
-                    answer_text=a["text"],             
-                    is_correct=a["is_correct"],
+            db.session.add(quiz)
+            db.session.flush()
+
+            for q in data["questions"]:
+                question = Question(
+                    quiz_id=quiz.quiz_id,
+                    question_text=q["text"],
+                    points=q["points"],
                 )
-                db.session.add(answer)
+                db.session.add(question)
+                db.session.flush()
 
-        db.session.commit()
+                for a in q["answers"]:
+                    answer = Answer(
+                        question_id=question.question_id,
+                        answer_text=a["text"],
+                        is_correct=a["is_correct"],
+                    )
+                    db.session.add(answer)
 
-        return {
-        "quiz_id": quiz.quiz_id,
-        "title": quiz.title,
-        "author_id": quiz.author_id,
-        "status": quiz.status
-    }
+            db.session.commit()
+
+            return {
+                "quiz_id": quiz.quiz_id,
+                "title": quiz.title,
+                "author_id": quiz.author_id,
+                "status": quiz.status
+            }
+
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
 
     @staticmethod
     def quiz_to_dto(quiz: Quiz):
@@ -202,27 +208,10 @@ class QuizService:
         if quiz.status != QuizStatus.REJECTED.value:
             raise ValueError("Quiz is not rejected and cannot be edited")
 
-        return {
-            "quiz_id": quiz.quiz_id,
-            "title": quiz.title,
-            "duration_seconds": quiz.duration_seconds,
-            "status": quiz.status,
-            "admin_comment": quiz.rejection_reason,
-            "questions": [
-                {
-                    "question_id": q.question_id,
-                    "text": q.question_text,
-                    "points": q.points,
-                    "answers": [
-                        {
-                            "answer_id": a.answer_id,
-                            "text": a.answer_text,
-                            "is_correct": a.is_correct
-                        } for a in q.answers
-                    ]
-                } for q in quiz.questions
-            ]
-        }
+        dto = QuizService.quiz_to_dto(quiz)
+        dto["admin_comment"] = quiz.rejection_reason
+
+        return dto
 
 
     @staticmethod

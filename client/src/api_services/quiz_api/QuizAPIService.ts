@@ -3,6 +3,7 @@ import type { IQuizAPIService } from "./IQuizAPIService";
 import type { CreateQuizDto } from "../../models/quiz/CreateQuizDto";
 import type { GetQuizResponse } from "../../types/quiz/GetQuizResponses";
 import type { GetAllQuizzesResponse } from "../../types/quiz/GetAllQuizzesResponse";
+import type { EditQuizResponse } from "../../types/quiz/EditQuizResponse";
 
 const API_URL: string = import.meta.env.VITE_API_URL + "/quiz";
 
@@ -224,7 +225,7 @@ export const quizApi: IQuizAPIService = {
         token: string,
         quizId: number,
         data: any
-    ): Promise<{ success: boolean; message: string }> {
+    ): Promise<EditQuizResponse> {
         try {
             const res = await axios.put(
                 `${API_URL}/edit/${quizId}`,
@@ -240,13 +241,21 @@ export const quizApi: IQuizAPIService = {
             return res.data;
         } catch (error) {
             let message = "Edit quiz error";
+            let errors: Record<string, string> | undefined = undefined;
+
             if (axios.isAxiosError(error)) {
                 message = error.response?.data?.message || message;
+                errors = error.response?.data?.errors;
             }
 
-            return { success: false, message };
+            return {
+                success: false,
+                message,
+                errors
+            };
         }
-    },
+    }
+
 
 
 

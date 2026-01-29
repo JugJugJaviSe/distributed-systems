@@ -1,4 +1,5 @@
 import type { CreateQuizDto } from "../../models/quiz/CreateQuizDto";
+import type { EditQuizResponse } from "../../types/quiz/EditQuizResponse";
 import type { GetAllQuizzesResponse } from "../../types/quiz/GetAllQuizzesResponse";
 import type { GetQuizResponse } from "../../types/quiz/GetQuizResponses";
 
@@ -6,7 +7,7 @@ export interface IQuizAPIService {
     createQuiz(token: string, data: CreateQuizDto): Promise<any>;
     getQuiz(token: string, quizId: number): Promise<GetQuizResponse>;
     getRejectedQuiz(token: string, quizId: number): Promise<GetQuizResponse>; 
-    editQuiz(token: string, quizId: number, data: any): Promise<{ success: boolean; message: string }>; 
+    editQuiz(token: string, quizId: number, data: any): Promise<EditQuizResponse>; 
     getAllQuizzes(token: string): Promise<GetAllQuizzesResponse>;
     getMyQuizzes(token: string): Promise<GetAllQuizzesResponse>;
     getQuizForAdmin(token: string, quizId: number): Promise<GetQuizResponse>;
