@@ -6,9 +6,9 @@ import type { ICloudinariImageAPIService } from "../../api_services/cloudinary_i
 import type { IUsersAPIService } from "../../api_services/users_api/IUsersAPIService";
 import type { IQuizAPIService } from "../../api_services/quiz_api/IQuizAPIService";
 import type { ModeratorNotification } from "../../types/moderator/ModeratorNotification";
-import { connectModeratorSocket, disconnectModeratorSocket } from "../../sockets/moderatorSocket";
 import { ModeratorInbox } from "../../components/moderator/ModeratorInbox";
 import { ModeratorTable } from "../../components/moderator/ModeratorTable";
+import { useSocket } from "../../contextsts/SocketContext";
 
 interface ModeratorDashboardProps {
     cloudinaryApi: ICloudinariImageAPIService;
@@ -23,8 +23,9 @@ export default function ModeratorDashboard({
     usersApi,
     quizApi,
 }: ModeratorDashboardProps) {
-    const { logout, user } = useAuth();
+    const { logout } = useAuth();
     const navigate = useNavigate();
+    const socket = useSocket();
 
     const [showProfile, setShowProfile] = useState(false);
 
@@ -33,30 +34,17 @@ export default function ModeratorDashboard({
         return saved ? JSON.parse(saved) : [];
     });
 
-    const saveNotifications = (data: ModeratorNotification[]) => {
-        setNotifications(data);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    };
-
-
-    const logoutHandler = () => {
-        disconnectModeratorSocket();
-        logout();
-        navigate("/login");
-    };
-
-    const toggleProfile = () => {
-        setShowProfile(prev => !prev);
-    };
+    
 
     useEffect(() => {
-        if (!user) return;
-
-        const socket = connectModeratorSocket(user.id);
+        if (!socket) return;
 
         const handleQuizRejected = (data: ModeratorNotification) => {
-            const updated = [data, ...notifications];
-            saveNotifications(updated);
+            setNotifications((prev) => {
+                const updated = [data, ...prev];
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+                return updated;
+            });
         };
 
         socket.on("quiz_rejected", handleQuizRejected);
@@ -64,7 +52,16 @@ export default function ModeratorDashboard({
         return () => {
             socket.off("quiz_rejected", handleQuizRejected);
         };
-    }, [user, notifications]);
+    }, [socket]);
+
+    const logoutHandler = () => {
+        logout();
+        navigate("/login");
+    };
+
+    const toggleProfile = () => {
+        setShowProfile(prev => !prev);
+    };
 
     return (
         <div className="min-h-screen w-full bg-gray-900 text-gray-100 p-6 flex flex-col items-center space-y-6">
@@ -77,7 +74,6 @@ export default function ModeratorDashboard({
                         navigate(`/quiz/edit/${quizId}`)
                     }
                 />
-
             </div>
 
             <div className="flex gap-4">

@@ -4,12 +4,12 @@ import { ProfileCard } from "../../components/profile_card/ProfileCard";
 import type { ICloudinariImageAPIService } from "../../api_services/cloudinary_image_api/ICloudinaryImageAPIService";
 import type { IUsersAPIService } from "../../api_services/users_api/IUsersAPIService";
 import { useEffect, useState } from "react";
-import { connectAdminSocket, disconnectAdminSocket } from "../../sockets/adminSocket";
 import ApprovedQuizzesTable from "../../components/quiz/ApprovedQuizzesTable";
 import type { IQuizAPIService } from "../../api_services/quiz_api/IQuizAPIService";
 import type { IAdminAPIService } from "../../api_services/admin_api/IAdminAPIService";
 import type { AdminNotification } from "../../types/admin/AdminNotification";
 import { AdminInbox } from "../../components/admin/AdminInbox";
+import { useSocket } from "../../contextsts/SocketContext";
 
 const STORAGE_KEY = "admin_notifications";
 
@@ -28,6 +28,7 @@ export default function AdminDashboard({
 }: AdminDashboardProps) {
     const { logout } = useAuth();
     const navigate = useNavigate();
+    const socket = useSocket();
 
     const [showProfile, setShowProfile] = useState(false);
     const [notifications, setNotifications] = useState<AdminNotification[]>([]);
@@ -39,10 +40,8 @@ export default function AdminDashboard({
         }
     }, []);
 
-    
     useEffect(() => {
-        const socket = connectAdminSocket();
-        socket.emit("join", "admins");
+        if (!socket) return;
 
         const handleQuizCreated = (data: AdminNotification) => {
             setNotifications((prev) => {
@@ -57,10 +56,9 @@ export default function AdminDashboard({
         return () => {
             socket.off("quiz_created", handleQuizCreated);
         };
-    }, []);
+    }, [socket]);
 
     const logoutHandler = () => {
-        disconnectAdminSocket();
         logout();
         navigate("/login");
     };
