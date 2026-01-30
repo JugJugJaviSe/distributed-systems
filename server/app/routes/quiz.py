@@ -253,6 +253,11 @@ def edit_quiz(quiz_id: int):
             json=request.json,
             timeout=10
         )
+        quiz_data = response.json()
+        if response.status_code == 200 and quiz_data.get("success"):
+            quiz = quiz_data.get("data", {})
+
+            socketio.emit("quiz_created", quiz, room="admins")
         
         return jsonify(response.json()), response.status_code
 
