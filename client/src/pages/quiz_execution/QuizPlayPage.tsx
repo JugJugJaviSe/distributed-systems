@@ -3,13 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import type { IQuizAPIService } from "../../api_services/quiz_api/IQuizAPIService";
 import type { IQuizExecutionAPIService } from "../../api_services/quiz_execution_api/IQuizExecutionAPIService";
 import type { GetQuizResponseData } from "../../types/quiz/GetQuizResponses";
-import { QuizFinish } from "../../components/quiz_execution/QuizFinish";
 import { QuizInfo } from "../../components/quiz_execution/QuizInfo";
 import { StartQuizButton } from "../../components/quiz_execution/StartQuizButton";
 import { QuizProgress } from "../../components/quiz_execution/QuizProgress";
 import { QuizQuestionCard } from "../../components/quiz_execution/QuizQuestionCard";
 import { useAuth } from "../../hooks/UseAuthHook";
 import { QuizTimer } from "../../components/quiz_execution/QuizTimer";
+import { Navbar } from "../../components/navbar/Navbar";
 
 
 interface QuizPlayPageProps {
@@ -27,13 +27,11 @@ export function QuizPlayPage({ quizApi, executionApi }: QuizPlayPageProps) {
 
     const [attemptId, setAttemptId] = useState<number | null>(null);
     const [quizStarted, setQuizStarted] = useState(false);
-    const [quizFinished, setQuizFinished] = useState(false);
 
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answersSelected, setAnswersSelected] = useState<Record<number, number>>({});
-    const [finishData] = useState<{ score: number; timeTakenSeconds: number } | null>(null);
 
-    const { token } = useAuth();
+    const { token, user } = useAuth();
 
     // Load quiz data
     useEffect(() => {
@@ -111,7 +109,7 @@ export function QuizPlayPage({ quizApi, executionApi }: QuizPlayPageProps) {
             });
 
         alert("Quiz finished. Results will be sent to your email.");
-        navigate("/quizzes");
+        navigate(`/${user?.role}-dashboard`);
     }
 
     if (loading) {
@@ -134,29 +132,9 @@ export function QuizPlayPage({ quizApi, executionApi }: QuizPlayPageProps) {
         return null;
     }
 
-    // Quiz finished view
-    if (quizFinished && finishData) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-gray-900 p-4">
-                <QuizFinish
-                    score={finishData.score}
-                    totalQuestions={quizData.questions.length}
-                    timeTakenSeconds={finishData.timeTakenSeconds}
-                    onRetry={() => {
-                        setQuizStarted(false);
-                        setQuizFinished(false);
-                        setAttemptId(null);
-                        setAnswersSelected({});
-                        setCurrentQuestionIndex(0);
-                    }}
-                    onBackToList={() => navigate("/quizzes")}
-                />
-            </div>
-        );
-    }
-
     return (
-        <div className="flex flex-col items-center min-h-screen bg-gray-900 p-4">
+        <div className="flex flex-col items-center min-h-screen bg-gray-900">
+            <Navbar />
             <QuizInfo
                 title={quizData.title}
                 durationSeconds={quizData.duration_seconds}

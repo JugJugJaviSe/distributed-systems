@@ -10,6 +10,7 @@ import type { IAdminAPIService } from "../../api_services/admin_api/IAdminAPISer
 import type { AdminNotification } from "../../types/admin/AdminNotification";
 import { AdminInbox } from "../../components/admin/AdminInbox";
 import { useSocket } from "../../contextsts/SocketContext";
+import { Navbar } from "../../components/navbar/Navbar";
 
 const STORAGE_KEY = "admin_notifications";
 
@@ -58,15 +59,11 @@ export default function AdminDashboard({
         };
     }, [socket]);
 
-    const logoutHandler = () => {
-        logout();
-        navigate("/login");
-    };
-
     return (
-        <div className="min-h-screen w-full bg-gray-900 text-gray-100 p-6 flex flex-col space-y-6">
-            <div className="w-full flex justify-between items-center">
-                <h1 className="text-3xl font-bold">Welcome to admin dashboard!</h1>
+        <div className="min-h-screen w-full bg-gray-900 text-gray-100 flex flex-col">
+            <Navbar onProfileClick={() => setShowProfile(true)} />
+            <div className="w-full flex justify-between items-center p-6">
+                <h1 className="text-3xl font-bold">Quizzes</h1>
 
                 <AdminInbox
                     notifications={notifications}
@@ -74,29 +71,6 @@ export default function AdminDashboard({
                         navigate(`/admin/quizzes/${quizId}`)
                     }
                 />
-            </div>
-
-            <div className="flex gap-4">
-                <button
-                    onClick={() => navigate("/Admin/users")}
-                    className="px-6 py-3 bg-blue-600 rounded-lg"
-                >
-                    Users page
-                </button>
-
-                <button
-                    onClick={() => setShowProfile((p) => !p)}
-                    className="px-6 py-3 bg-gray-700 rounded-lg"
-                >
-                    {showProfile ? "Hide Profile" : "Show Profile"}
-                </button>
-
-                <button
-                    onClick={logoutHandler}
-                    className="px-6 py-3 bg-red-600 rounded-lg"
-                >
-                    Log out
-                </button>
             </div>
 
             <ApprovedQuizzesTable quizApi={quizApi} adminApi={adminApi} />

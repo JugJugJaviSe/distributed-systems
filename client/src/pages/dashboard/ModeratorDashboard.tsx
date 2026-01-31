@@ -9,6 +9,7 @@ import type { ModeratorNotification } from "../../types/moderator/ModeratorNotif
 import { ModeratorInbox } from "../../components/moderator/ModeratorInbox";
 import { ModeratorTable } from "../../components/moderator/ModeratorTable";
 import { useSocket } from "../../contextsts/SocketContext";
+import { Navbar } from "../../components/navbar/Navbar";
 
 interface ModeratorDashboardProps {
     cloudinaryApi: ICloudinariImageAPIService;
@@ -34,7 +35,7 @@ export default function ModeratorDashboard({
         return saved ? JSON.parse(saved) : [];
     });
 
-    
+
 
     useEffect(() => {
         if (!socket) return;
@@ -54,19 +55,11 @@ export default function ModeratorDashboard({
         };
     }, [socket]);
 
-    const logoutHandler = () => {
-        logout();
-        navigate("/login");
-    };
-
-    const toggleProfile = () => {
-        setShowProfile(prev => !prev);
-    };
-
     return (
-        <div className="min-h-screen w-full bg-gray-900 text-gray-100 p-6 flex flex-col items-center space-y-6">
-            <div className="w-full flex justify-between items-center">
-                <h1 className="text-3xl font-bold">Welcome to moderator dashboard!</h1>
+        <div className="min-h-screen w-full bg-gray-900 text-gray-100 flex flex-col items-center">
+            <Navbar onProfileClick={() => setShowProfile(true)} />
+            <div className="w-full flex justify-between items-center p-6">
+                <h1 className="text-3xl font-bold">Quizzes</h1>
 
                 <ModeratorInbox
                     notifications={notifications}
@@ -74,23 +67,6 @@ export default function ModeratorDashboard({
                         navigate(`/quiz/edit/${quizId}`)
                     }
                 />
-            </div>
-
-            <div className="flex gap-4">
-                <button onClick={toggleProfile} className="px-6 py-3 bg-gray-700 rounded">
-                    {showProfile ? "Hide Profile" : "Show Profile"}
-                </button>
-
-                <button onClick={logoutHandler} className="px-6 py-3 bg-red-600 rounded">
-                    Log out
-                </button>
-
-                <button
-                    onClick={() => navigate("/quiz/create")}
-                    className="px-6 py-3 bg-green-600 rounded"
-                >
-                    Create Quiz
-                </button>
             </div>
 
             <ModeratorTable quizApi={quizApi} />
