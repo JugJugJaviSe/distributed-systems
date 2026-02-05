@@ -1,3 +1,4 @@
+from sqlalchemy import desc
 from app.extensions import db
 from app.models.quizzes import Quiz
 from app.models.questions import Question
@@ -127,6 +128,46 @@ class QuizService:
     def get_all() -> list[Dict]:
         quizzes = Quiz.query.filter(Quiz.status == QuizStatus.APPROVED.value).all()
         return [{"id": q.quiz_id, "title": q.title, "author_id": q.author_id, "duration_seconds": q.duration_seconds, "created_at": q.created_at.strftime("%d/%m/%y %H:%M:%S")} for q in quizzes]
+    
+
+    @staticmethod
+    def get_catalog(page: int = 1, page_size: int = 12) -> dict:
+        # Guardrails
+        if page < 1:
+            page = 1
+        if page_size < 1:
+            page_size = 12
+
+        # hard cap to prevent abuse
+        page_size = min(page_size, 50)
+
+        query = (
+            Quiz.query
+            .filter(Quiz.status == QuizStatus.APPROVED.value)
+            .order_by(desc(Quiz.created_at))
+        )
+
+        # Flask-SQLAlchemy paginate helper
+        pagination = query.paginate(page=page, per_page=page_size, error_out=False)
+
+        items = [
+            {
+                "id": q.quiz_id,
+                "title": q.title,
+                "duration_seconds": q.duration_seconds,
+                # Prefer ISO for FE; if you want your existing format, swap this line
+                "created_at": q.created_at.isoformat() if q.created_at else None,
+            }
+            for q in pagination.items
+        ]
+
+        return {
+            "items": items,
+            "page": pagination.page,
+            "page_size": pagination.per_page,
+            "total_items": pagination.total,
+            "total_pages": pagination.pages,
+        }
 
     @staticmethod
     def approve_quiz(quiz_id):

@@ -73,6 +73,25 @@ def get_all():
             "message": str(e)
         }), 500
 
+@quiz_bp.get("/catalog")
+def get_catalog():
+    try:
+        page = request.args.get("page", 1, type=int)
+        page_size = request.args.get("page_size", 12, type=int)
+
+        data = QuizService.get_catalog(page=page, page_size=page_size)
+        return jsonify({
+            "success": True,
+            "data": data
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
+
+
 @quiz_bp.route("/admin/<int:quiz_id>", methods=["GET"])
 def get_quiz_for_admin(quiz_id: int):
     try:
