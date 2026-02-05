@@ -96,6 +96,32 @@ def get_all_quizzes():
 
     except requests.exceptions.RequestException as e:
         return jsonify({"success": False, "message": str(e)}), 500
+    
+@quiz_bp.get("/catalog")
+@require_auth
+def get_catalog():
+    try:
+        page = request.args.get("page", 1, type=int)
+        page_size = request.args.get("page_size", 12, type=int)
+
+        catalog = QuizService.get_catalog_from_quizService(page=page, page_size=page_size)
+
+        data = catalog.get("data", {})
+        items = data.get("items", [])
+
+        users = UserService.get_all_user_emails()
+        id_to_email = {user["id"]: user["email"] for user in users}
+
+        for quiz in items:
+            author_id = quiz.pop("author_id", None)
+            quiz["author_email"] = id_to_email.get(author_id, "unknown@example.com")
+
+        return jsonify(catalog), 200
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+
 
 @quiz_bp.get("/admin/<int:quiz_id>")
 @require_role([UserRole.ADMIN])

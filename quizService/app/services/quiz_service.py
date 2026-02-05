@@ -132,13 +132,11 @@ class QuizService:
 
     @staticmethod
     def get_catalog(page: int = 1, page_size: int = 12) -> dict:
-        # Guardrails
         if page < 1:
             page = 1
         if page_size < 1:
             page_size = 12
 
-        # hard cap to prevent abuse
         page_size = min(page_size, 50)
 
         query = (
@@ -146,8 +144,6 @@ class QuizService:
             .filter(Quiz.status == QuizStatus.APPROVED.value)
             .order_by(desc(Quiz.created_at))
         )
-
-        # Flask-SQLAlchemy paginate helper
         pagination = query.paginate(page=page, per_page=page_size, error_out=False)
 
         items = [
@@ -155,8 +151,8 @@ class QuizService:
                 "id": q.quiz_id,
                 "title": q.title,
                 "duration_seconds": q.duration_seconds,
-                # Prefer ISO for FE; if you want your existing format, swap this line
                 "created_at": q.created_at.isoformat() if q.created_at else None,
+                "author_id": q.author_id
             }
             for q in pagination.items
         ]
