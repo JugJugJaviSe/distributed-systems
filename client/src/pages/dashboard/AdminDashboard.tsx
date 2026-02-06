@@ -1,18 +1,16 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import { useSocket } from "../../contextsts/SocketContext";
-import { Navbar } from "../../components/navbar/Navbar";
-import { DashboardLayout } from "../../components/dashboard/DashboardLayout";
 import { ProfileCard } from "../../components/profile_card/ProfileCard";
-import { AdminInbox } from "../../components/admin/AdminInbox";
-import ApprovedQuizzesTable from "../../components/quiz/ApprovedQuizzesTable";
-
 import type { ICloudinariImageAPIService } from "../../api_services/cloudinary_image_api/ICloudinaryImageAPIService";
 import type { IUsersAPIService } from "../../api_services/users_api/IUsersAPIService";
+import { useEffect, useState } from "react";
+import ApprovedQuizzesTable from "../../components/quiz/ApprovedQuizzesTable";
 import type { IQuizAPIService } from "../../api_services/quiz_api/IQuizAPIService";
 import type { IAdminAPIService } from "../../api_services/admin_api/IAdminAPIService";
 import type { AdminNotification } from "../../types/admin/AdminNotification";
+import { AdminInbox } from "../../components/admin/AdminInbox";
+import { useSocket } from "../../contextsts/SocketContext";
+import { Navbar } from "../../components/navbar/Navbar";
+import { DashboardLayout } from "../../components/dashboard/DashboardLayout";
 
 const STORAGE_KEY = "admin_notifications";
 
@@ -52,9 +50,6 @@ export default function AdminDashboard({
     };
 
     socket.on("quiz_created", handleQuizCreated);
-
-    // IMPORTANT: socket.off(...) returns the socket (not void),
-    // so wrap in a block so the cleanup returns void.
     return () => {
       socket.off("quiz_created", handleQuizCreated);
     };
@@ -62,6 +57,7 @@ export default function AdminDashboard({
 
   return (
     <DashboardLayout navbar={<Navbar onProfileClick={() => setShowProfile(true)} />}>
+      
       <div className="w-full max-w-5xl px-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-100">Quizzes</h1>
 
@@ -71,7 +67,8 @@ export default function AdminDashboard({
         />
       </div>
 
-      <div className="w-full max-w-6xl px-6">
+      
+      <div className="w-full max-w-5xl px-6">
         <ApprovedQuizzesTable quizApi={quizApi} adminApi={adminApi} />
       </div>
 
