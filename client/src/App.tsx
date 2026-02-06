@@ -27,7 +27,7 @@ function App() {
       <Route path="/404" element={<NotFoundPage />} />
 
       <Route path="/Player-dashboard" element={
-        <ProtectedRoute requiredRole="Player"><PlayerDashboard cloudinaryApi={cloudinaryApi} usersApi={usersApi} /></ProtectedRoute>
+        <ProtectedRoute requiredRole="Player"><PlayerDashboard cloudinaryApi={cloudinaryApi} usersApi={usersApi} quizApi={quizApi} /></ProtectedRoute>
       } />
 
       <Route path="/Admin-dashboard" element={
