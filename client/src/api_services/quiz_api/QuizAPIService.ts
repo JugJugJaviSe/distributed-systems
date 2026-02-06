@@ -5,6 +5,7 @@ import type { GetQuizResponse } from "../../types/quiz/GetQuizResponses";
 import type { GetAllQuizzesResponse } from "../../types/quiz/GetAllQuizzesResponse";
 import type { EditQuizResponse } from "../../types/quiz/EditQuizResponse";
 import type { CreateQuizResponse } from "../../types/quiz/CreateQuizResponse";
+import type { GetQuizCatalogResponse } from "../../types/quiz/GetQuizCatalogResponse";
 
 const API_URL: string = import.meta.env.VITE_API_URL + "/quiz";
 
@@ -78,6 +79,35 @@ export const quizApi: IQuizAPIService = {
             return { success: false, message, data: undefined };
         }
     },
+
+     async getCatalog(
+        token: string,
+        page: number = 1,
+        pageSize: number = 12
+    ): Promise<GetQuizCatalogResponse> {
+        try {
+            const res = await axios.get<GetQuizCatalogResponse>(
+                `${API_URL}/catalog`,
+                {
+                    params: { page, page_size: pageSize },
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            return res.data;
+        } catch (error) {
+            let message = "Get quiz catalog error";
+            if (axios.isAxiosError(error))
+                message = error.response?.data?.message || message;
+
+            return { success: false, message, data: undefined };
+        }
+    },
+
+
+
 
     async getQuizForAdmin(token: string, quizId: number) {
         try {
