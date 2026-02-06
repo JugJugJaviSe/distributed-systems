@@ -59,7 +59,7 @@ class QuizExecutionService:
 
 
     @staticmethod
-    def submit_answer(attempt_id: int, question_id: int, answer_id: int):
+    def submit_answer(attempt_id: int, question_id: int, answer_ids: list[int]):
         session = QuizExecutionCache.get_quiz(attempt_id)
         if not session:
             raise ValueError("Quiz attempt not found or expired")
@@ -68,26 +68,23 @@ class QuizExecutionService:
             QuizExecutionCache.finish_quiz(attempt_id)
             raise ValueError("Quiz time expired")
 
-        # Prevent answering same question twice
-        if question_id in session["player_answers"]:
-            raise ValueError("Question already answered")
-
         # Validate that the question belongs to this quiz
         question_ids = [q["question_id"] for q in session["questions"]]
         if question_id not in question_ids:
             raise ValueError("Invalid question for this quiz")
 
-        # Validate that the answer belongs to the question
+        # Validate that all submitted answer IDs belong to the question
         valid_answer_ids = [a["answer_id"] for a in session["answers"] if a["question_id"] == question_id]
-        if answer_id not in valid_answer_ids:
-            raise ValueError("Invalid answer for this question")
+        invalid_ids = [a_id for a_id in answer_ids if a_id not in valid_answer_ids]
+        if invalid_ids:
+            raise ValueError(f"Invalid answer IDs for this question: {invalid_ids}")
 
-        QuizExecutionCache.save_answer(attempt_id, question_id, answer_id)
+        QuizExecutionCache.save_answer(attempt_id, question_id, answer_ids)
 
         return {
             "attempt_id": attempt_id,
             "question_id": question_id,
-            "answer_id": answer_id,
+            "answer_ids": answer_ids,
             "answered_questions": len(session["player_answers"]),
             "total_questions": len(session["questions"])
         }
@@ -110,26 +107,23 @@ class QuizExecutionService:
         score = 0
         total_points = 0
 
+        # Calculate total points
         for question in session["questions"]:
             total_points += question["points"]
 
-        # Calculate score
-        for q_id, answer_id in session["player_answers"].items():
-            correct_answer = next(
-                (
-                    a for a in session["answers"]
-                    if a["question_id"] == q_id and a["is_correct"]
-                ),
-                None
-            )
+        # Calculate score based on submitted answers
+        for question in session["questions"]:
+            q_id = question["question_id"]
+            submitted_ids = session["player_answers"].get(q_id, [])
 
-            if correct_answer and answer_id == correct_answer["answer_id"]:
-                question = next(
-                    (q for q in session["questions"] if q["question_id"] == q_id),
-                    None
-                )
-                if question:
-                    score += question["points"]
+            correct_ids = [
+                a["answer_id"] for a in session["answers"]
+                if a["question_id"] == q_id and a["is_correct"]
+            ]
+
+            # Full points only if all correct answers submitted and no incorrect ones
+            if set(submitted_ids) == set(correct_ids) and correct_ids:
+                score += question["points"]
 
         attempt.finished_at = finished_at
         attempt.time_taken_seconds = int((finished_at - attempt.started_at).total_seconds())
@@ -138,6 +132,7 @@ class QuizExecutionService:
 
         db.session.commit()
 
+        # Send result email in separate process
         Process(
             target=QuizMailService.send_quiz_result_email,
             args=(

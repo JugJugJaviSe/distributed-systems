@@ -29,7 +29,7 @@ export function QuizPlayPage({ quizApi, executionApi }: QuizPlayPageProps) {
     const [quizStarted, setQuizStarted] = useState(false);
 
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [answersSelected, setAnswersSelected] = useState<Record<number, number>>({});
+    const [answersSelected, setAnswersSelected] = useState<Record<number, number[]>>({});
 
     const { token, user } = useAuth();
 
@@ -70,14 +70,14 @@ export function QuizPlayPage({ quizApi, executionApi }: QuizPlayPageProps) {
     };
 
     // Submit answer
-    const submitAnswer = async (answerId: number) => {
+    const submitAnswer = async (answerIds: number[]) => {
         if (!attemptId || !quizData) return;
 
         const currentQuestion = quizData.questions[currentQuestionIndex];
 
         setAnswersSelected(prev => ({   // Updating UI before calling API for better UX
             ...prev,
-            [currentQuestion.question_id]: answerId,
+            [currentQuestion.question_id]: answerIds,
         }));
 
         if (currentQuestionIndex + 1 < quizData.questions.length) {
@@ -85,7 +85,7 @@ export function QuizPlayPage({ quizApi, executionApi }: QuizPlayPageProps) {
         }
 
         try {
-            const response = await executionApi.submitAnswer(token!, attemptId, currentQuestion.question_id, answerId);
+            const response = await executionApi.submitAnswer(token!, attemptId, currentQuestion.question_id, answerIds);
 
             if (!response.success) {
                 console.error(response.message);
@@ -157,8 +157,7 @@ export function QuizPlayPage({ quizApi, executionApi }: QuizPlayPageProps) {
 
                     <QuizQuestionCard
                         question={quizData.questions[currentQuestionIndex]}
-                        selectedAnswerId={answersSelected[quizData.questions[currentQuestionIndex].question_id]}
-                        onAnswerSelect={submitAnswer}
+                        onSubmit={submitAnswer}
                     />
                 </>
             )}

@@ -14,7 +14,7 @@ export interface QuizStartResponse {
 export interface SubmitAnswerResponseData {
     attempt_id: number;
     question_id: number;
-    answer_id: number;
+    answer_ids: number[];
     answered_questions: number;
     total_questions: number;
 }

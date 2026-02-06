@@ -29,9 +29,9 @@ def submit_answer():
     data = request.get_json()
 
     result = QuizExecutionService.submit_answer(
-        attempt_id = int(data.get("attempt_id")),
-        question_id = int(data.get("question_id")),
-        answer_id = int(data.get("answer_id"))
+        attempt_id=int(data.get("attempt_id")),
+        question_id=int(data.get("question_id")),
+        answer_ids=list(map(int, data.get("answer_ids", [])))
     )
 
     return jsonify({

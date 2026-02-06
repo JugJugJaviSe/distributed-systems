@@ -31,26 +31,20 @@ function App() {
       } />
 
       <Route path="/Admin-dashboard" element={
-        <ProtectedRoute requiredRole="Admin"><AdminDashboard cloudinaryApi={cloudinaryApi} usersApi={usersApi} quizApi={quizApi} adminApi={adminApi}/></ProtectedRoute>
+        <ProtectedRoute requiredRole="Admin"><AdminDashboard cloudinaryApi={cloudinaryApi} usersApi={usersApi} quizApi={quizApi} adminApi={adminApi} /></ProtectedRoute>
       } />
 
-          <Route path="/Moderator-dashboard" element={
-              <ProtectedRoute requiredRole="Moderator"><ModeratorDashboard cloudinaryApi={cloudinaryApi} usersApi={usersApi} quizApi={quizApi} /></ProtectedRoute>
+      <Route path="/Moderator-dashboard" element={
+        <ProtectedRoute requiredRole="Moderator"><ModeratorDashboard cloudinaryApi={cloudinaryApi} usersApi={usersApi} quizApi={quizApi} /></ProtectedRoute>
       } />
 
       <Route path="/Admin/users" element={
         <ProtectedRoute requiredRole="Admin"><AdminUsersPage adminApi={adminApi} /></ProtectedRoute>
       } />
 
-      <Route
-        path="/quiz/play/:quizId"
-        element={
-          <QuizPlayPage
-            quizApi={quizApi}
-            executionApi={quizExecutionApi}
-          />
-        }
-      />
+      <Route path="/quiz/play/:quizId" element={
+        <ProtectedRoute requiredRole="Player"><QuizPlayPage quizApi={quizApi} executionApi={quizExecutionApi} /></ProtectedRoute>
+      } />
 
       <Route
         path="/quiz/create"
@@ -60,22 +54,22 @@ function App() {
           </ProtectedRoute>
         }
       />
-          <Route
-              path="/admin/quizzes/:quizId"
-              element={
-                  <ProtectedRoute requiredRole="Admin">
-                      <QuizReviewRoute />
-                  </ProtectedRoute>
-              }
-          />
-          <Route
-              path="/quiz/edit/:quizId"
-              element={
-                  <ProtectedRoute requiredRole="Moderator">
-                      <EditQuizPage quizApi={quizApi} />
-                  </ProtectedRoute>
-              }
-          />
+      <Route
+        path="/admin/quizzes/:quizId"
+        element={
+          <ProtectedRoute requiredRole="Admin">
+            <QuizReviewRoute />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/quiz/edit/:quizId"
+        element={
+          <ProtectedRoute requiredRole="Moderator">
+            <EditQuizPage quizApi={quizApi} />
+          </ProtectedRoute>
+        }
+      />
 
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/404" replace />} />

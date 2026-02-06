@@ -33,12 +33,12 @@ export const quizExecutionApi: IQuizExecutionAPIService = {
         }
     },
 
-    async submitAnswer(token: string, attemptId: number, questionId: number, answerId: number): Promise<SubmitAnswerResponse> {
+    async submitAnswer(token: string, attemptId: number, questionId: number, answerIds: number[]): Promise<SubmitAnswerResponse> {
         try {
             const payload = {
                 attempt_id: attemptId,
                 question_id: questionId,
-                answer_id: answerId
+                answer_ids: answerIds
             };
 
             const res = await axios.post<SubmitAnswerResponse>(
@@ -54,8 +54,9 @@ export const quizExecutionApi: IQuizExecutionAPIService = {
             return res.data;
         } catch (error) {
             let message = "Error submitting answer";
-            if (axios.isAxiosError(error))
+            if (axios.isAxiosError(error)) {
                 message = error.response?.data?.message || message;
+            }
 
             return { success: false, message, data: undefined };
         }

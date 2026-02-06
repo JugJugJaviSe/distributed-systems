@@ -16,7 +16,7 @@ QUIZ_SERVICE_BASE_URL = os.path.join(os.getenv("QUIZ_SERVICE_BASE_URL"), "quiz-e
 
 
 @quiz_execution_bp.route("/start", methods=["POST"])
-@jwt_required()
+@require_role([UserRole.PLAYER])
 def start_quiz():
     user_id = int(get_jwt_identity())
     data = request.get_json()
@@ -48,23 +48,31 @@ def start_quiz():
 
 
 @quiz_execution_bp.route("/answer", methods=["POST"])
-@jwt_required()
+@require_role([UserRole.PLAYER])
 def submit_answer():
     data = request.get_json()
     attempt_id = data.get("attempt_id")
     question_id = data.get("question_id")
-    answer_id = data.get("answer_id")
+    answer_ids = data.get("answer_ids")
 
-    if not attempt_id or not question_id or not answer_id:
+    if not attempt_id or not question_id or not answer_ids:
         return jsonify({
             "success": False,
-            "message": "attempt_id, question_id, and answer_id are required"
+            "message": "attempt_id, question_id, and answer_ids are required"
+        }), 400
+
+    try:
+        answer_ids = list(map(int, answer_ids))
+    except (ValueError, TypeError):
+        return jsonify({
+            "success": False,
+            "message": "answer_ids must be a list of integers"
         }), 400
 
     payload = {
         "attempt_id": attempt_id,
         "question_id": question_id,
-        "answer_id": answer_id
+        "answer_ids": answer_ids
     }
 
     try:
@@ -82,7 +90,7 @@ def submit_answer():
 
 
 @quiz_execution_bp.route("/finish", methods=["POST"])
-@jwt_required()
+@require_role([UserRole.PLAYER])
 def finish_quiz():
     data = request.get_json()
     attempt_id = data.get("attempt_id")
