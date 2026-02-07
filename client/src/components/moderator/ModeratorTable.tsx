@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import type { ModeratorTableProps } from "../../types/moderator/ModeratorTableProps";
 import type { QuizFromList } from "../../types/quiz/QuizFromList";
 import { useAuth } from "../../hooks/UseAuthHook";
+import { useNavigate } from "react-router-dom";
 
 export function ModeratorTable({ quizApi }: ModeratorTableProps) {
     const [quizzes, setQuizzes] = useState<QuizFromList[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { token } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchMyQuizzes() {
@@ -93,7 +95,18 @@ export function ModeratorTable({ quizApi }: ModeratorTableProps) {
                             </td>
 
                             <td className="px-6 py-5 text-sm font-medium text-gray-100">
-                                {quiz.title}
+                                {quiz.status.toLowerCase() === "rejected" ? (
+                                    <span
+                                        onClick={() => navigate(`/quiz/edit/${quiz.id}`)}
+                                        className="underline cursor-pointer text-red-500 hover:text-red-400 transition-colors"
+                                        title="Click to edit this rejected quiz"
+                                    >
+                                        {quiz.title}
+                                    </span>
+                                ) : (
+                                    quiz.title
+                                )}
+
                             </td>
 
                             <td className="px-6 py-5 text-sm text-gray-400">
@@ -106,9 +119,10 @@ export function ModeratorTable({ quizApi }: ModeratorTableProps) {
 
                             <td className="px-6 py-5">
                                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-700 text-gray-200">
-                                    {quiz.status}
+                                    {quiz.status.charAt(0).toUpperCase() + quiz.status.slice(1)}
                                 </span>
                             </td>
+
 
                             <td className="px-6 py-5 text-center">
                                 <button

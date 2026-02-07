@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { IUsersAPIService } from "./IUsersAPIService";
-import type { UserDto } from "../../models/UserDto";
+import type { UserDto } from "../../models/user/UserDto";
 import type { UserApi } from "../../mappers/user_mapper";
 import { mapUserApiToDto, mapUserDtoToApi } from "../../mappers/user_mapper";
 import type { UserResponse } from "../../types/user/UserResponse";

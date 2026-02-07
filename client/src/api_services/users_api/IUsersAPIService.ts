@@ -1,4 +1,4 @@
-import type { UserDto } from "../../models/UserDto";
+import type { UserDto } from "../../models/user/UserDto";
 import type { UserResponse } from "../../types/user/UserResponse";
 
 export interface IUsersAPIService {

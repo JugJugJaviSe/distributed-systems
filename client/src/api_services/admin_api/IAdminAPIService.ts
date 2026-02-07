@@ -1,4 +1,4 @@
-import type { UserDto } from "../../models/UserDto";
+import type { UserDto } from "../../models/user/UserDto";
 import type { AdminReportResponse } from "../../types/admin/AdminReportResponse";
 import type { AdminResponse } from "../../types/admin/AdminResponse";
 

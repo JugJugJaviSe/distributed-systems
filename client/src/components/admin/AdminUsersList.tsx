@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import type { UserDto } from "../../models/UserDto";
+import type { UserDto } from "../../models/user/UserDto";
 import type { AdminUsersProps } from "../../types/admin/AdminUsersPageProps";
 import { useAuth } from "../../hooks/UseAuthHook";
 

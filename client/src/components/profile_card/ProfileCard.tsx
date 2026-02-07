@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { CloudinaryImageResponse } from "../../types/cloudinary/CloudinaryImageResponse";
 import { useAuth } from "../../hooks/UseAuthHook";
-import type { UserDto } from "../../models/UserDto";
+import type { UserDto } from "../../models/user/UserDto";
 import type { ProfileFormState } from "../../types/user/ProfileFormState";
 import type { ProfileCardProps } from "../../types/user/ProfileCardProps";
 

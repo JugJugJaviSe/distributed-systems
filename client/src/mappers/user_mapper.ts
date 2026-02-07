@@ -1,4 +1,4 @@
-import type { UserDto } from "../models/UserDto";
+import type { UserDto } from "../models/user/UserDto";
 
 export type UserApi = {
   id: number;
