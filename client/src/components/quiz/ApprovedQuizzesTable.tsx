@@ -90,72 +90,113 @@ export default function ApprovedQuizzesTable({ quizApi, adminApi }: QuizzesTable
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full border-collapse shadow-lg rounded-lg overflow-hidden">
-        
-        <thead className="bg-gray-800 text-white">
-          <tr>
-            <th className="px-6 py-3 text-left uppercase tracking-wider">ID</th>
-            <th className="px-6 py-3 text-left uppercase tracking-wider">Title</th>
-            <th className="px-6 py-3 text-left uppercase tracking-wider">Author Email</th>
-            <th className="px-6 py-3 text-left uppercase tracking-wider">Duration (s)</th>
-            <th className="px-6 py-3 text-left uppercase tracking-wider">Created At</th>
-            <th className="px-6 py-3 text-left uppercase tracking-wider">Report</th>
-            <th className="px-6 py-3 text-left uppercase tracking-wider">Delete</th>
-          </tr>
-        </thead>
-
-        <tbody className="bg-white">
-          {quizzes.map((quiz, idx) => (
-            <tr
-              key={quiz.id}
-              className={`
-                ${idx % 2 === 0 ? "bg-gray-50" : "bg-white"} 
-                hover:bg-gray-100 transition-colors duration-200
-              `}
-            >
-              <td className="px-6 py-4 text-gray-500">{quiz.id}</td>
-              <td className="px-6 py-4 font-medium text-gray-700">{quiz.title}</td>
-              <td className="px-6 py-4 text-gray-600">{quiz.author_email}</td>
-              <td className="px-6 py-4 text-gray-500">{quiz.duration_seconds}</td>
-              <td className="px-6 py-4 text-gray-500">{quiz.created_at}</td>
-
-              <td className="px-6 py-4 text-center">
-                <input
-                  type="checkbox"
-                  checked={selectedQuizzes.includes(quiz.id)}
-                  onChange={() => handleCheckboxChange(quiz.id)}
-                  className="h-5 w-5 text-blue-500 rounded border-gray-300 focus:ring-2 focus:ring-blue-400"
-                />
-              </td>
-
-              <td className="px-6 py-4 text-center">
-                <button
-                  onClick={() => handleDeleteQuiz(quiz.id)}
-                  className="px-3 py-1 bg-red-600 hover:bg-red-500 text-white rounded-lg shadow"
-                >
-                  Delete
-                </button>
-              </td>
+    <div>
+      <div className="overflow-x-auto rounded-xl ring-1 ring-gray-700 bg-gray-900 shadow-lg">
+        <table className="min-w-full border-separate border-spacing-0">
+          <thead className="bg-gray-800">
+            <tr>
+              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                ID
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                Title
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                Author Email
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                Duration
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                Created
+              </th>
+              <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-gray-300">
+                Report
+              </th>
+              <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-gray-300">
+                Delete
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
 
-      <button
-        onClick={handleGenerateReport}
-        className="
-          mt-4 px-6 py-2 
-          bg-blue-500 font-medium 
-          rounded-lg shadow hover:bg-blue-600 
-          transition-colors duration-200 
-          flex items-center justify-center
-          disabled:bg-gray-400 disabled:cursor-not-allowed
+          <tbody>
+            {quizzes.map((quiz, idx) => (
+              <tr
+                key={quiz.id}
+                className={`
+                ${idx % 2 === 0 ? "bg-gray-900" : "bg-gray-800/60"}
+                hover:bg-gray-800 transition-colors
+              `}
+              >
+                <td className="px-6 py-5 text-sm text-gray-400">
+                  {quiz.id}
+                </td>
+
+                <td className="px-6 py-5 text-sm font-medium text-gray-100">
+                  {quiz.title}
+                </td>
+
+                <td className="px-6 py-5 text-sm text-gray-300">
+                  {quiz.author_email}
+                </td>
+
+                <td className="px-6 py-5 text-sm text-gray-400">
+                  {quiz.duration_seconds}s
+                </td>
+
+                <td className="px-6 py-5 text-sm text-gray-400">
+                  {quiz.created_at}
+                </td>
+
+                <td className="px-6 py-5 text-center">
+                  <input
+                    type="checkbox"
+                    checked={selectedQuizzes.includes(quiz.id)}
+                    onChange={() => handleCheckboxChange(quiz.id)}
+                    className="
+                    h-5 w-5 rounded-md
+                    bg-gray-800 border-gray-600
+                    text-indigo-500
+                    focus:ring-2 focus:ring-indigo-500
+                    focus:ring-offset-0
+                  "
+                  />
+                </td>
+
+                <td className="px-6 py-5 text-center">
+                  <button
+                    onClick={() => handleDeleteQuiz(quiz.id)}
+                    className="
+                    px-4 py-2 text-sm font-semibold rounded-lg
+                    bg-red-600 hover:bg-red-500
+                    text-white transition-colors
+                    shadow-sm
+                  "
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="flex justify-end mt-4">
+        <button
+          onClick={handleGenerateReport}
+          disabled={selectedQuizzes.length === 0}
+          className="
+          px-6 py-2 rounded-lg font-semibold text-sm
+          bg-indigo-600 hover:bg-indigo-500
+          text-white shadow-sm transition-colors
+          disabled:bg-gray-700 disabled:text-gray-400
+          disabled:cursor-not-allowed
         "
-        disabled={selectedQuizzes.length === 0}
-      >
-        Generate Report
-      </button>
+        >
+          Generate Report
+        </button>
+      </div>
     </div>
   );
 }

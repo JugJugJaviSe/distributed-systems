@@ -66,7 +66,7 @@ export default function ModeratorDashboard({
         />
       </div>
 
-      <div className="w-full max-w-6xl px-6">
+      <div className="w-full max-w-5xl px-6">
         <ModeratorTable quizApi={quizApi} />
       </div>
 

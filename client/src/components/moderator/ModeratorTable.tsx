@@ -50,40 +50,72 @@ export function ModeratorTable({ quizApi }: ModeratorTableProps) {
         }
     };
 
-    if (loading) return <p className="text-gray-500">Loading quizzes...</p>;
-    if (error) return <p className="text-red-500">{error}</p>;
+    if (loading) return <p className="text-gray-400 px-6 py-4">Loading quizzes...</p>;
+    if (error) return <p className="text-red-500 px-6 py-4">{error}</p>;
 
     return (
-        <div className="overflow-x-auto">
-            <table className="min-w-full border-collapse shadow-lg rounded-lg overflow-hidden">
-                <thead className="bg-gray-800 text-white">
+        <div className="overflow-x-auto rounded-xl ring-1 ring-gray-700 bg-gray-900 shadow-lg">
+            <table className="min-w-full border-separate border-spacing-0">
+                <thead className="bg-gray-800">
                     <tr>
-                        <th className="px-6 py-3 text-left uppercase tracking-wider">ID</th>
-                        <th className="px-6 py-3 text-left uppercase tracking-wider">Title</th>
-                        <th className="px-6 py-3 text-left uppercase tracking-wider">Duration (s)</th>
-                        <th className="px-6 py-3 text-left uppercase tracking-wider">Created At</th>
-                        <th className="px-6 py-3 text-left uppercase tracking-wider">Status</th>
-                        <th className="px-6 py-3 text-left uppercase tracking-wider">Actions</th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                            ID
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                            Title
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                            Duration
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                            Created
+                        </th>
+                        <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                            Status
+                        </th>
+                        <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-gray-300">
+                            Actions
+                        </th>
                     </tr>
                 </thead>
-                <tbody className="bg-white">
+
+                <tbody>
                     {quizzes.map((quiz, idx) => (
                         <tr
                             key={quiz.id}
                             className={`
-                                ${idx % 2 === 0 ? "bg-gray-50" : "bg-white"} 
-                                hover:bg-gray-100 transition-colors duration-200
-                            `}
+                            ${idx % 2 === 0 ? "bg-gray-900" : "bg-gray-800/60"}
+                            hover:bg-gray-800 transition-colors
+                        `}
                         >
-                            <td className="px-6 py-4 text-gray-500">{quiz.id}</td>
-                            <td className="px-6 py-4 font-medium text-gray-700">{quiz.title}</td>
-                            <td className="px-6 py-4 text-gray-500">{quiz.duration_seconds}</td>
-                            <td className="px-6 py-4 text-gray-500">{quiz.created_at}</td>
-                            <td className="px-6 py-4 text-gray-600">{quiz.status}</td>
-                            <td className="px-6 py-4 text-center">
+                            <td className="px-6 py-5 text-sm text-gray-400">
+                                {quiz.id}
+                            </td>
+
+                            <td className="px-6 py-5 text-sm font-medium text-gray-100">
+                                {quiz.title}
+                            </td>
+
+                            <td className="px-6 py-5 text-sm text-gray-400">
+                                {quiz.duration_seconds}s
+                            </td>
+
+                            <td className="px-6 py-5 text-sm text-gray-400">
+                                {quiz.created_at}
+                            </td>
+
+                            <td className="px-6 py-5">
+                                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-700 text-gray-200">
+                                    {quiz.status}
+                                </span>
+                            </td>
+
+                            <td className="px-6 py-5 text-center">
                                 <button
                                     onClick={() => handleDeleteQuiz(quiz.id)}
-                                    className="px-3 py-1 bg-red-600 hover:bg-red-500 text-white rounded-lg shadow"
+                                    className="px-4 py-2 text-sm font-semibold rounded-lg
+                                           bg-red-600 hover:bg-red-500
+                                           text-white transition-colors shadow-sm"
                                 >
                                     Delete
                                 </button>

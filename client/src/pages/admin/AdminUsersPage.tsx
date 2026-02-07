@@ -29,9 +29,10 @@ export default function AdminUsersPage({ adminApi }: AdminUsersProps) {
 
   return (
     <DashboardLayout navbar={<Navbar />}>
-     
-      <div className="w-full max-w-5xl px-6 flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-100">User Management</h1>
+      <div className="w-full max-w-5xl px-6 flex items-center justify-between">
+        <h1 className="text-3xl font-bold text-gray-100">
+          User Management
+        </h1>
       </div>
 
       <div className="w-full max-w-5xl px-6">

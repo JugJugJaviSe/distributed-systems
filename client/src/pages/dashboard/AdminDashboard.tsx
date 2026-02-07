@@ -57,7 +57,7 @@ export default function AdminDashboard({
 
   return (
     <DashboardLayout navbar={<Navbar onProfileClick={() => setShowProfile(true)} />}>
-      
+
       <div className="w-full max-w-5xl px-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-100">Quizzes</h1>
 
@@ -67,7 +67,7 @@ export default function AdminDashboard({
         />
       </div>
 
-      
+
       <div className="w-full max-w-5xl px-6">
         <ApprovedQuizzesTable quizApi={quizApi} adminApi={adminApi} />
       </div>

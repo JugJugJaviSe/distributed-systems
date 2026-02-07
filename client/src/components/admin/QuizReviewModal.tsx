@@ -95,118 +95,94 @@ export function QuizReviewModal({
 
     if (loading) {
         return (
-            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-                <div className="bg-gray-800 p-6 rounded text-white">
-                    Loading quiz details...
-                </div>
+            <div className="bg-gray-800 p-6 rounded-xl shadow text-gray-200">
+                Loading quiz details...
             </div>
         );
     }
 
     if (error || !quiz) {
         return (
-            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-                <div className="bg-gray-800 p-6 rounded max-w-md">
-                    <p className="text-red-400 mb-4">{error}</p>
-                    <button
-                        onClick={onClose}
-                        className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white"
-                    >
-                        Close
-                    </button>
-                </div>
+            <div className="bg-red-800 p-6 rounded-xl shadow text-red-200">
+                {error || "Quiz not found"}
             </div>
         );
     }
 
     return (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-            <div className="bg-gray-900 w-full max-w-4xl rounded-xl p-6 max-h-[90vh] overflow-y-auto">
-                <div className="flex justify-between mb-6">
-                    <div>
-                        <h2 className="text-2xl font-bold text-white">{quiz.title}</h2>
-                        <p className="text-gray-400 mt-2">{quiz.description}</p>
-                        <div className="flex gap-3 mt-3">
-                            <span className="bg-gray-800 px-3 py-1 rounded text-sm text-gray-300">
-                                {quiz.duration_seconds}s
+        <div className="bg-gray-900 rounded-xl shadow p-6 space-y-6">
+            {/* Quiz Header */}
+            <div className="space-y-2">
+                <h2 className="text-2xl font-bold text-white">{quiz.title}</h2>
+                <p className="text-gray-400">{quiz.description}</p>
+                <div className="flex gap-3 mt-2">
+                    <span className="bg-gray-800 px-3 py-1 rounded text-sm text-gray-300">
+                        {quiz.duration_seconds}s
+                    </span>
+                    <span className="bg-gray-800 px-3 py-1 rounded text-sm text-gray-300">
+                        {quiz.questions.length} questions
+                    </span>
+                </div>
+            </div>
+
+            {/* Questions */}
+            <div className="space-y-4">
+                {quiz.questions.map((q, qi) => (
+                    <div
+                        key={q.question_id}
+                        className="bg-gray-800 border border-gray-700 rounded-xl p-4 shadow-sm"
+                    >
+                        <div className="text-white font-semibold mb-2">
+                            {qi + 1}. {q.text}{" "}
+                            <span className="ml-2 text-green-400">
+                                ({q.points} pts)
                             </span>
-                            <span className="bg-gray-800 px-3 py-1 rounded text-sm text-gray-300">
-                                {quiz.questions.length} questions
-                            </span>
+                        </div>
+                        <div className="space-y-2">
+                            {q.answers.map((a, ai) => (
+                                <div
+                                    key={a.answer_id}
+                                    className="p-2 bg-gray-700 rounded text-gray-300"
+                                >
+                                    {a.text}
+                                </div>
+                            ))}
                         </div>
                     </div>
-                    <button
-                        onClick={onClose}
-                        className="text-gray-400 hover:text-white"
-                    >
-                        X
-                    </button>
-                </div>
+                ))}
+            </div>
 
-                <div className="space-y-4 mb-6">
-                    {quiz.questions.map((q, qi) => (
-                        <div
-                            key={`question-${q.question_id}-${qi}`}
-                            className="bg-gray-800 border border-gray-700 rounded p-4"
-                        >
-                            <div className="text-white font-semibold mb-2">
-                                {qi + 1}. {q.text}
-                                <span className="ml-2 text-green-400">
-                                    ({q.points} pts)
-                                </span>
-                            </div>
+            {/* Admin Comment */}
+            <div>
+                <label className="block text-gray-300 mb-2 font-medium">
+                    Admin comment (required for rejection)
+                </label>
+                <textarea
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    className="w-full p-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    rows={4}
+                    placeholder="Write feedback..."
+                />
+            </div>
 
-                            <div className="space-y-2">
-                                {q.answers.map((a, ai) => (
-                                    <div
-                                        key={`answer-${a.answer_id}-${ai}`}
-                                        className="p-2 bg-gray-700 rounded text-gray-300"
-                                    >
-                                        {a.text}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
-                </div>
+            {/* Actions */}
+            <div className="flex justify-between mt-4">
+                <button
+                    disabled={submitting}
+                    onClick={handleReject}
+                    className="px-6 py-2 bg-red-600 rounded-lg text-white font-semibold shadow-sm hover:bg-red-500 transition-colors disabled:opacity-50"
+                >
+                    Reject
+                </button>
 
-                <div className="mb-6">
-                    <label className="block text-gray-300 mb-2">
-                        Admin comment (required for rejection)
-                    </label>
-                    <textarea
-                        value={comment}
-                        onChange={(e) => setComment(e.target.value)}
-                        className="w-full p-3 bg-gray-800 border border-gray-700 rounded text-white"
-                        rows={4}
-                        placeholder="Write feedback..."
-                    />
-                </div>
-
-                <div className="flex justify-end gap-3">
-                    <button
-                        onClick={onClose}
-                        className="px-4 py-2 bg-gray-700 rounded text-white"
-                    >
-                        Cancel
-                    </button>
-
-                    <button
-                        disabled={submitting}
-                        onClick={handleReject}
-                        className="px-4 py-2 bg-red-600 rounded text-white disabled:opacity-50"
-                    >
-                        Reject
-                    </button>
-
-                    <button
-                        disabled={submitting}
-                        onClick={handleApprove}
-                        className="px-4 py-2 bg-green-600 rounded text-white disabled:opacity-50"
-                    >
-                        Approve
-                    </button>
-                </div>
+                <button
+                    disabled={submitting}
+                    onClick={handleApprove}
+                    className="px-6 py-2 bg-green-600 rounded-lg text-white font-semibold shadow-sm hover:bg-green-500 transition-colors disabled:opacity-50"
+                >
+                    Approve
+                </button>
             </div>
         </div>
     );

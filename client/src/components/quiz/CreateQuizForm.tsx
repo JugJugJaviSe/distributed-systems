@@ -100,54 +100,71 @@ export function CreateQuizForm({ quizApi }: CreateQuizPageProps) {
     };
 
     return (
-        <div className="max-w-3xl mx-auto space-y-4">
-            <h1 className="text-2xl font-bold">Create Quiz</h1>
+        <div className="max-w-5xl mx-auto space-y-6 px-6">
+            <div className="space-y-1">
+                <label className="block text-gray-300 font-medium text-sm">Quiz Title</label>
+                <input
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Enter quiz title"
+                    className="w-full px-4 py-3 rounded-lg bg-gray-800 text-gray-100 border border-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                />
+            </div>
 
+            <div className="space-y-1">
+                <label className="block text-gray-300 font-medium text-sm">
+                    Duration (minutes)
+                </label>
+                <input
+                    type="number"
+                    value={duration}
+                    onChange={(e) => setDuration(Number(e.target.value))}
+                    placeholder="Enter duration in minutes"
+                    className="w-full px-4 py-3 rounded-lg bg-gray-800 text-gray-100 border border-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    min={1}
+                />
+            </div>
+
+            <div className="space-y-4">
+                {questions.map((q, index) => (
+                    <QuestionEditor
+                        key={index}
+                        question={q}
+                        onChange={(updated) => {
+                            const copy = [...questions];
+                            copy[index] = updated;
+                            setQuestions(copy);
+                        }}
+                    />
+                ))}
+            </div>
+
+            {/* Errors */}
             {formErrors.length > 0 && (
-                <div className="bg-red-100 border border-red-400 text-red-700 p-3 rounded">
-                    {formErrors.map((err, i) => <p key={i}>• {err}</p>)}
+                <div className="bg-gray-900 border border-red-600 text-red-400 p-4 rounded-lg shadow-sm">
+                    {formErrors.map((err, i) => (
+                        <p key={i} className="text-sm">
+                            â€¢ {err}
+                        </p>
+                    ))}
                 </div>
             )}
 
-            <input
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-                placeholder="Quiz title"
-                className="w-full p-2 border rounded"
-            />
+            <div className="flex justify-between mt-4">
+                <button
+                    onClick={addQuestion}
+                    className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg shadow transition-colors duration-200"
+                >
+                    Add Question
+                </button>
 
-            <input
-                type="number"
-                value={duration}
-                onChange={e => setDuration(Number(e.target.value))}
-                className="w-full p-2 border rounded"
-            />
-
-            {questions.map((q, index) => (
-                <QuestionEditor
-                    key={index}
-                    question={q}
-                    onChange={updated => {
-                        const copy = [...questions];
-                        copy[index] = updated;
-                        setQuestions(copy);
-                    }}
-                />
-            ))}
-
-            <button
-                onClick={addQuestion}
-                className="px-4 py-2 bg-blue-600 text-white rounded"
-            >
-                Add question
-            </button>
-
-            <button
-                onClick={handleSubmit}
-                className="px-4 py-2 bg-green-600 text-white rounded"
-            >
-                Save quiz
-            </button>
+                <button
+                    onClick={handleSubmit}
+                    className="px-6 py-2 bg-green-600 hover:bg-green-500 text-white font-semibold rounded-lg shadow transition-colors duration-200"
+                >
+                    Save Quiz
+                </button>
+            </div>
         </div>
     );
 }

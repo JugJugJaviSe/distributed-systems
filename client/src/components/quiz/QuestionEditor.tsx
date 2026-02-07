@@ -14,42 +14,52 @@ export function QuestionEditor({ question, onChange }: Props) {
     };
 
     return (
-        <div className="border p-4 rounded space-y-2">
-            <input
-                value={question.text}
-                onChange={e => onChange({ ...question, text: e.target.value })}
-                placeholder="Question text"
-                className="w-full p-2 border rounded"
-            />
-
-            <input
-                type="number"
-                value={question.points}
-                onChange={e =>
-                    onChange({ ...question, points: Number(e.target.value) })
-                }
-                className="w-full p-2 border rounded"
-            />
-
-            {question.answers.map((a, i) => (
-                <AnswerEditor
-                    key={i}
-                    answer={a}
-                    onChange={val => updateAnswer(i, val)}
+        <div className="bg-gray-900 border border-gray-700 rounded-xl p-5 space-y-4 shadow-sm">
+            <div className="space-y-1">
+                <label className="block text-gray-300 font-medium text-sm">Question Text</label>
+                <input
+                    value={question.text}
+                    onChange={(e) => onChange({ ...question, text: e.target.value })}
+                    placeholder="Enter the question text"
+                    className="w-full px-4 py-3 rounded-lg bg-gray-800 text-gray-100 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
-            ))}
+            </div>
 
-            <button
-                onClick={() =>
-                    onChange({
-                        ...question,
-                        answers: [...question.answers, { text: "", is_correct: false }],
-                    })
-                }
-                className="text-sm text-blue-600"
-            >
-                + Add answer
-            </button>
+            <div className="space-y-1">
+                <label className="block text-gray-300 font-medium text-sm">Points</label>
+                <input
+                    type="number"
+                    value={question.points}
+                    onChange={(e) => onChange({ ...question, points: Number(e.target.value) })}
+                    placeholder="Enter points for this question"
+                    className="w-full px-4 py-3 rounded-lg bg-gray-800 text-gray-100 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    min={0}
+                />
+            </div>
+
+            <div className="space-y-3">
+                {question.answers.map((a, i) => (
+                    <AnswerEditor
+                        key={i}
+                        answer={a}
+                        onChange={(val) => updateAnswer(i, val)}
+                    />
+                ))}
+            </div>
+
+            <div>
+                <button
+                    onClick={() =>
+                        onChange({
+                            ...question,
+                            answers: [...question.answers, { text: "", is_correct: false }],
+                        })
+                    }
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg shadow transition-colors duration-200 text-sm"
+                >
+                    Add Answer
+                </button>
+            </div>
         </div>
     );
 }

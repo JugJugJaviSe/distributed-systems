@@ -39,16 +39,15 @@ export default function EditQuizForm({ quizId, quizApi, onSaved }: EditQuizFormP
             }
 
             const quiz = res.data;
-
             setTitle(quiz.title);
             setDuration(quiz.duration_seconds);
 
             const mappedQuestions: EditQuestion[] = quiz.questions.map((q: any) => ({
-                question_id: q.id, // FIX
+                question_id: q.id,
                 text: q.text,
                 points: q.points,
                 answers: q.answers.map((a: any) => ({
-                    answer_id: a.id, // FIX
+                    answer_id: a.id,
                     text: a.text,
                     is_correct: a.is_correct,
                 })),
@@ -85,7 +84,6 @@ export default function EditQuizForm({ quizId, quizApi, onSaved }: EditQuizFormP
         }
 
         const payload = { title, duration, questions };
-
         const res = await quizApi.editQuiz(token, quizId, payload);
 
         if (!res.success) {
@@ -108,96 +106,112 @@ export default function EditQuizForm({ quizId, quizApi, onSaved }: EditQuizFormP
         onSaved();
     };
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <p className="text-gray-300">Loading quiz...</p>;
     if (error) return <p className="text-red-500">{error}</p>;
 
     return (
-        <div className="max-w-3xl mx-auto space-y-4">
-            <h1 className="text-2xl font-bold">Edit quiz</h1>
+        <div className="max-w-5xl mx-auto px-6 space-y-6">
+            <div className="space-y-1">
+                <label className="block text-gray-300 font-medium text-sm">Quiz Title</label>
+                <input
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Enter quiz title"
+                    className="w-full px-4 py-3 rounded-lg bg-gray-800 text-gray-100 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+            </div>
 
+            <div className="space-y-1">
+                <label className="block text-gray-300 font-medium text-sm">Duration (minutes)</label>
+                <input
+                    type="number"
+                    value={duration}
+                    onChange={(e) => setDuration(Number(e.target.value))}
+                    placeholder="Enter duration in minutes"
+                    className="w-full px-4 py-3 rounded-lg bg-gray-800 text-gray-100 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    min={1}
+                />
+            </div>
+
+            <div className="space-y-4">
+                {questions.map((q, index) => (
+                    <div key={q.question_id} className="bg-gray-900 border border-gray-700 rounded-xl p-5 space-y-3 shadow-sm">
+                        <div className="space-y-1">
+                            <label className="block text-gray-300 font-medium text-sm">Question Text</label>
+                            <input
+                                className="w-full px-4 py-3 rounded-lg bg-gray-800 text-gray-100 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                value={q.text}
+                                onChange={e => {
+                                    const copy = [...questions];
+                                    copy[index] = { ...q, text: e.target.value };
+                                    setQuestions(copy);
+                                }}
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="block text-gray-300 font-medium text-sm">Points</label>
+                            <input
+                                type="number"
+                                className="w-full px-4 py-3 rounded-lg bg-gray-800 text-gray-100 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                value={q.points}
+                                onChange={e => {
+                                    const copy = [...questions];
+                                    copy[index] = { ...q, points: Number(e.target.value) };
+                                    setQuestions(copy);
+                                }}
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            {q.answers.map((a, aIndex) => (
+                                <div key={a.answer_id} className="flex items-center gap-2">
+                                    <input
+                                        className="flex-1 px-4 py-2 rounded-lg bg-gray-800 text-gray-100 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        value={a.text}
+                                        onChange={e => {
+                                            const copy = [...questions];
+                                            copy[index].answers[aIndex] = { ...a, text: e.target.value };
+                                            setQuestions(copy);
+                                        }}
+                                    />
+                                    <label className="flex items-center gap-1 text-gray-300">
+                                        <input
+                                            type="checkbox"
+                                            checked={a.is_correct}
+                                            onChange={e => {
+                                                const copy = [...questions];
+                                                copy[index].answers[aIndex] = { ...a, is_correct: e.target.checked };
+                                                setQuestions(copy);
+                                            }}
+                                            className="w-4 h-4 rounded border-gray-600 bg-gray-800 focus:ring-2 focus:ring-indigo-500"
+                                        />
+                                        Correct
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Errors */}
             {formErrors.length > 0 && (
-                <div className="bg-red-100 border border-red-400 text-red-700 p-3 rounded">
+                <div className="bg-gray-900 border border-red-600 text-red-400 p-4 rounded-lg shadow-sm">
                     {formErrors.map((err, i) => (
-                        <p key={i}>• {err}</p>
+                        <p key={i} className="text-sm">â€¢ {err}</p>
                     ))}
                 </div>
             )}
 
-            <input
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-                placeholder="Quiz title"
-                className="w-full p-2 border rounded"
-            />
-
-            <input
-                type="number"
-                value={duration}
-                onChange={e => setDuration(Number(e.target.value))}
-                className="w-full p-2 border rounded"
-            />
-
-            {questions.map((q, index) => (
-                <div key={q.question_id} className="border p-4 rounded">
-                    <input
-                        className="w-full p-2 border mb-2"
-                        value={q.text}
-                        onChange={e => {
-                            const copy = [...questions];
-                            copy[index] = { ...q, text: e.target.value };
-                            setQuestions(copy);
-                        }}
-                    />
-
-                    <input
-                        type="number"
-                        className="w-full p-2 border mb-2"
-                        value={q.points}
-                        onChange={e => {
-                            const copy = [...questions];
-                            copy[index] = { ...q, points: Number(e.target.value) };
-                            setQuestions(copy);
-                        }}
-                    />
-
-                    {q.answers.map((a, aIndex) => (
-                        <div key={a.answer_id} className="flex items-center gap-2 mb-1">
-                            <input
-                                className="flex-1 p-2 border"
-                                value={a.text}
-                                onChange={e => {
-                                    const copy = [...questions];
-                                    copy[index].answers[aIndex] = {
-                                        ...a,
-                                        text: e.target.value,
-                                    };
-                                    setQuestions(copy);
-                                }}
-                            />
-                            <input
-                                type="checkbox"
-                                checked={a.is_correct}
-                                onChange={e => {
-                                    const copy = [...questions];
-                                    copy[index].answers[aIndex] = {
-                                        ...a,
-                                        is_correct: e.target.checked,
-                                    };
-                                    setQuestions(copy);
-                                }}
-                            />
-                            <span>Correct</span>
-                        </div>
-                    ))}
-                </div>
-            ))}
-
-            <button
-                onClick={handleSave}
-                className="px-4 py-2 bg-green-600 text-white rounded"
-            >
-                Save changes
-            </button>
+            <div className="flex justify-end mt-4">
+                <button
+                    onClick={handleSave}
+                    className="px-6 py-2 bg-green-600 hover:bg-green-500 text-white font-semibold rounded-lg shadow transition-colors duration-200"
+                >
+                    Save Changes
+                </button>
+            </div>
         </div>
     );
 }
