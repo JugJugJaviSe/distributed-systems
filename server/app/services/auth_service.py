@@ -56,7 +56,7 @@ class AuthService:
         if user.blocked_until and user.blocked_until > now:
             return {
                 "success": False,
-                "message": f"Too many unsuccessful login attempts. Account blocked for 60 seconds.",    # 15 minutes by specification
+                "message": f"Too many unsuccessful login attempts.\nAccount blocked for 60 seconds.",    # 15 minutes by specification
                 "status": 403
             }
 

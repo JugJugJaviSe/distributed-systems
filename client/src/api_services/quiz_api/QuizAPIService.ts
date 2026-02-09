@@ -129,7 +129,7 @@ export const quizApi: IQuizAPIService = {
 
 
 
-    async getQuizForAdmin(token: string, quizId: number) {
+    async getQuizForAdmin(token: string, quizId: number): Promise<GetQuizResponse> {
         try {
             const res = await axios.get(
                 `${API_URL}/admin/${quizId}`,

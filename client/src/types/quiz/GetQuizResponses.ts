@@ -1,6 +1,7 @@
 export interface QuizAnswer {
     answer_id: number;
     text: string;
+    is_correct?: boolean;   // Admin can see this field while user cannot
 }
 
 export interface QuizQuestion {
@@ -16,6 +17,7 @@ export interface GetQuizResponseData {
     description: string;
     duration_seconds: number;
     questions: QuizQuestion[];
+    status: "pending" | "approved" | "rejected";    // Admin can see this field while user cannot
 }
 
 export interface GetQuizResponse {

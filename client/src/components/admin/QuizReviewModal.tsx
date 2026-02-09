@@ -25,6 +25,7 @@ export function QuizReviewModal({
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
+    const [isPending, setIsPending] = useState(false);
 
     useEffect(() => {
         const loadQuiz = async () => {
@@ -37,6 +38,8 @@ export function QuizReviewModal({
                 }
 
                 setQuiz(res.data);
+                console.log(res.data.status);
+                setIsPending(res.data.status === "pending");
             } catch (e) {
                 console.error(e);
                 setError("Error while loading quiz");
@@ -61,6 +64,8 @@ export function QuizReviewModal({
     };
 
     const handleApprove = async () => {
+        if (!isPending) return;
+
         try {
             setSubmitting(true);
             await onApprove(comment);
@@ -75,6 +80,8 @@ export function QuizReviewModal({
     };
 
     const handleReject = async () => {
+        if (!isPending) return;
+
         if (!comment.trim()) {
             alert("Comment is required when rejecting a quiz");
             return;
@@ -139,10 +146,13 @@ export function QuizReviewModal({
                             </span>
                         </div>
                         <div className="space-y-2">
-                            {q.answers.map((a, ai) => (
+                            {q.answers.map((a) => (
                                 <div
                                     key={a.answer_id}
-                                    className="p-2 bg-gray-700 rounded text-gray-300"
+                                    className={`p-2 rounded ${a.is_correct
+                                        ? "bg-green-700 text-green-100 border border-green-500"
+                                        : "bg-gray-700 text-gray-300"
+                                        }`}
                                 >
                                     {a.text}
                                 </div>
@@ -169,7 +179,7 @@ export function QuizReviewModal({
             {/* Actions */}
             <div className="flex justify-between mt-4">
                 <button
-                    disabled={submitting}
+                    disabled={submitting || !isPending}
                     onClick={handleReject}
                     className="px-6 py-2 bg-rose-600 hover:bg-rose-500 rounded-lg text-white font-semibold shadow-sm transition-colors disabled:opacity-50"
                 >
@@ -177,13 +187,19 @@ export function QuizReviewModal({
                 </button>
 
                 <button
-                    disabled={submitting}
+                    disabled={submitting || !isPending}
                     onClick={handleApprove}
                     className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg text-white font-semibold shadow-sm transition-colors disabled:opacity-50"
                 >
                     Approve
                 </button>
             </div>
+
+            {!isPending && (
+                <div className="bg-rose-900/40 border border-rose-700 text-white px-4 py-2 rounded-lg text-sm">
+                    This quiz is already <strong>{quiz.status}</strong> and cannot be modified.
+                </div>
+            )}
         </div>
     );
 }

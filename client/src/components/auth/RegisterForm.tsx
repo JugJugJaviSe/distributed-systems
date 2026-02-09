@@ -112,13 +112,17 @@ export function RegisterForm({ authApi }: AuthFormProps) {
             className="w-full px-5 py-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
           />
 
-          <input
-            type="date"
-            value={dateOfBirth}
-            required
-            onChange={(e) => setDateOfBirth(e.target.value)}
-            className="w-full px-5 py-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100"
-          />
+          <div className="relative">
+            <input
+              type="date"
+              value={dateOfBirth}
+              required
+              onChange={(e) => setDateOfBirth(e.target.value)}
+              className="w-full px-5 py-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150 appearance-none cursor-pointer"
+              style={{ colorScheme: 'dark' }}
+            />
+          </div>
+
 
           <select
             value={gender}

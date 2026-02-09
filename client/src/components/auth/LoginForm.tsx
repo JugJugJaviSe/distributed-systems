@@ -52,7 +52,7 @@ export function LoginForm({ authApi }: AuthFormProps) {
                     />
 
                     {errorMessage && (
-                        <p className="text-red-500 text-sm">{errorMessage}</p>
+                        <p className="text-red-500 text-sm whitespace-pre-line">{errorMessage}</p>
                     )}
 
                     <button
