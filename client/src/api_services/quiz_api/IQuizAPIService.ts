@@ -8,9 +8,10 @@ import type { GetQuizResponse } from "../../types/quiz/GetQuizResponses";
 export interface IQuizAPIService {
     createQuiz(token: string, data: CreateQuizDto): Promise<CreateQuizResponse>;
     getQuiz(token: string, quizId: number): Promise<GetQuizResponse>;
-    getRejectedQuiz(token: string, quizId: number): Promise<GetQuizResponse>; 
-    editQuiz(token: string, quizId: number, data: any): Promise<EditQuizResponse>; 
-    getAllQuizzes(token: string): Promise<GetAllQuizzesResponse>;
+    getRejectedQuiz(token: string, quizId: number): Promise<GetQuizResponse>;
+    editQuiz(token: string, quizId: number, data: any): Promise<EditQuizResponse>;
+    getApprovedQuizzes(token: string): Promise<GetAllQuizzesResponse>;
+    getPendingQuizzes(token: string): Promise<GetAllQuizzesResponse>;
     getMyQuizzes(token: string): Promise<GetAllQuizzesResponse>;
     getQuizForAdmin(token: string, quizId: number): Promise<GetQuizResponse>;
     approveQuiz(token: string, quizId: number, comment: string): Promise<{ success: boolean; message: string }>;

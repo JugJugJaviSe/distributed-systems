@@ -59,10 +59,24 @@ def get_quiz(quiz_id: int):
             "message": f"Failed to fetch quiz {ex}"
         }), 500
     
-@quiz_bp.get("/getAll")
-def get_all():
+@quiz_bp.get("/getApproved")
+def get_approved():
     try:
-        quizzes = QuizService.get_all()
+        quizzes = QuizService.get_approved()
+        return jsonify({
+            "success": True,
+            "data": quizzes
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
+    
+@quiz_bp.get("/getPending")
+def get_pending():
+    try:
+        quizzes = QuizService.get_pending()
         return jsonify({
             "success": True,
             "data": quizzes

@@ -16,7 +16,7 @@ export function QuizProgress({ answered, total }: QuizProgressProps) {
             </div>
             <div className="w-full h-3 bg-gray-700 rounded-full overflow-hidden border border-gray-600">
                 <div
-                    className="h-3 bg-blue-600 transition-all duration-300"
+                    className="h-3 bg-indigo-600 transition-all duration-300"
                     style={{ width: `${progressPercentage}%` }}
                 ></div>
             </div>

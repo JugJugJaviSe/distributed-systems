@@ -48,7 +48,7 @@ export function Navbar({ onProfileClick }: NavbarProps) {
 
                     <button
                         onClick={logoutHandler}
-                        className="px-4 py-2 bg-red-600 hover:bg-red-500 rounded-lg text-white transition-all duration-150"
+                        className="px-4 py-2 bg-rose-700 hover:bg-rose-600 rounded-lg text-white transition-all duration-150"
                     >
                         Log out
                     </button>

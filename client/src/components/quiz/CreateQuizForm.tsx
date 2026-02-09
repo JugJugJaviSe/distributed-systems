@@ -113,13 +113,13 @@ export function CreateQuizForm({ quizApi }: CreateQuizPageProps) {
 
             <div className="space-y-1">
                 <label className="block text-gray-300 font-medium text-sm">
-                    Duration (minutes)
+                    Duration (seconds)
                 </label>
                 <input
                     type="number"
                     value={duration}
                     onChange={(e) => setDuration(Number(e.target.value))}
-                    placeholder="Enter duration in minutes"
+                    placeholder="Enter duration in seconds"
                     className="w-full px-4 py-3 rounded-lg bg-gray-800 text-gray-100 border border-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                     min={1}
                 />
@@ -160,7 +160,7 @@ export function CreateQuizForm({ quizApi }: CreateQuizPageProps) {
 
                 <button
                     onClick={handleSubmit}
-                    className="px-6 py-2 bg-green-600 hover:bg-green-500 text-white font-semibold rounded-lg shadow transition-colors duration-200"
+                    className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg shadow transition-colors duration-200"
                 >
                     Save Quiz
                 </button>

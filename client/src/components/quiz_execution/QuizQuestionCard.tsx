@@ -49,7 +49,7 @@ export function QuizQuestionCard({ question, onSubmit }: QuizQuestionCardProps) 
                             onMouseLeave={() => setHoveredAnswer(null)}
                             className={`
                                 w-full text-left px-5 py-3 border rounded-lg transition-all duration-150
-                                ${isSelected ? "bg-blue-600 text-white border-blue-500 shadow-md" : ""}
+                                ${isSelected ? "bg-indigo-600 text-white border-blue-500 shadow-md" : ""}
                                 ${!isSelected && isHovered ? "bg-gray-700/80 border-gray-500" : ""}
                                 ${!isSelected && !isHovered ? "bg-gray-700 border-gray-600 text-gray-100" : ""}
                             `}
@@ -67,7 +67,7 @@ export function QuizQuestionCard({ question, onSubmit }: QuizQuestionCardProps) 
                     w-full py-3 rounded-lg font-semibold transition
                     ${selectedAnswers.length === 0
                         ? "bg-gray-600 text-gray-400 cursor-not-allowed"
-                        : "bg-green-600 hover:bg-green-700 text-white"}
+                        : "bg-emerald-600 hover:bg-emerald-500 text-white"}
                 `}
             >
                 Submit

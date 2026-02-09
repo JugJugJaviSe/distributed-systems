@@ -52,7 +52,7 @@ export function RegisterForm({ authApi }: AuthFormProps) {
     console.log("Auth result:", authResult);
 
     if (authResult.success && authResult.data) {
-    //console.log(`Auth result data: ${authResult.data}`)
+      //console.log(`Auth result data: ${authResult.data}`)
       login(authResult.data);
     } else {
       setErrorMessage(authResult.message);
@@ -121,12 +121,12 @@ export function RegisterForm({ authApi }: AuthFormProps) {
           />
 
           <select
-          value={gender}
-          onChange={(e) => setGender(e.target.value)}
-          className="w-full px-5 py-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150">
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-        </select>
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+            className="w-full px-5 py-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
 
 
           <input
@@ -168,7 +168,7 @@ export function RegisterForm({ authApi }: AuthFormProps) {
 
           <button
             type="submit"
-            className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+            className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
           >
             Register
           </button>

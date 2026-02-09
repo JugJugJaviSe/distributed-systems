@@ -44,7 +44,7 @@ export function QuizCatalogGrid({
               onClick={() => onPlay(q.id)}
               className="
                 mt-auto w-full py-2 rounded-lg
-                bg-blue-600 hover:bg-blue-700
+                bg-indigo-600 hover:bg-indigo-500
                 text-white font-semibold text-sm
                 transition-colors
               "

@@ -125,10 +125,14 @@ class QuizService:
         return [{"id": q.quiz_id, "title": q.title} for q in quizzes]
     
     @staticmethod
-    def get_all() -> list[Dict]:
+    def get_approved() -> list[Dict]:
         quizzes = Quiz.query.filter(Quiz.status == QuizStatus.APPROVED.value).all()
         return [{"id": q.quiz_id, "title": q.title, "author_id": q.author_id, "duration_seconds": q.duration_seconds, "created_at": q.created_at.strftime("%d/%m/%y %H:%M:%S")} for q in quizzes]
-    
+
+    @staticmethod
+    def get_pending() -> list[Dict]:
+        quizzes = Quiz.query.filter(Quiz.status == QuizStatus.PENDING.value).all()
+        return [{"id": q.quiz_id, "title": q.title, "author_id": q.author_id, "duration_seconds": q.duration_seconds, "created_at": q.created_at.strftime("%d/%m/%y %H:%M:%S")} for q in quizzes]    
 
     @staticmethod
     def get_catalog(page: int = 1, page_size: int = 12) -> dict:

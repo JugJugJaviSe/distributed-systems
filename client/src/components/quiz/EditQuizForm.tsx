@@ -207,7 +207,7 @@ export default function EditQuizForm({ quizId, quizApi, onSaved }: EditQuizFormP
             <div className="flex justify-end mt-4">
                 <button
                     onClick={handleSave}
-                    className="px-6 py-2 bg-green-600 hover:bg-green-500 text-white font-semibold rounded-lg shadow transition-colors duration-200"
+                    className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg shadow transition-colors duration-200"
                 >
                     Save Changes
                 </button>

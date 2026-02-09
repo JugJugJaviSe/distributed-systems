@@ -34,7 +34,7 @@ export function AdminUserRow({ user, onDelete, onChangeRole }: AdminUserRowProps
         {!isAdmin ? (
           <button
             onClick={() => onDelete(user.id)}
-            className="px-3 py-1 bg-red-600 hover:bg-red-500 text-white rounded-lg shadow"
+            className="px-3 py-1 bg-rose-700 hover:bg-rose-600 text-white rounded-lg shadow"
           >
             Delete
           </button>

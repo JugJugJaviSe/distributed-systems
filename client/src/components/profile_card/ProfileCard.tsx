@@ -205,7 +205,7 @@ export function ProfileCard({
         <p className="text-red-500">{error}</p>
         <button
           onClick={() => setShowProfile(false)}
-          className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200"
+          className="mt-4 px-4 py-2 bg-rose-700 hover:bg-rose-600 text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200"
         >
           Close
         </button>
@@ -224,7 +224,7 @@ export function ProfileCard({
       />
 
       <div className="mb-4">
-        <label className="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg cursor-pointer text-sm">
+        <label className="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg cursor-pointer text-sm">
           {loadingPicture ? "Uploading..." : "Change Picture"}
           <input
             type="file"
@@ -329,7 +329,7 @@ export function ProfileCard({
           onClick={handleSave}
           className={`px-4 py-2 rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200 min-w-[120px] ${!hasChanges || saving
             ? "bg-gray-500 cursor-not-allowed text-gray-200"
-            : "bg-green-600 hover:bg-green-500 text-white cursor-pointer"
+            : "bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer"
             }`}
         >
           {saving ? "Saving..." : "Save"}
@@ -337,7 +337,7 @@ export function ProfileCard({
 
         <button
           onClick={() => setShowProfile(false)}
-          className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200 min-w-[120px]"
+          className="px-4 py-2 bg-rose-700 hover:bg-rose-600 text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200 min-w-[120px]"
         >
           Close
         </button>

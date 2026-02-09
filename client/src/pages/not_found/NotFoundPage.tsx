@@ -12,7 +12,7 @@ export default function NotFoundPage() {
 
                 <Link
                     to="/"
-                    className="inline-block px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                    className="inline-block px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
                 >
                     Back to the home page
                 </Link>

@@ -1,6 +1,7 @@
 export const NAVBAR_ITEMS: Record<string, { label: string; path: string }[]> = {
     "Admin": [
         { label: "Quizzes", path: "/Admin-dashboard" },
+        { label: "Pending Quizzes", path: "/Admin/pendingQuizzes" },
         { label: "Users", path: "/Admin/users" },
     ],
     "Moderator": [

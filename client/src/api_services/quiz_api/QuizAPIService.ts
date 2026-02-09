@@ -60,10 +60,10 @@ export const quizApi: IQuizAPIService = {
         }
     },
 
-    async getAllQuizzes(token: string): Promise<GetAllQuizzesResponse> {
+    async getApprovedQuizzes(token: string): Promise<GetAllQuizzesResponse> {
         try {
             const res = await axios.get<GetAllQuizzesResponse>(
-                `${API_URL}/allQuizzes`,
+                `${API_URL}/approvedQuizzes`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -72,7 +72,7 @@ export const quizApi: IQuizAPIService = {
             );
             return res.data;
         } catch (error) {
-            let message = "Get all quizzes error";
+            let message = "Get approved quizzes error";
             if (axios.isAxiosError(error))
                 message = error.response?.data?.message || message;
 
@@ -80,7 +80,27 @@ export const quizApi: IQuizAPIService = {
         }
     },
 
-     async getCatalog(
+    async getPendingQuizzes(token: string): Promise<GetAllQuizzesResponse> {
+        try {
+            const res = await axios.get<GetAllQuizzesResponse>(
+                `${API_URL}/pendingQuizzes`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            return res.data;
+        } catch (error) {
+            let message = "Get pending quizzes error";
+            if (axios.isAxiosError(error))
+                message = error.response?.data?.message || message;
+
+            return { success: false, message, data: undefined };
+        }
+    },
+
+    async getCatalog(
         token: string,
         page: number = 1,
         pageSize: number = 12

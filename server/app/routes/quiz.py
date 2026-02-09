@@ -79,11 +79,11 @@ def get_quiz(quiz_id: int):
             "message": "Quiz service is unreachable"
         }), 503
     
-@quiz_bp.get("/allQuizzes")
+@quiz_bp.get("/approvedQuizzes")
 @require_auth
-def get_all_quizzes():
+def get_approved_quizzes():
     try:
-        quizzes = QuizService.get_all_quizzes_from_quizService()
+        quizzes = QuizService.get_approved_quizzes_from_quizService()
 
         users = UserService.get_all_user_emails()
         id_to_email = {user["id"]: user["email"] for user in users}
@@ -97,6 +97,26 @@ def get_all_quizzes():
     except requests.exceptions.RequestException as e:
         return jsonify({"success": False, "message": str(e)}), 500
     
+
+@quiz_bp.get("/pendingQuizzes")
+@require_auth
+def get_pending_quizzes():
+    try:
+        quizzes = QuizService.get_pending_quizzes_from_quizService()
+
+        users = UserService.get_all_user_emails()
+        id_to_email = {user["id"]: user["email"] for user in users}
+
+        for quiz in quizzes["data"]:
+            author_id = quiz.pop("author_id", None)
+            quiz["author_email"] = id_to_email.get(author_id, "unknown@example.com")
+
+        return jsonify(quizzes), 200
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+    
+
 @quiz_bp.get("/catalog")
 @require_auth
 def get_catalog():

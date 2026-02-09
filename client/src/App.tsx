@@ -18,6 +18,7 @@ import { quizExecutionApi } from "./api_services/quiz_execution_api/QuizExecutio
 import { QuizPlayPage } from "./pages/quiz_execution/QuizPlayPage";
 import EditQuizPage from "./pages/quiz/EditQuizPage";
 import QuizReviewPage from "./pages/quiz/QuizReviewPage";
+import QuizzesForReviewPage from "./pages/quiz/QuizzesForReviewPage";
 
 function App() {
   return (
@@ -54,6 +55,16 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      <Route
+        path="/Admin/pendingQuizzes"
+        element={
+          <ProtectedRoute requiredRole="Admin">
+            <QuizzesForReviewPage quizApi={quizApi} />
+          </ProtectedRoute>
+        }
+      />
+
       <Route
         path="/admin/quizzes/:quizId"
         element={
@@ -62,6 +73,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/quiz/edit/:quizId"
         element={

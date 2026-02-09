@@ -128,7 +128,7 @@ export function ModeratorTable({ quizApi }: ModeratorTableProps) {
                                 <button
                                     onClick={() => handleDeleteQuiz(quiz.id)}
                                     className="px-4 py-2 text-sm font-semibold rounded-lg
-                                           bg-red-600 hover:bg-red-500
+                                           bg-rose-700 hover:bg-rose-600
                                            text-white transition-colors shadow-sm"
                                 >
                                     Delete
