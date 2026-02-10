@@ -12,7 +12,7 @@ if __name__ == "__main__":
     socketio.run(
         app,
         host="0.0.0.0",
-        port=5000,
+        port=8000,
         debug=True,
         allow_unsafe_werkzeug=True
     )#0.0.0.0 Flask listens on all network interfaces (inside container + exposed to host via Docker port mapping)

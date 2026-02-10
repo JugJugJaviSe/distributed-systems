@@ -16,7 +16,7 @@ COPY . .
 RUN chmod +x wait_for_db.sh
 
 # Expose Flask port
-EXPOSE 5000
+EXPOSE 8000
 
 # Run wait_for_db.sh then Flask
-CMD ["./wait_for_db.sh", "users_db", "python", "run.py"]
+CMD ["sh", "./wait_for_db.sh", "users_db", "python", "run.py"]

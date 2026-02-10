@@ -3,7 +3,7 @@ services:
     container_name: drs-flask-server
     build: ./server
     ports:
-      - "5000:5000"
+      - "8000:8000"
     volumes:
       - ./server:/app
     environment:
@@ -12,14 +12,16 @@ services:
       DB_USER: root
       DB_PASSWORD: 1234
       DB_NAME: quiz_users_db
+      QUIZ_SERVICE_BASE_URL: "http://quizservice:8001/"
     depends_on:
+      - quizservice
       - users_db
 
   quizservice:
     container_name: drs-flask-quizService
     build: ./quizService
     ports:
-      - "5001:5001"
+      - "8001:8001"
     volumes:
       - ./quizService:/app
     environment:
@@ -28,6 +30,7 @@ services:
       DB_USER: root
       DB_PASSWORD: 1234
       DB_NAME: quiz_db
+      SERVER_URL: "http://server:8000"
     depends_on:
       - quiz_db
 
