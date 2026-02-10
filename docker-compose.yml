@@ -1,7 +1,11 @@
+version: "3.9"
+
 services:
   server:
     container_name: drs-flask-server
-    build: ./server
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
     ports:
       - "8000:8000"
     volumes:
@@ -19,7 +23,9 @@ services:
 
   quizservice:
     container_name: drs-flask-quizService
-    build: ./quizService
+    build:
+      context: ./quizService
+      dockerfile: Dockerfile.dev
     ports:
       - "8001:8001"
     volumes:
@@ -58,7 +64,9 @@ services:
 
   client:
     container_name: drs-react-client
-    build: ./client
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
     ports:
       - "5173:5173"
     volumes:

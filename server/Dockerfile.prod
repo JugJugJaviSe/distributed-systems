@@ -1,0 +1,14 @@
+FROM python:3.9.13-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+# Render provides PORT at runtime; default to 8000 locally
+ENV PORT=8000
+
+# Production WSGI server
+CMD ["sh", "-c", "gunicorn -w 2 -b 0.0.0.0:${PORT} run:app"]
