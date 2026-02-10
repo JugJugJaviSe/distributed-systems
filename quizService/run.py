@@ -1,12 +1,17 @@
+import os
 from app import create_app
 from app.models import quizzes, questions, answers, quiz_attempts
+from app.extensions import db
 
 app = create_app()
 
-from app.extensions import db
-
-with app.app_context():
-    db.create_all()     # Generates tables inside schema
+if os.getenv("AUTO_CREATE_TABLES", "false").lower() == "true":
+    with app.app_context():
+        db.create_all()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8001, debug=True) #0.0.0.0 Flask listens on all network interfaces (inside container + exposed to host via Docker port mapping)
+    app.run(
+        host="0.0.0.0",
+        port=int(os.getenv("PORT", "8001")),
+        debug=True,
+    )
