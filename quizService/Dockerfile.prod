@@ -9,4 +9,5 @@ COPY . .
 
 ENV PORT=8001
 
-CMD ["sh", "-c", "gunicorn -w 2 -b 0.0.0.0:${PORT} run:app"]
+CMD ["sh", "-c", "gunicorn -k eventlet -w 1 -b 0.0.0.0:${PORT} run:app"]
+

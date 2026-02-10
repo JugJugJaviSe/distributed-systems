@@ -1,0 +1,81 @@
+version: "3.9"
+
+services:
+  server:
+    container_name: drs-flask-server
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./server:/app
+    environment:
+      FLASK_ENV: development
+      DB_HOST: users_db
+      DB_USER: root
+      DB_PASSWORD: 1234
+      DB_NAME: quiz_users_db
+      QUIZ_SERVICE_BASE_URL: "http://quizservice:8001/"
+    depends_on:
+      - quizservice
+      - users_db
+
+  quizservice:
+    container_name: drs-flask-quizService
+    build:
+      context: ./quizService
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./quizService:/app
+    environment:
+      FLASK_ENV: development
+      DB_HOST: quiz_db
+      DB_USER: root
+      DB_PASSWORD: 1234
+      DB_NAME: quiz_db
+      SERVER_URL: "http://server:8000"
+    depends_on:
+      - quiz_db
+
+  users_db:
+    container_name: drs_users_db
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: quiz_users_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - users_db_data:/var/lib/mysql
+
+  quiz_db:
+    container_name: drs_quiz_db
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: quiz_db
+    ports:
+      - "3308:3306"
+    volumes:
+      - quiz_db_data:/var/lib/mysql
+
+  client:
+    container_name: drs-react-client
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    depends_on:
+      - server
+      - quizservice
+
+volumes:
+  users_db_data:
+  quiz_db_data:
