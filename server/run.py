@@ -1,18 +1,19 @@
+import os
 from app import create_app
-from app.extensions import socketio
+from app.extensions import socketio, db
 
 app = create_app()
 
-from app.extensions import db
 
-with app.app_context():
-    db.create_all()     # Generates tables inside schema
+if os.getenv("AUTO_CREATE_TABLES", "false").lower() == "true":
+    with app.app_context():
+        db.create_all()
 
 if __name__ == "__main__":
     socketio.run(
         app,
         host="0.0.0.0",
-        port=8000,
+        port=int(os.getenv("PORT", "8000")),
         debug=True,
-        allow_unsafe_werkzeug=True
-    )#0.0.0.0 Flask listens on all network interfaces (inside container + exposed to host via Docker port mapping)
+        allow_unsafe_werkzeug=True,
+    )
