@@ -269,22 +269,44 @@ class QuizService:
         quiz.duration_seconds = data.get("duration", quiz.duration_seconds)
 
         for q_data in data.get("questions", []):
-            question = Question.query.get(q_data["question_id"])
-            if not question:
-                continue
+            qid = q_data.get("question_id")
 
-            question.question_text = q_data["text"]
-            question.points = q_data["points"]
-
-            for a_data in q_data["answers"]:
-                answer = Answer.query.get(a_data["answer_id"])
-                if not answer:
+            if qid:
+                # Update existing question
+                question = Question.query.get(qid)
+                if not question:
                     continue
+                question.question_text = q_data["text"]
+                question.points = q_data["points"]
+            else:
+                # Create new question
+                question = Question(
+                    quiz_id=quiz_id,
+                    question_text=q_data["text"],
+                    points=q_data["points"],
+                )
+                db.session.add(question)
+                db.session.flush()  # get question_id before processing its answers
 
-                answer.answer_text = a_data["text"]
-                answer.is_correct = a_data["is_correct"]
+            for a_data in q_data.get("answers", []):
+                aid = a_data.get("answer_id")
 
-        
+                if aid:
+                    # Update existing answer
+                    answer = Answer.query.get(aid)
+                    if not answer:
+                        continue
+                    answer.answer_text = a_data["text"]
+                    answer.is_correct = a_data["is_correct"]
+                else:
+                    # Create new answer
+                    answer = Answer(
+                        question_id=question.question_id,
+                        answer_text=a_data["text"],
+                        is_correct=a_data["is_correct"],
+                    )
+                    db.session.add(answer)
+
         quiz.status = QuizStatus.PENDING.value
         quiz.rejection_reason = None
 

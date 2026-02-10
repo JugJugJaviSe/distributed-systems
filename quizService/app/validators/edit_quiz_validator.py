@@ -7,13 +7,16 @@ def validate_edit_quiz(payload):
         return SimpleNamespace(ok=False, errors={"payload": "Payload required"})
 
     questions = payload.get("questions", [])
+    if len(questions) == 0:
+        errors["questions"] = "At least 1 question required"
 
     for i, q in enumerate(questions):
-        qid = q.get("question_id") or q.get("id")
-        if not qid:
-            errors[f"questions[{i}].id"] = "Question id missing"
+        # question_id can be None/missing for newly added questions
+        qid = q.get("question_id")
+        if qid is not None and not isinstance(qid, int):
+            errors[f"questions[{i}].question_id"] = "Question id must be integer or null"
 
-        if not q.get("text"):
+        if not q.get("text") or not str(q.get("text")).strip():
             errors[f"questions[{i}].text"] = "Text required"
 
         if not isinstance(q.get("points"), int):
@@ -27,11 +30,12 @@ def validate_edit_quiz(payload):
                 errors[f"questions[{i}].answers"] = "At least one correct answer required"
 
         for j, a in enumerate(answers):
-            aid = a.get("answer_id") or a.get("id")
-            if not aid:
-                errors[f"questions[{i}].answers[{j}].id"] = "Answer id missing"
+            # answer_id can be None/missing for newly added answers
+            aid = a.get("answer_id")
+            if aid is not None and not isinstance(aid, int):
+                errors[f"questions[{i}].answers[{j}].answer_id"] = "Answer id must be integer or null"
 
-            if not a.get("text"):
+            if not a.get("text") or not str(a.get("text")).strip():
                 errors[f"questions[{i}].answers[{j}].text"] = "Answer text required"
 
     if errors:

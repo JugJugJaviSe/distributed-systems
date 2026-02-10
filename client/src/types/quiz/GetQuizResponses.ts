@@ -18,6 +18,7 @@ export interface GetQuizResponseData {
     duration_seconds: number;
     questions: QuizQuestion[];
     status: "pending" | "approved" | "rejected";    // Admin can see this field while user cannot
+    admin_comment?: string | null;                  // Rejection reason from admin
 }
 
 export interface GetQuizResponse {
