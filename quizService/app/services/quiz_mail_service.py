@@ -3,13 +3,21 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 from typing import Optional, List, Tuple
 import os
-import smtplib
 from ..config import Config
+import base64
+import requests
+from requests.auth import HTTPBasicAuth
 
-SMTP_USER = Config.SMTP_USER
-SMTP_HOST = Config.SMTP_HOST
-SMTP_PORT = Config.SMTP_PORT
-SMTP_PASSWORD = Config.SMTP_PASSWORD
+#SMTP_USER = Config.SMTP_USER
+#SMTP_HOST = Config.SMTP_HOST
+#SMTP_PORT = Config.SMTP_PORT
+#SMTP_PASSWORD = Config.SMTP_PASSWORD
+
+MAILJET_API_KEY=Config.MAILJET_API_KEY
+MAILJET_SECRET_KEY=Config.MAILJET_SECRET_KEY
+MAILJET_FROM_EMAIL=Config.MAILJET_FROM_EMAIL
+MAILJET_FROM_NAME=Config.MAILJET_FROM_NAME
+
 
 class QuizMailService:
 
@@ -22,29 +30,52 @@ class QuizMailService:
         attachments: Optional[List[Tuple[str, bytes]]] = None
     ):
 
-        msg = MIMEMultipart("mixed")
-        msg["From"] = SMTP_USER
-        msg["To"] = to_email
-        msg["Subject"] = subject
+        url = "https://api.mailjet.com/v3.1/send"
 
-        alt_part = MIMEMultipart("alternative")
-        alt_part.attach(MIMEText(body, "plain"))
+        message = {
+            "From": {
+                "Email": Config.MAILJET_FROM_EMAIL,
+                "Name": Config.MAILJET_FROM_NAME
+            },
+            "To": [
+                {
+                    "Email": to_email
+                }
+            ],
+            "Subject": subject,
+            "TextPart": body,
+        }
+
         if html:
-            alt_part.attach(MIMEText(html, "html"))
-
-        msg.attach(alt_part)
+            message["HTMLPart"] = html
 
         if attachments:
+            message["Attachments"] = []
             for filename, file_bytes in attachments:
-                part = MIMEApplication(file_bytes, _subtype="octet-stream")
-                part.add_header("Content-Disposition", "attachment", filename=filename)
-                msg.attach(part)
+                encoded = base64.b64encode(file_bytes).decode("utf-8")
 
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
-            server.starttls()
-            server.login(SMTP_USER, SMTP_PASSWORD)
-            server.send_message(msg)
-            print(f"Email sent to {to_email} with subject '{subject}'")
+                message["Attachments"].append({
+                    "ContentType": "application/pdf",
+                    "Filename": filename,
+                    "Base64Content": encoded
+                })
+
+        payload = {
+            "Messages": [message]
+        }
+
+        response = requests.post(
+            url,
+            auth=HTTPBasicAuth(
+                Config.MAILJET_API_KEY,
+                Config.MAILJET_SECRET_KEY
+            ),
+            json=payload
+        )
+
+        response.raise_for_status()
+
+        print(f"Email sent to {to_email} via Mailjet")
 
     @staticmethod
     def send_email_pdf(to_email: str, pdf_bytes: bytes, quiz_titles: list[str]):

@@ -16,3 +16,7 @@ class Config:
     SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
     SMTP_USER = os.getenv("SMTP_USER")
     SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
+    MAILJET_API_KEY = os.getenv("MAILJET_API_KEY")
+    MAILJET_SECRET_KEY = os.getenv("MAILJET_SECRET_KEY")
+    MAILJET_FROM_EMAIL = os.getenv("MAILJET_FROM_EMAIL")
+    MAILJET_FROM_NAME = os.getenv("MAILJET_FROM_NAME")
