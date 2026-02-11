@@ -135,33 +135,36 @@ def get_catalog():
         page_size = request.args.get("page_size", 12, type=int)
 
         cache_key = f"catalog:{page}:{page_size}"
-        cached_catalog = QuizCache.get(cache_key)
-        if cached_catalog:
-            catalog = cached_catalog
-        else:
+        catalog = QuizCache.get(cache_key)
+
+        if not catalog:
             catalog = QuizService.get_catalog_from_quizService(page=page, page_size=page_size)
 
-            existing_keys = [k for k in QuizCache._cache.keys() if k.startswith("catalog:")]
-            if len(existing_keys) >= 3:         # Caching maximum 3 pages 
-                oldest_key = existing_keys[0]
-                QuizCache._cache.pop(oldest_key)
+            
+            data = catalog.get("data", {})
+            items = data.get("items", [])
 
+            users = UserService.get_all_user_emails()
+            id_to_email = {u["id"]: u["email"] for u in users}
+
+            for quiz in items:
+                author_id = quiz.get("author_id")
+                quiz["author_email"] = id_to_email.get(author_id, "unknown@example.com")
+                quiz.pop("author_id", None)
+
+            
             QuizCache.set(cache_key, catalog)
 
-        data = catalog.get("data", {})
-        items = data.get("items", [])
-
-        users = UserService.get_all_user_emails()
-        id_to_email = {user["id"]: user["email"] for user in users}
-
-        for quiz in items:
-            author_id = quiz.pop("author_id", None)
-            quiz["author_email"] = id_to_email.get(author_id, "unknown@example.com")
+            
+            existing_keys = [k for k in QuizCache._cache.keys() if k.startswith("catalog:")]
+            if len(existing_keys) > 3:
+                QuizCache._cache.pop(existing_keys[0])
 
         return jsonify(catalog), 200
 
     except requests.exceptions.RequestException as e:
         return jsonify({"success": False, "message": str(e)}), 500
+
 
 
 @quiz_bp.get("/admin/<int:quiz_id>")
