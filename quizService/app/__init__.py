@@ -8,6 +8,7 @@ from app.routes.quiz_execution import quiz_execution_bp
 from app.routes.quiz_mail import quiz_mail_bp
 from app.routes.quiz_admin import quiz_admin_bp
 from app.routes.quiz_moderator import quiz_moderator_bp
+from app.routes.quiz_leaderboard import quiz_leaderboard_bp
 
 def create_app():
     app = Flask(__name__)
@@ -28,5 +29,6 @@ def create_app():
     app.register_blueprint(quiz_mail_bp)
     app.register_blueprint(quiz_admin_bp)
     app.register_blueprint(quiz_moderator_bp)
+    app.register_blueprint(quiz_leaderboard_bp)
 
     return app
