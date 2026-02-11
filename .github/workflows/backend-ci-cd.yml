@@ -57,6 +57,6 @@ jobs:
             ghcr.io/jugjugjavise/distributed-systems-${{ matrix.image_suffix }}:${{ github.sha }}
 
       - name: Trigger Render Deploy
-        if: ${{ secrets[matrix.deploy_hook_secret] != '' }}
+        if: secrets[matrix.deploy_hook_secret] != ''
         run: |
           curl -fsSL -X POST "${{ secrets[matrix.deploy_hook_secret] }}"

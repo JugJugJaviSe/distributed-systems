@@ -41,6 +41,6 @@ jobs:
             ghcr.io/jugjugjavise/distributed-systems-client:${{ github.sha }}
 
       - name: Trigger Render Deploy (client)
-        if: ${{ secrets.RENDER_DEPLOY_HOOK_CLIENT != '' }}
+        if: secrets.RENDER_DEPLOY_HOOK_CLIENT != ''
         run: |
           curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_CLIENT }}"
