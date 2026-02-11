@@ -6,6 +6,7 @@ import type { GetAllQuizzesResponse } from "../../types/quiz/GetAllQuizzesRespon
 import type { GetQuizCatalogResponse } from "../../types/quiz/GetQuizCatalogResponse";
 import type { GetQuizResponse } from "../../types/quiz/GetQuizResponses";
 import type { QuizResponse } from "../../types/quiz/QuizResponse"; 
+import type { GetLeaderboardResponse } from "../../types/leaderboard/GetLeaderboardResponse";
 
 export interface IQuizAPIService {
     createQuiz(token: string, data: CreateQuizDto): Promise<CreateQuizResponse>;
@@ -20,4 +21,6 @@ export interface IQuizAPIService {
     rejectQuiz(token: string, quizId: number, comment: string): Promise<QuizResponse>;
     deleteQuiz(quizId: number, token: string): Promise<QuizResponse>;
     getCatalog(token: string, page: number, pageSize: number): Promise<GetQuizCatalogResponse>
+    getLeaderboard(quizId: number, token?: string): Promise<GetLeaderboardResponse>;
+
 }

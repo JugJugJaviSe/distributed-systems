@@ -7,6 +7,7 @@ import type { EditQuizResponse } from "../../types/quiz/EditQuizResponse";
 import type { CreateQuizResponse } from "../../types/quiz/CreateQuizResponse";
 import type { GetQuizCatalogResponse } from "../../types/quiz/GetQuizCatalogResponse";
 import type { EditQuizDto } from "../../models/quiz/EditQuizDto";
+import type { GetLeaderboardResponse } from "../../types/leaderboard/GetLeaderboardResponse";
 
 const API_URL: string = import.meta.env.VITE_API_URL + "/quiz";
 
@@ -306,5 +307,21 @@ export const quizApi: IQuizAPIService = {
                 errors
             };
         }
+    },
+
+  
+  async getLeaderboard(quizId: number): Promise<GetLeaderboardResponse> {
+    try {
+      const res = await axios.get<GetLeaderboardResponse>(`${API_URL}/${quizId}/leaderboard`);
+      return res.data;
+    } catch (error) {
+      let message = "Get leaderboard error";
+      if (axios.isAxiosError(error)) message = error.response?.data?.message || message;
+
+      return { success: false, message, data: undefined };
     }
+  },
+
+
+
 };

@@ -9,6 +9,7 @@ from .routes.admin import admin_bp
 from .routes.user import user_bp
 from .routes.quiz import quiz_bp
 from .routes.quiz_execution import quiz_execution_bp
+from .routes.quiz_leaderboard import quiz_leaderboard_bp
 from .routes import socket_events 
 
 
@@ -40,6 +41,6 @@ def create_app():
     app.register_blueprint(user_bp)
     app.register_blueprint(quiz_bp)
     app.register_blueprint(quiz_execution_bp)
-    
+    app.register_blueprint(quiz_leaderboard_bp)
     return app
   

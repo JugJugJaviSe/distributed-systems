@@ -19,6 +19,8 @@ import { QuizPlayPage } from "./pages/quiz_execution/QuizPlayPage";
 import EditQuizPage from "./pages/quiz/EditQuizPage";
 import QuizReviewPage from "./pages/quiz/QuizReviewPage";
 import QuizzesForReviewPage from "./pages/quiz/QuizzesForReviewPage";
+import LeaderboardHomePage from "./pages/leaderboard/LeaderboardHomePage";
+import QuizLeaderboardPage from "./pages/leaderboard/QuizLeaderboardPage";
 
 function App() {
   return (
@@ -83,8 +85,28 @@ function App() {
         }
       />
 
+      <Route
+        path="/leaderboards"
+        element={
+          <ProtectedRoute requiredRole="">
+            <LeaderboardHomePage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/quiz/:quizId/leaderboard"
+        element={
+          <ProtectedRoute requiredRole="">
+            <QuizLeaderboardPage />
+          </ProtectedRoute>
+        }
+      />
+
+
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/404" replace />} />
+      
     </Routes>
   );
 }
