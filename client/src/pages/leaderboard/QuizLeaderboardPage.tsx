@@ -102,7 +102,7 @@ export function QuizLeaderboardPage({ cloudinaryApi, usersApi, quizApi, }: QuizL
       </div>
 
       <DashboardHeader
-        title={`Quiz`}
+        title={``}
         page={page}
         totalPages={totalPages}
         canPrev={canPrev}

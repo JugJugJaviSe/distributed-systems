@@ -27,16 +27,16 @@ export function QuizLeaderboardTable({
                 <table className="min-w-full border-separate border-spacing-0 table-fixed">
                     <thead className="bg-gray-800">
                         <tr>
-                            <th className="w-1/4 px-6 py-5 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                            <th className="w-1/4 px-6 py-5 text-left text-xs font-semibold uppercase tracking-wider text-gray-300 text-left">
                                 Rank
                             </th>
-                            <th className="w-1/4 px-6 py-5 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                            <th className="w-1/4 px-6 py-5 text-left text-xs font-semibold uppercase tracking-wider text-gray-300 text-left">
                                 Player
                             </th>
-                            <th className="w-1/4 px-6 py-5 text-right text-xs font-semibold uppercase tracking-wider text-gray-300">
+                            <th className="w-1/4 px-6 py-5 text-right text-xs font-semibold uppercase tracking-wider text-gray-300 text-right">
                                 Score
                             </th>
-                            <th className="w-1/4 px-6 py-5 text-right text-xs font-semibold uppercase tracking-wider text-gray-300">
+                            <th className="w-1/4 px-6 py-5 text-right text-xs font-semibold uppercase tracking-wider text-gray-300 text-right">
                                 Time
                             </th>
                         </tr>
@@ -60,11 +60,11 @@ export function QuizLeaderboardTable({
                                         {a.player_email}
                                     </td>
 
-                                    <td className="w-1/4 px-6 py-6 text-base font-semibold text-gray-100">
+                                    <td className="w-1/4 px-6 py-6 text-base font-semibold text-gray-100 text-right">
                                         {a.score}
                                     </td>
 
-                                    <td className="w-1/4 px-6 py-6 text-base text-gray-400">
+                                    <td className="w-1/4 px-6 py-6 text-base text-gray-400 text-right">
                                         {formatSeconds(a.time_taken_seconds)}
                                     </td>
                                 </tr>
