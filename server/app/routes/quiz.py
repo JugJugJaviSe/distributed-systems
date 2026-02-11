@@ -11,7 +11,7 @@ from app.services.user_service import UserService
 
 quiz_bp = Blueprint("quiz", __name__, url_prefix="/quiz")
 
-QUIZ_SERVICE_BASE_URL = os.path.join(os.getenv("QUIZ_SERVICE_BASE_URL"), "quiz")
+QUIZ_SERVICE_BASE_URL = os.path.join(os.getenv("QUIZ_SERVICE_BASE_URL"), "/quiz")
 
 @quiz_bp.route("", methods=["OPTIONS"])
 def quiz_options():
