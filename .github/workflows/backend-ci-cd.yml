@@ -46,7 +46,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push image
+      - name: Build and Push image (${{ matrix.service_name }})
         uses: docker/build-push-action@v6
         with:
           context: ${{ matrix.context }}
@@ -56,7 +56,6 @@ jobs:
             ghcr.io/jugjugjavise/distributed-systems-${{ matrix.image_suffix }}:latest
             ghcr.io/jugjugjavise/distributed-systems-${{ matrix.image_suffix }}:${{ github.sha }}
 
-      - name: Trigger Render Deploy
-        if: secrets[matrix.deploy_hook_secret] != ''
+      - name: Trigger Render Deploy (${{ matrix.service_name }})
         run: |
           curl -fsSL -X POST "${{ secrets[matrix.deploy_hook_secret] }}"
