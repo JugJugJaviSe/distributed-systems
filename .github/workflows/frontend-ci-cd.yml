@@ -2,10 +2,10 @@ name: Build & Deploy Frontend
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
       - "client/**"
-      - ".github/workflows/frontend.yml"
+      - ".github/workflows/frontend-ci-cd.yml"
   workflow_dispatch:
 
 permissions:
@@ -37,8 +37,8 @@ jobs:
           file: ./client/Dockerfile.prod
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}-client:latest
-            ghcr.io/${{ github.repository }}-client:${{ github.sha }}
+            ghcr.io/jugjugjavise/distributed-systems-client:latest
+            ghcr.io/jugjugjavise/distributed-systems-client:${{ github.sha }}
 
       - name: Trigger Render Deploy (client)
         if: ${{ secrets.RENDER_DEPLOY_HOOK_CLIENT != '' }}
