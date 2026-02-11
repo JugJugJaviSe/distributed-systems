@@ -19,7 +19,7 @@ import { QuizPlayPage } from "./pages/quiz_execution/QuizPlayPage";
 import EditQuizPage from "./pages/quiz/EditQuizPage";
 import QuizReviewPage from "./pages/quiz/QuizReviewPage";
 import QuizzesForReviewPage from "./pages/quiz/QuizzesForReviewPage";
-
+import LeaderboardHomePage from "./pages/leaderboard/LeaderboardHomePage";
 function App() {
   return (
     <Routes>
@@ -82,6 +82,16 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      <Route
+        path="/leaderboards"
+        element={
+          <ProtectedRoute requiredRole="">
+            <LeaderboardHomePage />
+          </ProtectedRoute>
+        }
+      />
+
 
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/404" replace />} />
