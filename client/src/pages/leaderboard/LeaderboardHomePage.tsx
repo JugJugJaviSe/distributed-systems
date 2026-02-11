@@ -76,7 +76,7 @@ export function LeaderboardHomePage() {
   const onNext = () => setPage((p) => Math.min(totalPages, p + 1));
 
   const onViewLeaderboard = (quizId: number) => {
-    navigate(`/dashboard/quizzes/${quizId}/leaderboard`);
+    navigate(`/quiz/${quizId}/leaderboard`);
   };
 
   return (
@@ -100,7 +100,6 @@ export function LeaderboardHomePage() {
 
       {!loading && !errorMsg && items.length > 0 && (
         <div className="w-full max-w-5xl px-6">
-          {/* one quiz = one row */}
           <QuizList
             quizzes={items.map((q) => ({
               id: q.id,
