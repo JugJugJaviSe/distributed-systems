@@ -1,10 +1,10 @@
 import os
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import base64
 from typing import Optional
+import requests
+from requests.auth import HTTPBasicAuth
 from flask import current_app
-
+from ..config import Config
 from app.constants.user_roles import UserRole
 
 
@@ -17,36 +17,34 @@ class MailService:
         body: str,
         html: Optional[str] = None
     ):
+        """Send an email via Mailjet API."""
+
         try:
-            smtp_host = os.getenv("SMTP_HOST")
-            smtp_port = int(os.getenv("SMTP_PORT", "587"))
-            smtp_user = os.getenv("SMTP_USER")
-            smtp_password = os.getenv("SMTP_PASSWORD")
+            url = Config.MAILJET_URL or "https://api.mailjet.com/v3.1/send"
 
-            if not smtp_host or not smtp_user or not smtp_password:
-                raise RuntimeError(
-                    "SMTP configuration missing: "
-                    "SMTP_HOST / SMTP_USER / SMTP_PASSWORD"
-                )
+            message = {
+                "From": {
+                    "Email": Config.MAILJET_FROM_EMAIL,
+                    "Name": Config.MAILJET_FROM_NAME
+                },
+                "To": [{"Email": to_email}],
+                "Subject": subject,
+                "TextPart": body
+            }
 
-            msg = MIMEMultipart("alternative")
-            msg["From"] = smtp_user
-            msg["To"] = to_email
-            msg["Subject"] = subject
-
-            # Plain text
-            msg.attach(MIMEText(body, "plain"))
-
-            # Optional HTML
             if html:
-                msg.attach(MIMEText(html, "html"))
+                message["HTMLPart"] = html
 
-            with smtplib.SMTP(smtp_host, smtp_port, timeout=20) as server:
-                server.ehlo()
-                server.starttls()
-                server.ehlo()
-                server.login(smtp_user, smtp_password)
-                server.send_message(msg)
+            payload = {"Messages": [message]}
+
+            response = requests.post(
+                url,
+                auth=HTTPBasicAuth(Config.MAILJET_API_KEY, Config.MAILJET_SECRET_KEY),
+                json=payload,
+                timeout=10
+            )
+
+            response.raise_for_status()
 
             current_app.logger.info(
                 f"Email successfully sent to {to_email} | subject='{subject}'"

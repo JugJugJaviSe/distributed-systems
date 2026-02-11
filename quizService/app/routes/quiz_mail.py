@@ -14,7 +14,6 @@ def generate_report():
     current_user_email = data.get("admin_email")
     quiz_ids = data.get("quiz_ids")
     users = data.get("users")
-    #attempts = data.get("attempts")
 
     quizzes = QuizService.get_quiz_titles(quiz_ids)
     attempts = AttemptsService.get_attempts_for_quizzes(quiz_ids)

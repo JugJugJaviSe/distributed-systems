@@ -8,16 +8,11 @@ import base64
 import requests
 from requests.auth import HTTPBasicAuth
 
-#SMTP_USER = Config.SMTP_USER
-#SMTP_HOST = Config.SMTP_HOST
-#SMTP_PORT = Config.SMTP_PORT
-#SMTP_PASSWORD = Config.SMTP_PASSWORD
-
 MAILJET_API_KEY=Config.MAILJET_API_KEY
 MAILJET_SECRET_KEY=Config.MAILJET_SECRET_KEY
 MAILJET_FROM_EMAIL=Config.MAILJET_FROM_EMAIL
 MAILJET_FROM_NAME=Config.MAILJET_FROM_NAME
-
+MAILJET_URL=Config.MAILJET_URL
 
 class QuizMailService:
 
@@ -29,8 +24,6 @@ class QuizMailService:
         html: Optional[str] = None,
         attachments: Optional[List[Tuple[str, bytes]]] = None
     ):
-
-        url = "https://api.mailjet.com/v3.1/send"
 
         message = {
             "From": {
@@ -65,7 +58,7 @@ class QuizMailService:
         }
 
         response = requests.post(
-            url,
+            MAILJET_URL,
             auth=HTTPBasicAuth(
                 Config.MAILJET_API_KEY,
                 Config.MAILJET_SECRET_KEY
