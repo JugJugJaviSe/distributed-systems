@@ -2,7 +2,7 @@ import os
 from app import create_app
 from app.models import quizzes, questions, answers, quiz_attempts
 from app.extensions import db
-
+#comment for testing workflow
 app = create_app()
 
 if os.getenv("AUTO_CREATE_TABLES", "false").lower() == "true":
