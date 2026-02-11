@@ -13,24 +13,41 @@ quiz_leaderboard_bp = Blueprint("quiz-leaderboard", __name__, url_prefix="/quiz"
 
 base = (os.getenv("QUIZ_SERVICE_BASE_URL") or "").rstrip("/")
 QUIZ_SERVICE_BASE_URL = f"{base}/quiz"
-
 @quiz_leaderboard_bp.get("/<int:quiz_id>/leaderboard")
 def get_leaderboard(quiz_id: int):
     try:
         url = f"{QUIZ_SERVICE_BASE_URL}/{quiz_id}/leaderboard"
-
         resp = requests.get(url, timeout=20)
 
-        return jsonify(resp.json()), resp.status_code
+        payload = resp.json()
+
+        data = payload.get("data", [])
+
+        users = UserService.get_all_user_emails()
+        id_to_email = {u["id"]: u["email"] for u in users}
+
+        for attempt in data:
+            player_id = attempt.get("player_id")
+            attempt["player_email"] = id_to_email.get(
+                player_id,
+                "unknown@example.com"
+            )
+
+            attempt.pop("player_id", None)
+
+        return jsonify({
+            "success": True,
+            "data": data
+        }), resp.status_code
 
     except requests.RequestException as e:
         return jsonify({
             "success": False,
             "message": f"Quiz service unreachable: {str(e)}"
         }), 503
+
     except Exception as e:
         return jsonify({
             "success": False,
             "message": str(e)
-        }),
-
+        }), 500
