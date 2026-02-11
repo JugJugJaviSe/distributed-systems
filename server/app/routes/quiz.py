@@ -8,6 +8,7 @@ from app.middlewares.require_auth import require_auth
 from app.middlewares.require_role import require_role 
 from app.services.quiz_service import QuizService
 from app.services.user_service import UserService
+from app.cache.quiz_cache import QuizCache
 
 quiz_bp = Blueprint("quiz", __name__, url_prefix="/quiz")
 
@@ -19,7 +20,6 @@ QUIZ_SERVICE_BASE_URL = f"{base}/quiz"
 @jwt_required()
 def create_quiz():
     try:
-
         if get_jwt()["role"] != UserRole.MODERATOR.value:
             return jsonify({
                 "success": False,
@@ -44,6 +44,7 @@ def create_quiz():
             return jsonify(data), response.status_code
 
         quiz = data.get("data", data)
+        QuizCache.clear()
 
         # real-time admin notification
         socketio.emit("quiz_created", quiz, room="admins")
@@ -82,7 +83,12 @@ def get_quiz(quiz_id: int):
 @require_auth
 def get_approved_quizzes():
     try:
-        quizzes = QuizService.get_approved_quizzes_from_quizService()
+        cached = QuizCache.get("approved_quizzes")
+        if cached:
+            quizzes = cached
+        else:
+            quizzes = QuizService.get_approved_quizzes_from_quizService()
+            QuizCache.set("approved_quizzes", quizzes)
 
         users = UserService.get_all_user_emails()
         id_to_email = {user["id"]: user["email"] for user in users}
@@ -101,7 +107,12 @@ def get_approved_quizzes():
 @require_auth
 def get_pending_quizzes():
     try:
-        quizzes = QuizService.get_pending_quizzes_from_quizService()
+        cached = QuizCache.get("pending_quizzes")
+        if cached:
+            quizzes = cached
+        else:
+            quizzes = QuizService.get_pending_quizzes_from_quizService()
+            QuizCache.set("pending_quizzes", quizzes)
 
         users = UserService.get_all_user_emails()
         id_to_email = {user["id"]: user["email"] for user in users}
@@ -114,7 +125,7 @@ def get_pending_quizzes():
 
     except requests.exceptions.RequestException as e:
         return jsonify({"success": False, "message": str(e)}), 500
-    
+
 
 @quiz_bp.get("/catalog")
 @require_auth
@@ -123,7 +134,19 @@ def get_catalog():
         page = request.args.get("page", 1, type=int)
         page_size = request.args.get("page_size", 12, type=int)
 
-        catalog = QuizService.get_catalog_from_quizService(page=page, page_size=page_size)
+        cache_key = f"catalog:{page}:{page_size}"
+        cached_catalog = QuizCache.get(cache_key)
+        if cached_catalog:
+            catalog = cached_catalog
+        else:
+            catalog = QuizService.get_catalog_from_quizService(page=page, page_size=page_size)
+
+            existing_keys = [k for k in QuizCache._cache.keys() if k.startswith("catalog:")]
+            if len(existing_keys) >= 3:         # Caching maximum 3 pages 
+                oldest_key = existing_keys[0]
+                QuizCache._cache.pop(oldest_key)
+
+            QuizCache.set(cache_key, catalog)
 
         data = catalog.get("data", {})
         items = data.get("items", [])
@@ -170,13 +193,13 @@ def approve_quiz(quiz_id):
             timeout=5
         )
 
+        QuizCache.clear()
+
         return jsonify(response.json()), response.status_code
 
     except requests.RequestException:
-        return jsonify({
-            "success": False,
-            "message": "Quiz service is unreachable"
-        }), 503
+        return jsonify({"success": False, "message": "Quiz service is unreachable"}), 503
+
 
 
 @quiz_bp.route("/admin/<int:quiz_id>/reject", methods=["PUT"])
@@ -198,6 +221,7 @@ def reject_quiz(quiz_id):
             timeout=5
         )
         quiz_data = response.json()
+        QuizCache.clear()
 
         data = quiz_data.get("data", {})
         author_id = data.get("author_id")
@@ -245,6 +269,8 @@ def delete_quiz(quiz_id):
                 "message": "Invalid response from quizService"
             }
 
+        QuizCache.clear()
+
         return jsonify(data), response.status_code
 
     except Exception as e:
@@ -260,13 +286,21 @@ def delete_quiz(quiz_id):
 def get_my_quizzes():
     try:
         user_id = get_jwt_identity()
+        cache_key = f"my_quizzes:{user_id}"
+
+        cached = QuizCache.get(cache_key)
+        if cached:
+            return jsonify(cached), 200
 
         response = requests.get(
             f"{QUIZ_SERVICE_BASE_URL}/my/{user_id}",
             timeout=10
         )
+        data = response.json()
+        if response.status_code == 200:
+            QuizCache.set(cache_key, data)
 
-        return jsonify(response.json()), response.status_code
+        return jsonify(data), response.status_code
 
     except requests.exceptions.RequestException as e:
         return jsonify({"success": False, "message": str(e)}), 500

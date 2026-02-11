@@ -36,10 +36,12 @@ export function CreateQuizForm({ quizApi }: CreateQuizPageProps) {
         const newErrors: string[] = [];
 
         if (!title.trim()) newErrors.push("Title is required");
+        if (duration <= 0) newErrors.push("Duration must be a positive number");
         if (questions.length === 0) newErrors.push("At least one question is required");
 
         questions.forEach((q, i) => {
             if (!q.text.trim()) newErrors.push(`Question ${i + 1} text is required`);
+            if (!q.points) newErrors.push(`Question ${i + 1} points must be > 0`);
 
             if (q.answers.length < 2) {
                 newErrors.push(`Question ${i + 1} must have at least 2 answers`);

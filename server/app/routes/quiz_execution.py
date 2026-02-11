@@ -16,7 +16,6 @@ base = (os.getenv("QUIZ_SERVICE_BASE_URL") or "").rstrip("/")
 QUIZ_SERVICE_BASE_URL = f"{base}/quiz-execution"
 
 
-
 @quiz_execution_bp.route("/start", methods=["POST"])
 @require_role([UserRole.PLAYER])
 def start_quiz():
