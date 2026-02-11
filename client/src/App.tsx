@@ -42,7 +42,7 @@ function App() {
       } />
 
       <Route path="/Admin/users" element={
-        <ProtectedRoute requiredRole="Admin"><AdminUsersPage adminApi={adminApi} /></ProtectedRoute>
+        <ProtectedRoute requiredRole="Admin"><AdminUsersPage adminApi={adminApi} cloudinaryApi={cloudinaryApi} usersApi={usersApi} /></ProtectedRoute>
       } />
 
       <Route path="/quiz/play/:quizId" element={
@@ -53,7 +53,7 @@ function App() {
         path="/quiz/create"
         element={
           <ProtectedRoute requiredRole="Moderator">
-            <CreateQuizPage quizApi={quizApi} />
+            <CreateQuizPage quizApi={quizApi} cloudinaryApi={cloudinaryApi} usersApi={usersApi} />
           </ProtectedRoute>
         }
       />
@@ -62,7 +62,7 @@ function App() {
         path="/Admin/pendingQuizzes"
         element={
           <ProtectedRoute requiredRole="Admin">
-            <QuizzesForReviewPage quizApi={quizApi} />
+            <QuizzesForReviewPage quizApi={quizApi} cloudinaryApi={cloudinaryApi} usersApi={usersApi} />
           </ProtectedRoute>
         }
       />
@@ -71,7 +71,7 @@ function App() {
         path="/admin/quizzes/:quizId"
         element={
           <ProtectedRoute requiredRole="Admin">
-            <QuizReviewPage />
+            <QuizReviewPage cloudinaryApi={cloudinaryApi} usersApi={usersApi} quizApi={quizApi} />
           </ProtectedRoute>
         }
       />
@@ -80,7 +80,7 @@ function App() {
         path="/quiz/edit/:quizId"
         element={
           <ProtectedRoute requiredRole="Moderator">
-            <EditQuizPage quizApi={quizApi} />
+            <EditQuizPage quizApi={quizApi} cloudinaryApi={cloudinaryApi} usersApi={usersApi} />
           </ProtectedRoute>
         }
       />
@@ -89,7 +89,7 @@ function App() {
         path="/leaderboards"
         element={
           <ProtectedRoute requiredRole="">
-            <LeaderboardHomePage />
+            <LeaderboardHomePage cloudinaryApi={cloudinaryApi} usersApi={usersApi} quizApi={quizApi} />
           </ProtectedRoute>
         }
       />
@@ -98,7 +98,7 @@ function App() {
         path="/quiz/:quizId/leaderboard"
         element={
           <ProtectedRoute requiredRole="">
-            <QuizLeaderboardPage />
+            <QuizLeaderboardPage cloudinaryApi={cloudinaryApi} usersApi={usersApi} quizApi={quizApi} />
           </ProtectedRoute>
         }
       />
@@ -106,7 +106,7 @@ function App() {
 
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/404" replace />} />
-      
+
     </Routes>
   );
 }
