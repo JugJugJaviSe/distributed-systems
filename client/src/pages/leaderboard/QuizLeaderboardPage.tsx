@@ -5,10 +5,20 @@ import { Navbar } from "../../components/navbar/Navbar";
 import { DashboardLayout } from "../../components/dashboard/DashboardLayout";
 import { DashboardHeader } from "../../components/player_dashboard/DashboardHeader";
 
-import { quizApi } from "../../api_services/quiz_api/QuizAPIService";
 import type { LeaderboardAttemptDto } from "../../types/leaderboard/LeaderboardAttemptDto";
 import { QuizLeaderboardTable } from "../../components/leaderboard/QuizLeaderboardTable";
-export function QuizLeaderboardPage() {
+import type { ICloudinariImageAPIService } from "../../api_services/cloudinary_image_api/ICloudinaryImageAPIService";
+import type { IUsersAPIService } from "../../api_services/users_api/IUsersAPIService";
+import type { IQuizAPIService } from "../../api_services/quiz_api/IQuizAPIService";
+import { ProfileCard } from "../../components/profile_card/ProfileCard";
+
+interface QuizLeaderboardPageProps {
+  cloudinaryApi: ICloudinariImageAPIService;
+  usersApi: IUsersAPIService;
+  quizApi: IQuizAPIService;
+}
+
+export function QuizLeaderboardPage({ cloudinaryApi, usersApi, quizApi, }: QuizLeaderboardPageProps) {
   const { quizId } = useParams();
   const navigate = useNavigate();
 
@@ -17,6 +27,7 @@ export function QuizLeaderboardPage() {
   const [items, setItems] = useState<LeaderboardAttemptDto[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const [showProfile, setShowProfile] = useState(false);
 
   const [page, setPage] = useState<number>(1);
   const pageSize = 10;
@@ -75,7 +86,7 @@ export function QuizLeaderboardPage() {
   };
 
   return (
-    <DashboardLayout navbar={<Navbar />}>
+    <DashboardLayout navbar={<Navbar onProfileClick={() => setShowProfile(true)} />}>
       <div className="w-full max-w-5xl px-6">
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-3xl font-bold text-gray-100">Leaderboard</h1>
@@ -116,6 +127,16 @@ export function QuizLeaderboardPage() {
           pageSize={pageSize}
           formatSeconds={formatSeconds}
         />
+      )}
+
+      {showProfile && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <ProfileCard
+            setShowProfile={setShowProfile}
+            cloudinaryApi={cloudinaryApi}
+            usersApi={usersApi}
+          />
+        </div>
       )}
     </DashboardLayout>
   );

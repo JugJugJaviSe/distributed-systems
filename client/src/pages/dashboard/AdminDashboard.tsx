@@ -11,6 +11,7 @@ import { AdminInbox } from "../../components/admin/AdminInbox";
 import { useSocket } from "../../contextsts/SocketContext";
 import { Navbar } from "../../components/navbar/Navbar";
 import { DashboardLayout } from "../../components/dashboard/DashboardLayout";
+import { useAuth } from "../../hooks/UseAuthHook";
 
 const STORAGE_KEY = "admin_notifications";
 
@@ -29,6 +30,7 @@ export default function AdminDashboard({
 }: AdminDashboardProps) {
   const navigate = useNavigate();
   const socket = useSocket();
+  const { token } = useAuth();
 
   const [showProfile, setShowProfile] = useState(false);
   const [notifications, setNotifications] = useState<AdminNotification[]>([]);
@@ -72,7 +74,7 @@ export default function AdminDashboard({
         <ApprovedQuizzesTable quizApi={quizApi} adminApi={adminApi} />
       </div>
 
-      {showProfile && (
+      {showProfile && token && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <ProfileCard
             setShowProfile={setShowProfile}

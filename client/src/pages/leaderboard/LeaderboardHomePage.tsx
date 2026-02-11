@@ -8,10 +8,19 @@ import { DashboardHeader } from "../../components/player_dashboard/DashboardHead
 import { CatalogState } from "../../components/player_dashboard/CatalogState";
 
 import QuizList from "../../components/leaderboard/QuizList";
-import { quizApi } from "../../api_services/quiz_api/QuizAPIService";
 import type { QuizCatalogItem } from "../../models/quizCatalog/QuizCatalog";
+import { ProfileCard } from "../../components/profile_card/ProfileCard";
+import type { ICloudinariImageAPIService } from "../../api_services/cloudinary_image_api/ICloudinaryImageAPIService";
+import type { IUsersAPIService } from "../../api_services/users_api/IUsersAPIService";
+import type { IQuizAPIService } from "../../api_services/quiz_api/IQuizAPIService";
 
-export function LeaderboardHomePage() {
+interface LeaderboardHomePageProps {
+  cloudinaryApi: ICloudinariImageAPIService;
+  usersApi: IUsersAPIService;
+  quizApi: IQuizAPIService;
+}
+
+export function LeaderboardHomePage({ cloudinaryApi, usersApi, quizApi, }: LeaderboardHomePageProps) {
   const navigate = useNavigate();
   const { token } = useAuth();
 
@@ -22,6 +31,7 @@ export function LeaderboardHomePage() {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const [showProfile, setShowProfile] = useState(false);
 
   const canPrev = useMemo(() => page > 1, [page]);
   const canNext = useMemo(() => page < totalPages, [page, totalPages]);
@@ -80,7 +90,7 @@ export function LeaderboardHomePage() {
   };
 
   return (
-    <DashboardLayout navbar={<Navbar />}>
+    <DashboardLayout navbar={<Navbar onProfileClick={() => setShowProfile(true)} />}>
       <DashboardHeader
         title="Leaderboards"
         page={page}
@@ -106,6 +116,16 @@ export function LeaderboardHomePage() {
               name: q.title,
             }))}
             onViewLeaderboard={onViewLeaderboard}
+          />
+        </div>
+      )}
+
+      {showProfile && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <ProfileCard
+            setShowProfile={setShowProfile}
+            cloudinaryApi={cloudinaryApi}
+            usersApi={usersApi}
           />
         </div>
       )}
