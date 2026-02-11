@@ -60,11 +60,11 @@ export function QuizLeaderboardTable({
                                         {a.player_email}
                                     </td>
 
-                                    <td className="w-1/4 px-6 py-6 text-base text-right font-semibold text-gray-100">
+                                    <td className="w-1/4 px-6 py-6 text-base font-semibold text-gray-100">
                                         {a.score}
                                     </td>
 
-                                    <td className="w-1/4 px-6 py-6 text-base text-right text-gray-400">
+                                    <td className="w-1/4 px-6 py-6 text-base text-gray-400">
                                         {formatSeconds(a.time_taken_seconds)}
                                     </td>
                                 </tr>
