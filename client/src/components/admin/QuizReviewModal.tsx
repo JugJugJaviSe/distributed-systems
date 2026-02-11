@@ -33,6 +33,7 @@ export function QuizReviewModal({
                 const res = await quizApi.getQuizForAdmin(token!, quizId);
 
                 if (!res.success || !res.data) {
+                    removeNotificationFromStorage();
                     setError(res.message || "Failed to load quiz");
                     return;
                 }
@@ -41,6 +42,7 @@ export function QuizReviewModal({
                 console.log(res.data.status);
                 setIsPending(res.data.status === "pending");
             } catch (e) {
+                removeNotificationFromStorage();
                 console.error(e);
                 setError("Error while loading quiz");
             } finally {

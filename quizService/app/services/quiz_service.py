@@ -8,50 +8,6 @@ from app.constants.quiz_status import QuizStatus
 
 class QuizService:
     @staticmethod
-    def create_quiz(data):
-        try:
-            quiz = Quiz(
-                title=data["title"],
-                duration_seconds=data["duration"],
-                author_id=data["author_id"],
-                status=QuizStatus.PENDING.value,
-            )
-
-            db.session.add(quiz)
-            db.session.flush()
-
-            for q in data["questions"]:
-                question = Question(
-                    quiz_id=quiz.quiz_id,
-                    question_text=q["text"],
-                    points=q["points"],
-                )
-                db.session.add(question)
-                db.session.flush()
-
-                for a in q["answers"]:
-                    answer = Answer(
-                        question_id=question.question_id,
-                        answer_text=a["text"],
-                        is_correct=a["is_correct"],
-                    )
-                    db.session.add(answer)
-
-            db.session.commit()
-
-            return {
-                "quiz_id": quiz.quiz_id,
-                "title": quiz.title,
-                "author_id": quiz.author_id,
-                "status": quiz.status
-            }
-
-        except Exception as e:
-            db.session.rollback()
-            raise e
-
-
-    @staticmethod
     def quiz_to_dto(quiz: Quiz):
         return {
             "id": quiz.quiz_id,   
@@ -109,30 +65,13 @@ class QuizService:
             "duration_seconds": quiz.duration_seconds,
             "questions": question_list
         }
-    
-    @staticmethod
-    def get_quiz_for_admin(quiz_id: int) -> Dict:
-        quiz = Quiz.query.get(quiz_id)
 
-        if not quiz:
-            raise ValueError("Quiz not found")
-
-        return QuizService.quiz_to_dto(quiz)
 
     @staticmethod
     def get_quiz_titles(quiz_ids:list[str]) -> list[Dict[str, str]]:
         quizzes = Quiz.query.filter(Quiz.quiz_id.in_(quiz_ids)).all()
         return [{"id": q.quiz_id, "title": q.title} for q in quizzes]
-    
-    @staticmethod
-    def get_approved() -> list[Dict]:
-        quizzes = Quiz.query.filter(Quiz.status == QuizStatus.APPROVED.value).all()
-        return [{"id": q.quiz_id, "title": q.title, "author_id": q.author_id, "duration_seconds": q.duration_seconds, "created_at": q.created_at.strftime("%d/%m/%y %H:%M:%S")} for q in quizzes]
 
-    @staticmethod
-    def get_pending() -> list[Dict]:
-        quizzes = Quiz.query.filter(Quiz.status == QuizStatus.PENDING.value).all()
-        return [{"id": q.quiz_id, "title": q.title, "author_id": q.author_id, "duration_seconds": q.duration_seconds, "created_at": q.created_at.strftime("%d/%m/%y %H:%M:%S")} for q in quizzes]    
 
     @staticmethod
     def get_catalog(page: int = 1, page_size: int = 12) -> dict:
@@ -167,152 +106,4 @@ class QuizService:
             "page_size": pagination.per_page,
             "total_items": pagination.total,
             "total_pages": pagination.pages,
-        }
-
-    @staticmethod
-    def approve_quiz(quiz_id):
-        quiz = Quiz.query.get(quiz_id)
-
-        if not quiz:
-            raise ValueError("Quiz not found")
-
-        quiz.status = QuizStatus.APPROVED.value
-
-        db.session.commit()
-
-        return {
-        "id": quiz.quiz_id,
-        "status": quiz.status
-        }
-
-    @staticmethod
-    def reject_quiz(quiz_id, comment):
-        quiz = Quiz.query.get(quiz_id)
-
-        if not quiz:
-            raise ValueError("Quiz not found")
-
-        quiz.status = QuizStatus.REJECTED.value
-        quiz.rejection_reason = comment
-
-        db.session.commit()
-
-        return {
-            "id": quiz.quiz_id,
-            "status": quiz.status,
-            "admin_comment": quiz.rejection_reason,
-            "author_id": quiz.author_id
-        }
-
-
-    @staticmethod
-    def delete_quiz(quiz_id: int):
-        quiz = Quiz.query.get(quiz_id)
-
-        if not quiz:
-            return {
-                "success": False,
-                "message": "Quiz not found"
-            }
-
-
-        db.session.delete(quiz)
-        db.session.commit()
-
-        return {
-            "success": True,
-            "message": "Quiz deleted successfully",
-            "quiz_id": quiz_id
-        }
-
-    @staticmethod
-    def get_by_author(author_id: int) -> list[Dict]:
-        quizzes = Quiz.query.filter(Quiz.author_id == author_id).all()
-        return [
-            {
-                "id": q.quiz_id,
-                "title": q.title,
-                "status": q.status,
-                "duration_seconds": q.duration_seconds,
-                "created_at": q.created_at.strftime("%d/%m/%y %H:%M:%S"),
-            }
-            for q in quizzes
-        ]
-
-    @staticmethod
-    def get_rejected_quiz_for_edit(quiz_id: int) -> Dict:
-        quiz = Quiz.query.get(quiz_id)
-
-        if not quiz:
-            raise ValueError("Quiz not found")
-
-        if quiz.status != QuizStatus.REJECTED.value:
-            raise ValueError("Quiz is not rejected and cannot be edited")
-
-        dto = QuizService.quiz_to_dto(quiz)
-        dto["admin_comment"] = quiz.rejection_reason
-
-        return dto
-
-
-    @staticmethod
-    def edit_quiz(quiz_id: int, data: Dict) -> Dict:
-        quiz = Quiz.query.get(quiz_id)
-
-        if not quiz:
-            raise ValueError("Quiz not found")
-
-        if quiz.status != QuizStatus.REJECTED.value:
-            raise ValueError("Only rejected quizzes can be edited")
-
-        quiz.title = data.get("title", quiz.title)
-        quiz.duration_seconds = data.get("duration", quiz.duration_seconds)
-
-        for q_data in data.get("questions", []):
-            qid = q_data.get("question_id")
-
-            if qid:
-                # Update existing question
-                question = Question.query.get(qid)
-                if not question:
-                    continue
-                question.question_text = q_data["text"]
-                question.points = q_data["points"]
-            else:
-                # Create new question
-                question = Question(
-                    quiz_id=quiz_id,
-                    question_text=q_data["text"],
-                    points=q_data["points"],
-                )
-                db.session.add(question)
-                db.session.flush()  # get question_id before processing its answers
-
-            for a_data in q_data.get("answers", []):
-                aid = a_data.get("answer_id")
-
-                if aid:
-                    # Update existing answer
-                    answer = Answer.query.get(aid)
-                    if not answer:
-                        continue
-                    answer.answer_text = a_data["text"]
-                    answer.is_correct = a_data["is_correct"]
-                else:
-                    # Create new answer
-                    answer = Answer(
-                        question_id=question.question_id,
-                        answer_text=a_data["text"],
-                        is_correct=a_data["is_correct"],
-                    )
-                    db.session.add(answer)
-
-        quiz.status = QuizStatus.PENDING.value
-        quiz.rejection_reason = None
-
-        db.session.commit()
-
-        return {
-            "quiz_id": quiz.quiz_id,
-            "status": quiz.status
         }

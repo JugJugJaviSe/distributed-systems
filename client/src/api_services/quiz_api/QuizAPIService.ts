@@ -307,8 +307,4 @@ export const quizApi: IQuizAPIService = {
             };
         }
     }
-
-
-
-
 };

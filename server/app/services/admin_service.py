@@ -56,7 +56,7 @@ class AdminService:
     
     @staticmethod
     def generate_report(quiz_ids: list[int], admin_email: str, users: list[dict]):
-        url = f"{Config.QUIZ_SERVICE_BASE_URL}quiz-mail/reports"
+        url = f"{Config.QUIZ_SERVICE_BASE_URL}/quiz-mail/reports"
 
         payload = {
             "quiz_ids": quiz_ids,

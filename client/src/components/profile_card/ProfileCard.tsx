@@ -216,7 +216,7 @@ export function ProfileCard({
   if (!profile) return null;
 
   return (
-    <div className="w-80 p-5 mx-auto mt-10 text-center bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden">
+    <div className="w-full max-w-2xl p-5 mx-auto mt-10 text-center bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-2xl overflow-y-auto">
       <img
         src={profilePicture}
         alt={`${form.firstName} ${form.lastName}`}
@@ -239,7 +239,7 @@ export function ProfileCard({
         {form.firstName} {form.lastName}
       </h2>
 
-      <div className="grid gap-2 text-left">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8 text-left">
         <label className="text-gray-100">
           First Name
           <input

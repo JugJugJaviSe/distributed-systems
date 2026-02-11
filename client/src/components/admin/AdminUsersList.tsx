@@ -90,7 +90,7 @@ export function AdminUsersList({ adminApi }: AdminUsersProps) {
                 Role
               </th>
               <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-gray-300">
-                Actions
+                Delete
               </th>
             </tr>
           </thead>

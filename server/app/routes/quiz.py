@@ -15,10 +15,6 @@ base = (os.getenv("QUIZ_SERVICE_BASE_URL") or "").rstrip("/")
 QUIZ_SERVICE_BASE_URL = f"{base}/quiz"
 
 
-@quiz_bp.route("", methods=["OPTIONS"])
-def quiz_options():
-    return "", 200
-
 @quiz_bp.route("", methods=["POST"])
 @jwt_required()
 def create_quiz():
@@ -67,7 +63,6 @@ def create_quiz():
         }), 500
 
 
-
 @quiz_bp.route("/<int:quiz_id>", methods=["GET"])
 def get_quiz(quiz_id: int):
     try:
@@ -81,7 +76,8 @@ def get_quiz(quiz_id: int):
             "success": False,
             "message": "Quiz service is unreachable"
         }), 503
-    
+
+
 @quiz_bp.get("/approvedQuizzes")
 @require_auth
 def get_approved_quizzes():
@@ -145,7 +141,6 @@ def get_catalog():
         return jsonify({"success": False, "message": str(e)}), 500
 
 
-
 @quiz_bp.get("/admin/<int:quiz_id>")
 @require_role([UserRole.ADMIN])
 def get_quiz_for_admin(quiz_id: int):
@@ -182,6 +177,7 @@ def approve_quiz(quiz_id):
             "success": False,
             "message": "Quiz service is unreachable"
         }), 503
+
 
 @quiz_bp.route("/admin/<int:quiz_id>/reject", methods=["PUT"])
 @require_auth
@@ -225,9 +221,11 @@ def reject_quiz(quiz_id):
             "message": "Quiz service is unreachable"
         }), 503
 
+
 @quiz_bp.route("/delete/<int:quiz_id>", methods=["OPTIONS"])
 def delete_quiz_options(quiz_id):
     return "", 200 
+
 
 @quiz_bp.route("/delete/<int:quiz_id>", methods=["DELETE"])
 @require_auth
@@ -254,6 +252,7 @@ def delete_quiz(quiz_id):
             "success": False,
             "message": f"Server error while deleting quiz: {str(e)}"
         }), 500
+
 
 @quiz_bp.get("/my")
 @require_auth

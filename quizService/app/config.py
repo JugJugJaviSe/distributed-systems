@@ -11,7 +11,7 @@ class Config:
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "jwt-secret-key")  #Flask-JWT-Extended reads it from Flask app config automatically!
-    SERVER_URL = os.getenv("SERVER_URL", "http://127.0.0.1:5000")
+    SERVER_URL = os.getenv("SERVER_URL", "http://127.0.0.1:8000")
     SMTP_HOST = os.getenv("SMTP_HOST")
     SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
     SMTP_USER = os.getenv("SMTP_USER")
