@@ -28,3 +28,9 @@ class Config:
         "QUIZ_SERVICE_BASE_URL",
         "http://127.0.0.1:8001"
     )
+
+    MAILJET_API_KEY = os.getenv("MAILJET_API_KEY")
+    MAILJET_SECRET_KEY = os.getenv("MAILJET_SECRET_KEY")
+    MAILJET_FROM_EMAIL = os.getenv("MAILJET_FROM_EMAIL")
+    MAILJET_FROM_NAME = os.getenv("MAILJET_FROM_NAME")
+    MAILJET_URL = os.getenv("MAILJET_URL")

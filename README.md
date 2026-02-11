@@ -11,6 +11,7 @@ The goal of the system is to simulate the core functionalities of an online quiz
 - [Running the Project](#running-the-project)
 - [Database Setup](#database-setup--mysql-workbench)
 - [Stopping / Starting / Cleaning Up](#stopping--cleaning-up)
+- [Deployment](#deployment)
 
 ## Key Features
 
@@ -134,5 +135,20 @@ docker compose down
 
 Start containers
 ```bash
-docker compose start
+docker compose up -d
 ```
+## Deployment
+
+Database: Neon (PostgreSQL)
+- Connection via Neon’s provided connection string
+- Automatic backups and scaling
+
+Backend API: Render (Flask app)
+
+- Deployed using Gunicorn
+- Exposes REST endpoints and WebSocket connections for real-time notifications
+
+Frontend: Render (React app)
+
+- Communicates securely with backend via HTTPS
+- Live updates using WebSockets
