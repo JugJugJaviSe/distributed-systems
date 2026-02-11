@@ -1,25 +1,37 @@
 version: "3.9"
 
 services:
-  server:
-    container_name: drs-flask-server
-    build:
-      context: ./server
-      dockerfile: Dockerfile.dev
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./server:/app
+  users_db:
+    container_name: drs_users_db
+    image: mysql:8.0
     environment:
-      FLASK_ENV: development
-      DB_HOST: users_db
-      DB_USER: root
-      DB_PASSWORD: 1234
-      DB_NAME: quiz_users_db
-      QUIZ_SERVICE_BASE_URL: "http://quizservice:8001/"
-    depends_on:
-      - quizservice
-      - users_db
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: quiz_users_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - users_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p1234"]
+      interval: 3s
+      timeout: 2s
+      retries: 30
+
+  quiz_db:
+    container_name: drs_quiz_db
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: quiz_db
+    ports:
+      - "3308:3306"
+    volumes:
+      - quiz_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p1234"]
+      interval: 3s
+      timeout: 2s
+      retries: 30
 
   quizservice:
     container_name: drs-flask-quizService
@@ -32,35 +44,32 @@ services:
       - ./quizService:/app
     environment:
       FLASK_ENV: development
-      DB_HOST: quiz_db
-      DB_USER: root
-      DB_PASSWORD: 1234
-      DB_NAME: quiz_db
+      PORT: 8001
       SERVER_URL: "http://server:8000"
+      DATABASE_URL: "mysql+pymysql://root:1234@quiz_db:3306/quiz_db"
     depends_on:
-      - quiz_db
+      quiz_db:
+        condition: service_healthy
 
-  users_db:
-    container_name: drs_users_db
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: 1234
-      MYSQL_DATABASE: quiz_users_db
+  server:
+    container_name: drs-flask-server
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
     ports:
-      - "3307:3306"
+      - "8000:8000"
     volumes:
-      - users_db_data:/var/lib/mysql
-
-  quiz_db:
-    container_name: drs_quiz_db
-    image: mysql:8.0
+      - ./server:/app
     environment:
-      MYSQL_ROOT_PASSWORD: 1234
-      MYSQL_DATABASE: quiz_db
-    ports:
-      - "3308:3306"
-    volumes:
-      - quiz_db_data:/var/lib/mysql
+      FLASK_ENV: development
+      PORT: 8000
+      QUIZ_SERVICE_BASE_URL: "http://quizservice:8001"
+      DATABASE_URL: "mysql+pymysql://root:1234@users_db:3306/quiz_users_db"
+    depends_on:
+      users_db:
+        condition: service_healthy
+      quizservice:
+        condition: service_started
 
   client:
     container_name: drs-react-client
@@ -72,6 +81,8 @@ services:
     volumes:
       - ./client:/app
       - /app/node_modules
+    environment:
+      VITE_API_URL: "http://localhost:8000"
     depends_on:
       - server
       - quizservice

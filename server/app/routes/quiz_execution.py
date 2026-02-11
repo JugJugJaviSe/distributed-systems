@@ -12,7 +12,9 @@ quiz_execution_bp = Blueprint(
     url_prefix="/quiz-execution"
 )
 
-QUIZ_SERVICE_BASE_URL = os.path.join(os.getenv("QUIZ_SERVICE_BASE_URL"), "/quiz-execution")
+base = (os.getenv("QUIZ_SERVICE_BASE_URL") or "").rstrip("/")
+QUIZ_SERVICE_BASE_URL = f"{base}/quiz-execution"
+
 
 
 @quiz_execution_bp.route("/start", methods=["POST"])

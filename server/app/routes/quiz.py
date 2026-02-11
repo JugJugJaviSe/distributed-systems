@@ -11,7 +11,9 @@ from app.services.user_service import UserService
 
 quiz_bp = Blueprint("quiz", __name__, url_prefix="/quiz")
 
-QUIZ_SERVICE_BASE_URL = os.path.join(os.getenv("QUIZ_SERVICE_BASE_URL"), "/quiz")
+base = (os.getenv("QUIZ_SERVICE_BASE_URL") or "").rstrip("/")
+QUIZ_SERVICE_BASE_URL = f"{base}/quiz"
+
 
 @quiz_bp.route("", methods=["OPTIONS"])
 def quiz_options():
@@ -21,6 +23,7 @@ def quiz_options():
 @jwt_required()
 def create_quiz():
     try:
+
         if get_jwt()["role"] != UserRole.MODERATOR.value:
             return jsonify({
                 "success": False,
