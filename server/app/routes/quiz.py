@@ -94,7 +94,7 @@ def get_approved_quizzes():
         id_to_email = {user["id"]: user["email"] for user in users}
 
         for quiz in quizzes["data"]:
-            author_id = quiz.pop("author_id", None)
+            author_id = quiz.get("author_id", None)
             quiz["author_email"] = id_to_email.get(author_id, "unknown@example.com")
 
         return jsonify(quizzes), 200
@@ -118,7 +118,7 @@ def get_pending_quizzes():
         id_to_email = {user["id"]: user["email"] for user in users}
 
         for quiz in quizzes["data"]:
-            author_id = quiz.pop("author_id", None)
+            author_id = quiz.get("author_id", None)
             quiz["author_email"] = id_to_email.get(author_id, "unknown@example.com")
 
         return jsonify(quizzes), 200
@@ -152,7 +152,6 @@ def get_catalog():
             for quiz in items:
                 author_id = quiz.get("author_id")
                 quiz["author_email"] = id_to_email.get(author_id, "unknown@example.com")
-                quiz.pop("author_id", None)
 
             catalog["data"] = data
             catalog["data"]["items"] = items
@@ -167,8 +166,6 @@ def get_catalog():
 
     except requests.exceptions.RequestException as e:
         return jsonify({"success": False, "message": str(e)}), 500
-
-
 
 
 @quiz_bp.get("/admin/<int:quiz_id>")
