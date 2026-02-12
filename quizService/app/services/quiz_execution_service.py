@@ -132,18 +132,16 @@ class QuizExecutionService:
 
         db.session.commit()
 
-        # Send result email in separate process
-        Process(
-            target=QuizMailService.send_quiz_result_email,
-            args=(
+        try:
+            QuizMailService.send_quiz_result_email(
                 user_email,
                 session["quiz"]["title"],
                 score,
                 total_points,
                 attempt.time_taken_seconds
-            ),
-            daemon=True
-        ).start()
+            )
+        except Exception as e:
+            print(f"Failed to send email for attempt {attempt_id}: {e}")
 
         return {
             "attempt_id": attempt_id,

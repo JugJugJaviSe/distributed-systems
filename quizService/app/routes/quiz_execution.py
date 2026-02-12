@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify
+from threading import Thread
+from flask import Blueprint, current_app, request, jsonify
 from app.services.quiz_execution_service import QuizExecutionService
 
 quiz_execution_bp = Blueprint(
@@ -41,6 +42,14 @@ def submit_answer():
     }), 200
 
 
+def finish_quiz_background(attempt_id, player_email, app):
+        with app.app_context():
+            try:
+                QuizExecutionService.finish_quiz(int(attempt_id), player_email)
+            except Exception as e:
+                print(f"Error finishing quiz {attempt_id}: {e}")
+
+
 @quiz_execution_bp.route("/finish", methods=["POST"])
 def finish_quiz():
     data = request.get_json()
@@ -54,13 +63,14 @@ def finish_quiz():
             "message": "attempt_id and player_email are required"
         }), 400
 
-    result = QuizExecutionService.finish_quiz(
-        attempt_id=int(attempt_id),
-        user_email=player_email
-    )
+    app = current_app._get_current_object()
 
+    Thread(
+        target=lambda: finish_quiz_background(attempt_id, player_email, app),
+        daemon=True
+    ).start()
+    
     return jsonify({
         "success": True,
         "message": "Quiz finished successfully. Results will be sent via email.",
-        "data": result
     }), 200

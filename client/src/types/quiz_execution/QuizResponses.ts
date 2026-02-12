@@ -25,14 +25,7 @@ export interface SubmitAnswerResponse {
     data?: SubmitAnswerResponseData;
 }
 
-export interface FinishQuizResponseData {
-    attempt_id: number;
-    score: number;
-    time_taken_seconds: number;
-}
-
 export interface FinishQuizResponse {
     success: boolean;
     message: string;
-    data?: FinishQuizResponseData;
 }

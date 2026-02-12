@@ -82,7 +82,7 @@ export const quizExecutionApi: IQuizExecutionAPIService = {
             if (axios.isAxiosError(error))
                 message = error.response?.data?.message || message;
 
-            return { success: false, message, data: undefined };
+            return { success: false, message };
         }
     }
 };
