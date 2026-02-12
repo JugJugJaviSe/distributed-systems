@@ -4,6 +4,7 @@ import { useAuth } from "../../hooks/UseAuthHook";
 import type { UserDto } from "../../models/user/UserDto";
 import type { ProfileFormState } from "../../types/user/ProfileFormState";
 import type { ProfileCardProps } from "../../types/user/ProfileCardProps";
+import { validateChangeProfileDataForm } from "../../helpers/ValidateChangeProfileDataForm";
 
 export function ProfileCard({
   setShowProfile,
@@ -29,6 +30,7 @@ export function ProfileCard({
   const [loadingPicture, setLoadingPicture] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string>("");
+  const [errors, setErrors] = useState<Partial<Record<keyof ProfileFormState, string>>>({});
 
   const hasChanges = useMemo(() => {
     if (!profile) return false;
@@ -143,9 +145,9 @@ export function ProfileCard({
     }
     if (!profile) return;
 
-    // Gender constraint
-    if (form.gender && form.gender !== "Male" && form.gender !== "Female") {
-      setError("Gender must be Male or Female");
+    const validationErrors = validateChangeProfileDataForm(form);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
 
@@ -247,6 +249,7 @@ export function ProfileCard({
             onChange={onChange("firstName")}
             className="w-full mt-1 px-3 py-2 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
           />
+          {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
         </label>
 
         <label className="text-gray-100">
@@ -256,6 +259,7 @@ export function ProfileCard({
             onChange={onChange("lastName")}
             className="w-full mt-1 px-3 py-2 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
           />
+          {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
         </label>
 
         <label className="text-gray-100">
@@ -265,6 +269,7 @@ export function ProfileCard({
             onChange={onChange("email")}
             className="w-full mt-1 px-3 py-2 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
           />
+          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
         </label>
 
         <label className="text-gray-100">
@@ -272,24 +277,25 @@ export function ProfileCard({
           <input
             type="date"
             value={form.dateOfBirth}
-            required
             onChange={onDateChange}
             className="w-full mt-1 px-3 py-2 rounded-lg bg-gray-700 text-gray-100 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
           />
+          {errors.dateOfBirth && <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth}</p>}
         </label>
 
         <label className="text-gray-100">
-          Gender
-          <select
-            value={form.gender}
-            onChange={onGenderChange}
-            className="w-full mt-1 px-3 py-2 rounded-lg bg-gray-700 text-gray-100 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
-          >
-            <option value="">Select...</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </select>
-        </label>
+        Gender
+        <select
+          value={form.gender}
+          onChange={onGenderChange}
+          className="w-full mt-1 px-3 py-2 rounded-lg bg-gray-700 text-gray-100 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
+        >
+          <option value="">Select...</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+        {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
+      </label>
 
         <label className="text-gray-100">
           Country
@@ -298,6 +304,7 @@ export function ProfileCard({
             onChange={onChange("country")}
             className="w-full mt-1 px-3 py-2 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
           />
+          {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country}</p>}
         </label>
 
         <label className="text-gray-100">
@@ -307,6 +314,7 @@ export function ProfileCard({
             onChange={onChange("street")}
             className="w-full mt-1 px-3 py-2 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
           />
+          {errors.street && <p className="text-red-500 text-sm mt-1">{errors.street}</p>}
         </label>
 
         <label className="text-gray-100">
@@ -316,6 +324,7 @@ export function ProfileCard({
             onChange={onChange("streetNumber")}
             className="w-full mt-1 px-3 py-2 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-150"
           />
+          {errors.streetNumber && <p className="text-red-500 text-sm mt-1">{errors.streetNumber}</p>}
         </label>
 
         <div className="mt-1 text-gray-300">
