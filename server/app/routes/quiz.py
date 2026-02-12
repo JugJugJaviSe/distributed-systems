@@ -86,6 +86,7 @@ def get_approved_quizzes():
         cached = QuizCache.get("approved_quizzes")
         if cached:
             quizzes = cached
+            return cached
         else:
             quizzes = QuizService.get_approved_quizzes_from_quizService()
             QuizCache.set("approved_quizzes", quizzes)
@@ -110,6 +111,7 @@ def get_pending_quizzes():
         cached = QuizCache.get("pending_quizzes")
         if cached:
             quizzes = cached
+            return cached
         else:
             quizzes = QuizService.get_pending_quizzes_from_quizService()
             QuizCache.set("pending_quizzes", quizzes)
@@ -136,6 +138,9 @@ def get_catalog():
 
         cache_key = f"catalog:{page}:{page_size}"
         catalog = QuizCache.get(cache_key)
+
+        if catalog is not None:
+            return catalog
 
         if catalog is None:
             catalog = QuizService.get_catalog_from_quizService(page=page, page_size=page_size)
