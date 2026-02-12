@@ -191,6 +191,7 @@ export function ProfileCard({
     });
 
     setSaving(false);
+     setErrors({});
   };
 
   if (loadingProfile) {

@@ -32,15 +32,15 @@ export const validateChangeProfileDataForm = (form: ProfileFormState) => {
     errors.gender = "Gender must be Male or Female";
   }
 
-  if (!form.country) errors.country = "Country is required.";
+  if (!form.country) errors.country = "Country is required";
   if (form.country && form.country.length > 50) errors.country = "Country is too long";
   if (form.country && form.country.length < 2) errors.country = "Country is too short";
 
-  if (!form.street) errors.street = "Street is required.";
+  if (!form.street) errors.street = "Street is required";
   if (form.street && form.street.length > 100) errors.street = "Street is too long";
   if (form.street && form.street.length < 5) errors.street = "Street is too short";
 
-  if (!form.streetNumber) errors.streetNumber = "Street number is required.";
+  if (!form.streetNumber) errors.streetNumber = "Street number is required";
   if (!form.streetNumber.trim()) errors.streetNumber = "Street number is required";
   if (form.streetNumber.length > 10)
     errors.streetNumber = "Street number is too long";
