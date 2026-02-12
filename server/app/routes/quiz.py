@@ -137,12 +137,14 @@ def get_catalog():
         cache_key = f"catalog:{page}:{page_size}"
         catalog = QuizCache.get(cache_key)
 
-        if not catalog:
+        if catalog is None:
             catalog = QuizService.get_catalog_from_quizService(page=page, page_size=page_size)
 
-            
-            data = catalog.get("data", {})
-            items = data.get("items", [])
+            if not isinstance(catalog, dict) or catalog.get("success") is False:
+                return jsonify(catalog), 502
+
+            data = catalog.get("data") or {}
+            items = data.get("items") or []
 
             users = UserService.get_all_user_emails()
             id_to_email = {u["id"]: u["email"] for u in users}
@@ -152,18 +154,20 @@ def get_catalog():
                 quiz["author_email"] = id_to_email.get(author_id, "unknown@example.com")
                 quiz.pop("author_id", None)
 
-            
+            catalog["data"] = data
+            catalog["data"]["items"] = items
+
             QuizCache.set(cache_key, catalog)
 
-            
             existing_keys = [k for k in QuizCache._cache.keys() if k.startswith("catalog:")]
             if len(existing_keys) > 3:
-                QuizCache._cache.pop(existing_keys[0])
+                QuizCache._cache.pop(existing_keys[0], None)
 
         return jsonify(catalog), 200
 
     except requests.exceptions.RequestException as e:
         return jsonify({"success": False, "message": str(e)}), 500
+
 
 
 
