@@ -33,10 +33,6 @@ export function QuizCatalogGrid({
                   <span>{formatDate(q.created_at)}</span>
                 )}
               </div>
-
-              <div className="text-xs text-gray-500 truncate">
-                {q.author_email}
-              </div>
             </div>
 
             <button

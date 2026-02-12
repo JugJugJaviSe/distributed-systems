@@ -50,9 +50,6 @@ export default function PendingQuizzesTable({ quizApi }: QuizzesTableProps) {
                                 Title
                             </th>
                             <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
-                                Author Email
-                            </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
                                 Duration
                             </th>
                             <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
@@ -79,10 +76,6 @@ export default function PendingQuizzesTable({ quizApi }: QuizzesTableProps) {
 
                                 <td className="px-6 py-5 text-sm font-medium text-gray-100">
                                     {quiz.title}
-                                </td>
-
-                                <td className="px-6 py-5 text-sm text-gray-300">
-                                    {quiz.author_email}
                                 </td>
 
                                 <td className="px-6 py-5 text-sm text-gray-400">
